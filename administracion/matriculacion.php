@@ -46,7 +46,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 </style>
 
 <main>
-
+    <?php include_once("../controller/guardar_matricula.php");
+    ?>
     <form action="" method="post" id="myForm" enctype="multipart/form-data">
 
 
@@ -56,10 +57,13 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     <h3>Estudiante</h3>
                 </li>
                 <li class="tab" onclick="changeTab(1)">
-                    <h3>Representante</p>
+                    <h3>Papá</p>
                     </h3>
                 <li class="tab" onclick="changeTab(2)">
-                    <h3>Nose</h3>
+                    <h3>Mamá</h3>
+                </li>
+                <li class="tab" onclick="changeTab(3)">
+                    <h3>Representante</h3>
                 </li>
             </ul>
 
@@ -69,17 +73,22 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
                 </div>
                 <div id="tab2" style="display: none;">
+                    <?php include_once("./matricula2.php"); ?>
                 </div>
                 <div id="tab3" style="display: none;">
-
+                    <?php include_once("./matricula3.php"); ?>
+                </div>
+                <div id="tab4" style="display: none;">
+                    <?php include_once("./representante.php"); ?>
                 </div>
 
+                <div class="navigation-buttons">
+                    <button type="button" class="custom-tab-label" onclick="changeTab('previous')">Anterior</button>
+                    <button type="button" class="custom-tab-label" onclick="changeTab('next')">Siguiente</button>
+
+                    <br><br>
+                </div>
             </div>
-            <div class="navigation-buttons">
-                <button type="button" class="custom-tab-label" onclick="changeTab('previous')">Anterior</button>
-                <button type="button" class="custom-tab-label" onclick="changeTab('next')">Siguiente</button>
-            </div>
-        </div>
 
 
     </form>

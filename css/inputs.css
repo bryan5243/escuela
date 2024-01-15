@@ -116,6 +116,12 @@ textarea.input {
     resize: vertical;
 }
 
+.form-container {
+    margin-left: 10px; /* Ajusta este valor según tus necesidades */
+    display: flex;
+    flex-wrap: wrap;
+}
+
 @media screen and (max-width: 480px) {
     .form {
         flex: 1 1 100%;

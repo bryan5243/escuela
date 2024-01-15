@@ -15,6 +15,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-ez+oQUa5o2Y6LRpeW4tzZSsck4m4XLqf3qIrxFmUfcHA70SE1k/b1juv+7Sg1lfj+Ps6C2lG5LUdi8FwA2EwCQ=="
     crossorigin="anonymous" />
+<link rel="stylesheet" href="../css/agregar.css">
+
 
 <style>
     :root {
@@ -40,7 +42,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         /* Espacio a la derecha del ícono */
         font-weight: bold;
         /* Puedes ajustar el peso de la fuente según tus preferencias */
-        font-size: 20px;
+        font-size: 15px;
         /* Puedes ajustar el tamaño del ícono según tus preferencias */
         color: green;
         /* Cambia el color del ícono según tus preferencias */
@@ -66,7 +68,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         /* Espacio a la derecha del ícono */
         font-weight: bold;
         /* Puedes ajustar el peso de la fuente según tus preferencias */
-        font-size: 20px;
+        font-size: 15px;
         /* Puedes ajustar el tamaño del ícono según tus preferencias */
         color: red;
         /* Cambia el color del ícono según tus preferencias */
@@ -195,6 +197,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         box-shadow: none;
     }
 </style>
+
 <link rel="stylesheet" href="../src/datables//Responsive-2.4.1/css/responsive.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css"
     integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
@@ -217,8 +220,30 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 </head>
 <main>
 
-    <div class="date" style="margin-bottom: 50px;">
-        <input type="date" id="datePicker" readonly>
+    <div class="button-container">
+        <button class="cssbuttons-io-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
+            </svg>
+            <span>Iniciar Período</span>
+        </button>
+
+        <button class="cssbuttons-io-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
+            </svg>
+            <span>Agregar Grado</span>
+        </button>
+
+        <button class="cssbuttons-io-button">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
+            </svg>
+            <span>Agregar Paralelo</span>
+        </button>
     </div>
 
     <table id="example" class="display compact nowrap" style="width:100%;min-width: 480px">
@@ -231,7 +256,9 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <th>Nombres</th>
                 <th>Grado</th>
                 <th>Paralelo</th>
-                <th>Periodo Académico</th>
+                <th>Opciones</th>
+
+
 
 
 
@@ -246,15 +273,19 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             e.apellidos,
             e.nombres,
             g.grado,
-            pa.paralelo,
-            pe.periodo
-
-            FROM estudiante e
-            JOIN grado g ON e.id_grado = g.id
-            JOIN matricula m ON e.id = m.id_estudiante
-            JOIN periodo pe ON m.id = pe.id_matricula
-            JOIN paralelo pa ON pa.id = e.id_paralelo
-            WHERE pe.estado = 1;";
+            pa.paralelo
+            FROM 
+                estudiante e
+            JOIN 
+                grado g ON e.id_grado = g.id
+            JOIN 
+                matricula m ON e.id = m.id_estudiante
+            JOIN 
+                periodo pe ON m.id_periodo = pe.id
+            JOIN 
+                paralelo pa ON pa.id_grado = g.id
+            WHERE 
+                e.id_paralelo=pa.id;";
             $result = $conn->query($sql);
             if (!$result) {
                 echo "Error al obtener los datos: " . $conn->errorInfo()[2];
@@ -268,7 +299,15 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <td>' . $row['nombres'] . '</td>
                 <td>' . $row['grado'] . '</td>
                 <td>' . $row['paralelo'] . '</td>
-                <td>' . $row['periodo'] . '</td>';
+                <td>';
+                echo '<div style="display: flex; align-items: center;" >
+                <form action="" method="post" id="actForm">
+                    <input type="hidden" name="id" value="' . $row['id'] . '">
+                    <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
+                    <i class="fas fa-pen-to-square" style="font-size: 28px; color: #167bae;"></i>
+                    </button>
+                </form>';
+                '<td> ';
 
             }
             ?>
@@ -280,6 +319,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 <?php
 include_once "./header.php";
 ?>
+
+
 
 <script src="../js/tema.js"></script>
 <script src="../js/activo.js"></script>

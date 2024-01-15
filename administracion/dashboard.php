@@ -140,7 +140,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <th>Cedula</th>
                 <th>Nombres</th>
                 <th>Apellidos</th>
-                <th>Sector</th>
+                <th>Dirección</th>
                 <th>Grado</th>
                 <th>Discapacidad</th>
                 <th>Representante</th>
@@ -180,7 +180,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <td>' . $row['cedula'] . '</td>
                 <td>' . $row['nombres'] . '</td>
                 <td>' . $row['apellidos'] . '</td>
-                <td>' . $row['sector'] . '</td>
+                <td>' . $row['direccion'] . '</td>
                 <td>' . $row['grado'] . '</td>
                 <td>' . $row['discapacidad'] . '</td>
 

@@ -204,6 +204,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     integrity="sha384-..." crossorigin="anonymous">
 
 
+
 <!-- //link de botones  -->
 
 <!-- jQuery UI CSS -->
@@ -216,10 +217,11 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.jqueryui.min.css">
 </head>
 <main>
-
-    <div class="date" style="margin-bottom: 50px;">
+    <div class="date">
         <input type="date" id="datePicker" readonly>
     </div>
+
+
 
     <table id="example" class="display compact nowrap" style="width:100%;min-width: 480px">
         <thead>
@@ -258,7 +260,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             JOIN persona p ON e.Id = p.id_estudiante
             JOIN rol r ON  p.Id= r.id_persona  
             JOIN matricula m on e.Id=m.id_estudiante
-            JOIN periodo pe on m.Id=pe.id_matricula
+            JOIN periodo pe on m.id_periodo=pe.Id
             WHERE r.rol = 'representante' AND pe.estado=1;";
             $result = $conn->query($sql);
             if (!$result) {

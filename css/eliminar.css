@@ -1,0 +1,51 @@
+:root {
+    --color-dark-variant: #222425;
+    --border-before-color: rgba(17, 16, 16, 0.39);
+
+}
+
+.dark-theme-variables {
+    --color-dark-variant: #ffffff;
+    --border-before-color: rgba(254, 251, 251, 0.39);
+
+}
+
+.button-container {
+    display: flex;
+    gap: 2%;
+    margin-top: 30px;
+    margin-bottom: 20px;
+}
+
+.cssbuttons-io-button {
+    display: flex;
+    align-items: center;
+    font-family: inherit;
+    font-weight: 500;
+    font-weight: bold;
+    font-size: 14px;
+    padding: 0.7em 1.4em 0.7em 1.1em;
+    color: var(--color-dark-variant);
+    background: #ad5389;
+    background: linear-gradient(0deg, rgb(224, 6, 31) 0%, rgb(247, 102, 109) 100%);
+    border: none;
+    box-shadow: 0 0.7em 1.5em -0.5em #a7141498;
+    letter-spacing: 0.05em;
+    border-radius: 20em;
+}
+
+.cssbuttons-io-button svg {
+    margin-right: 6px;
+}
+
+.cssbuttons-io-button:hover {
+    box-shadow: 0 0.5em 1.5em -0.5em #a7141498;
+}
+
+.cssbuttons-io-button:active {
+    box-shadow: 0 0.3em 1em -0.5em #14a73e98;
+}
+
+span {
+    color: var(--color-dark-variant);
+}

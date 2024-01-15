@@ -6,6 +6,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 }
 
 ?>
+
 <head>
     <div class="right">
         <div class="top">

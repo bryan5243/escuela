@@ -59,14 +59,9 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 </span>
                 <h3>Listado Estudiantes</h3>
             </a>
-            <a href="#">
-                <span class="material-symbols-outlined">
-                    assignment_ind
-                </span>
-                <h3>Asignar Grados</h3>
-            </a>
 
-            <a href="#">
+
+            <a href="periodos_culminados.php">
                 <span class="material-symbols-outlined">
                     content_paste_off
                 </span>

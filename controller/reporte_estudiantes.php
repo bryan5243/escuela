@@ -11,22 +11,27 @@ class MiPDF extends FPDF
     {
 
         // Posicionar la imagen al costado izquierdo y hacerla un 30% más pequeña
-        $this->Image('../img/logo23.png', 10, 10, 35); // Ajusta las coordenadas y el porcentaje según sea necesario
+        $this->Image('../img/logo23.png', 10, 10, 40); // Ajusta las coordenadas y el porcentaje según sea necesario
 
         // Texto al lado de la imagen
-        $this->SetFont('Arial', 'B', 18);
-        $this->SetX(50); // Ajusta la posición horizontal del texto según sea necesario
+        $this->SetFont('Arial', 'B', 15);
+        $this->SetX(48); // Ajusta la posición horizontal del texto según sea necesario
         $this->Cell(140, 15, iconv('UTF-8', 'ISO-8859-1', 'ESCUELA DE EDUCACIÓN BÁSICA PARTICULAR'), 0, 0, 'C');
         $this->Ln(2);
 
+        // Establecer el fondo rojo
+        $this->SetFillColor(236, 29, 23);
+        $this->Rect(50, $this->GetY() + 8, 137, 8, 'F'); // Ajusta los valores según el tamaño y posición del fondo
+
         // Establecer la fuente y el texto
-        $this->SetFont('Arial', 'B', 18);
+        $this->SetFont('Arial', 'B', 15);
         $this->SetX(50); // Ajusta la posición horizontal del texto según sea necesario
-        $this->SetTextColor(236, 29, 23); // Establecer el color del texto en blanco para que sea legible en fondo rojo
+        $this->SetTextColor(0, 0, 0); // Establecer el color del texto en blanco para que sea legible en fondo rojo
         $this->Cell(137, 25, iconv('UTF-8', 'ISO-8859-1', '"LAS ÁGUILAS DEL SABER"'), 0, 0, 'C');
         // Restaurar el color original
         $this->SetTextColor(0, 0, 0);
         $this->Ln(9);
+
 
         $this->SetFont('Arial', 'B', 10);
         $this->SetX(50); // Ajusta la posición horizontal del texto según sea necesario
@@ -43,9 +48,11 @@ class MiPDF extends FPDF
         $this->Cell(137, 20, iconv('UTF-8', 'ISO-8859-1', 'EL CAMBIO-MACHALA-ECUADOR'), 0, 0, 'C');
 
         $this->Ln(8);
-        $this->SetFont('Arial', 'B', 18);
+        $this->SetFont('Arial', 'B', 16);
         $this->SetX(50); // Ajusta la posición horizontal del texto según sea necesario
         $this->Cell(137, 20, iconv('UTF-8', 'ISO-8859-1', 'HOJA DE MATRICULA'), 0, 0, 'C');
+
+
 
 
 
@@ -76,14 +83,51 @@ function generateReport($estudianteId)
     $pdf->AddPage();
 
     $conn = conectarBaseDeDatos();
-    $pdf->Ln(15);
+
+
+    $sql = "SELECT 
+    m.numero,
+    e.codigo_unico
+    FROM
+    matricula m JOIN estudiante e on m.id_estudiante=e.Id
+     WHERE e.id = :estudianteId";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);
+    $stmt->execute();
+    $matriculaDatos = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Definir la fuente, tamaño y estilo
+    $pdf->SetFont('Arial', 'B', 12);
+
+    // Establecer la posición X
+    $pdf->SetX(180);
+
+    // Ajustar la posición Y para subir el recuadro
+    $yPosition = $pdf->GetY() - 5; // Puedes ajustar este valor según tus necesidades
+
+    // Crear un cuadro con bordes alrededor
+    $pdf->Rect(155, $yPosition, 50, 18, 'D');
+    $pdf->SetX(143);
+
+    // Colocar el texto en el cuadro
+    $pdf->Cell(0, 0, iconv('UTF-8', 'ISO-8859-1', 'Matricula N°' . $matriculaDatos['numero']), 0, 1, 'C');
+    $pdf->SetX(160);
+
+
+    $pdf->Cell(0, 12, iconv('UTF-8', 'ISO-8859-1', 'Código N°' . $matriculaDatos['codigo_unico']), 0, 1, 'C');
+
+
+
+
+
+    $pdf->Ln(0);
 
     $sql = "SELECT 
     m.numero,
     p.periodo,
     g.grado
     FROM
-    matricula m join periodo p on m.Id=p.id_matricula 
+    matricula m join periodo p on m.id_periodo=p.id 
     JOIN estudiante e on e.Id=m.id_estudiante 
     join grado g on e.id_grado=g.id
      WHERE e.id = :estudianteId";
@@ -91,11 +135,15 @@ function generateReport($estudianteId)
     $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);
     $stmt->execute();
     $gradoDatos = $stmt->fetch(PDO::FETCH_ASSOC);
-    $pdf->SetX(30); // Ajusta la posición horizontal del texto según sea necesario
 
-    $pdf->SetFont('Arial', 'B', 18); // Regular font style
-    $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper($gradoDatos['grado']) . '   '.mb_strtoupper($gradoDatos['periodo']) ), 0, 1, 'C');
+    $pdf->SetX(40); // Ajusta la posición horizontal del texto según sea necesario
+    $pdf->SetFont('Arial', 'B', 15); // Regular font style
+    $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper($gradoDatos['grado']) . '   ' . mb_strtoupper($gradoDatos['periodo'])), 0, 1, 'C');
 
+
+    // Alineado al centro
+
+    //$pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper($gradoDatos['grado']) . '   '.mb_strtoupper($gradoDatos['periodo']) ), 0, 1, 'C');
 
 
 
