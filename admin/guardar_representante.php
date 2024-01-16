@@ -4,7 +4,7 @@ session_start(); // Inicia la sesión
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verificamos si se recibieron los datos esperados y la variable de sesión está presente
-    if (isset($_SESSION['id_estudiante'])){ // Obtenemos los datos del formulario
+    if (isset($_SESSION['id_estudiante'])) { // Obtenemos los datos del formulario
         $idEstudiante = $_SESSION['id_estudiante'];
         $cedula = $_POST['cedula'];
         $apellidosNombres = $_POST['apellidos_nombres'];

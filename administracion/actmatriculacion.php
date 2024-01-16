@@ -46,19 +46,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 </style>
 
 <main>
-
-
-
-<?php
-    if (isset($_POST['id'])) {
-        // Obtener el valor del ID del paciente
-        $idEstudiante = $_POST['id'];
-    }
-    include_once("../controller/cargar_prematricula.php");
+    <?php include_once("../controller/guardar_matricula.php");
     ?>
-
-
-    
     <form action="" method="post" id="myForm" enctype="multipart/form-data">
 
 

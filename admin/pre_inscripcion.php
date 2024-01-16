@@ -101,12 +101,19 @@ use PgSql\Connection\Connection;
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="mb-3">
+                <label for="direcciones" class="form-label">4. Dirección:</label>
+                <input type="text" class="form-control" name="nombres" required>
+            </div>
+        </div>
+
 
         <div class="mb-3">
             <label for="discapacidad" class="form-label">4. Posee algún tipo de discapacidad:</label>
             <select class="form-select" name="discapacidad" id="discapacidad" required
                 onchange="toggleCamposDiscapacidad()">
-                <option value="o"> </option>
+                <option value="" selected disabled>¿Tiene alguna discapacidad?</option>
                 <option value="si">Si</option>
                 <option value="no">No</option>
             </select>
@@ -133,21 +140,22 @@ use PgSql\Connection\Connection;
 
         <div class="row">
             <div class="col-md-6">
-                <h2>Padre</h2>
+                <h2>Padre:</h2>
 
                 <div class="mb-3">
                     <label for="cedulaPadre" class="form-label">7. Cedula:</label>
-                    <input type="text" class="form-control" name="cedulaPadre" required>
+                    <input type="text" class="form-control" name="cedulaPadre" id="cedulaPadre" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="apellidosNombresPadre" class="form-label">8. Apellidos y Nombres:</label>
-                    <input type="text" class="form-control" name="apellidosNombresPadre" required>
+                    <input type="text" class="form-control" name="apellidosNombresPadre" id="apellidosNombresPadre"
+                        required>
                 </div>
 
                 <div class="mb-3">
                     <label for="telefonoPadre" class="form-label">9. Teléfono Celular:</label>
-                    <input type="text" class="form-control" name="telefonoPadre">
+                    <input type="text" class="form-control" id="telefonoPadre" name="telefonoPadre">
                 </div>
             </div>
 
@@ -156,24 +164,118 @@ use PgSql\Connection\Connection;
 
                 <div class="mb-3">
                     <label for="cedulaMadre" class="form-label">10. Cedula:</label>
-                    <input type="text" class="form-control" name="cedulaMadre" required>
+                    <input type="text" class="form-control" name="cedulaMadre" id="cedulaMadre" required>
                 </div>
 
-                <div class="mb-3">
+                <div class=" mb-3">
                     <label for="apellidosNombresMadre" class="form-label">11. Apellidos y Nombres:</label>
-                    <input type="text" class="form-control" name="apellidosNombresMadre" required>
+                    <input type="text" class="form-control" name="apellidosNombresMadre" id="apellidosNombresMadre"
+                        required>
                 </div>
 
-                <div class="mb-3">
+                <div class=" mb-3">
                     <label for="telefonoMadre" class="form-label">12. Teléfono Celular:</label>
-                    <input type="text" class="form-control" name="telefonoMadre">
+                    <input type="text" class="form-control" id="telefonoMadre" name=" telefonoMadre">
                 </div>
             </div>
+
+            <div class="col-md-6 mx-auto">
+                <h2>Representante:</h2>
+
+                <div class="mb-3">
+                    <label for="tipoRepresentante" class="form-label">Tipo de Representante:</label>
+                    <select class="form-select" id="tipoRepresentante" onchange="mostrarCampos(this.value)">
+                        <option value="" selected disabled>Seleccione un representante</option>
+
+                        <option value="padre">Padre</option>
+                        <option value="madre">Madre</option>
+                        <option value="otros">Otros</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="cedulaRepresentante" class="form-label">7. Cedula:</label>
+                    <input type="text" class="form-control" name="cedulaRepresentante" id="cedulaRepresentante"
+                        required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="apellidosNombresRepresentante" class="form-label">8. Apellidos y Nombres:</label>
+                    <input type="text" class="form-control" name="apellidosNombresRepresentante"
+                        id="apellidosNombresRepresentante" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="telefonoRepresentante" class="form-label">9. Teléfono Celular:</label>
+                    <input type="text" class="form-control" name="telefonoRepresentante" id="telefonoRepresentante">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Enviar</button>
+
         </div>
 
-        <button type="submit" class="btn btn-primary">Enviar</button>
+
     </form>
 </main>
+
+
+<script>
+    function mostrarCampos(tipo) {
+        // Obtén los elementos del formulario
+        var cedulaRepresentante = document.getElementById('cedulaRepresentante');
+        var apellidosNombresRepresentante = document.getElementById('apellidosNombresRepresentante');
+        var telefonoRepresentante = document.getElementById('telefonoRepresentante');
+
+        // Reinicia los valores y deshabilita los campos
+        cedulaRepresentante.value = '';
+        apellidosNombresRepresentante.value = '';
+        telefonoRepresentante.value = '';
+        cedulaRepresentante.disabled = true;
+        apellidosNombresRepresentante.disabled = true;
+        telefonoRepresentante.disabled = true;
+
+        // Muestra datos según la selección
+        if (tipo === 'madre') {
+            var cedulaMadre = document.getElementById('cedulaMadre');
+            var apellidosNombresMadre = document.getElementById('apellidosNombresMadre');
+            var telefonoMadre = document.getElementById('telefonoMadre');
+
+            cedulaRepresentante.value = cedulaMadre.value;
+            apellidosNombresRepresentante.value = apellidosNombresMadre.value;
+            telefonoRepresentante.value = telefonoMadre.value;
+
+            // Deshabilita los campos del padre
+            cedulaRepresentante.disabled = true;
+            apellidosNombresRepresentante.disabled = true;
+            telefonoRepresentante.disabled = true;
+
+        } else if (tipo === 'padre') {
+            var cedulaPadre = document.getElementById('cedulaPadre');
+            var apellidosNombresPadre = document.getElementById('apellidosNombresPadre');
+            var telefonoPadre = document.getElementById('telefonoPadre');
+
+            cedulaRepresentante.value = cedulaPadre.value;
+            apellidosNombresRepresentante.value = apellidosNombresPadre.value;
+            telefonoRepresentante.value = telefonoPadre.value;
+
+
+            // Deshabilita los campos del padre
+            cedulaRepresentante.disabled = true;
+            apellidosNombresRepresentante.disabled = true;
+            telefonoRepresentante.disabled = true;
+
+
+        } else if (tipo === 'otros') {
+            cedulaRepresentante.disabled = false;
+            apellidosNombresRepresentante.disabled = false;
+            telefonoRepresentante.disabled = false;
+        }
+    }
+
+
+</script>
+
 
 <script>
     function toggleCamposDiscapacidad() {

@@ -15,19 +15,22 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-ez+oQUa5o2Y6LRpeW4tzZSsck4m4XLqf3qIrxFmUfcHA70SE1k/b1juv+7Sg1lfj+Ps6C2lG5LUdi8FwA2EwCQ=="
     crossorigin="anonymous" />
-<link rel="stylesheet" href="../css/agregar.css">
+<link rel="stylesheet" href="../css/inputs.css">
 
 
 <style>
     :root {
         --color-dark-variant: #222425;
-
+        --border-before-color: rgba(255, 255, 255);
+        --color-text: #222425;
+        --color-modal: #e0e0e0;
     }
 
     .dark-theme-variables {
-
-        --color-dark-variant: #a3bdcc;
-
+        --color-dark-variant: #ffffff;
+        --border-before-color: rgba(254, 251, 251, 0.39);
+        --color-text: #222425;
+        --color-modal: rgba(0, 0, 0, 0.7)
     }
 
 
@@ -105,6 +108,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     }
 
     select,
+    option,
     p,
     label,
     input,
@@ -137,7 +141,6 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     #example_next {
         color: var(--color-dark-variant);
     }
-
 
 
 
@@ -196,6 +199,73 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         border: none;
         box-shadow: none;
     }
+
+    .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        color: var(--color-text);
+
+    }
+
+    .modal {
+        background-color: var(--color-modal);
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+        color: var(--color-text);
+        position: relative;
+        border-radius: 5%;
+        /* Añade posición relativa para posicionar el botón */
+
+
+    }
+
+    .modal-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 30px;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        background-color: red;
+        color: white;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        /* Cambia el cursor al pasar sobre el botón */
+        border-radius: 50%;
+        /* Para que el botón sea circular */
+    }
+
+    .btn-modal {
+        cursor: pointer;
+        font-size: 16px;
+        /* Ajusta el tamaño de la fuente según tus preferencias */
+        padding: 10px 15px;
+        margin-top: 10px;
+        /* Ajusta el padding para hacer el botón más grande */
+        border-radius: 10px;
+        /* Bordes redondeados */
+        background-color: #4CAF50;
+        /* Color de fondo */
+        color: white;
+        /* Color del texto */
+        border: none;
+        /* Quita el borde */
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+    }
 </style>
 
 <link rel="stylesheet" href="../src/datables//Responsive-2.4.1/css/responsive.dataTables.min.css">
@@ -205,7 +275,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha384-..." crossorigin="anonymous">
-
+<link rel="stylesheet" href="../css/agregar.css">
 
 <!-- //link de botones  -->
 
@@ -221,7 +291,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 <main>
 
     <div class="button-container">
-        <button class="cssbuttons-io-button">
+        <button class="cssbuttons-io-button" onclick="openModal('modal1')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                 <path fill="none" d="M0 0h24v24H0z"></path>
                 <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
@@ -229,7 +299,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             <span>Iniciar Período</span>
         </button>
 
-        <button class="cssbuttons-io-button">
+        <button class="cssbuttons-io-button" onclick="openModal('modal2')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                 <path fill="none" d="M0 0h24v24H0z"></path>
                 <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
@@ -237,7 +307,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             <span>Agregar Grado</span>
         </button>
 
-        <button class="cssbuttons-io-button">
+        <button class="cssbuttons-io-button" onclick="openModal('modal3')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                 <path fill="none" d="M0 0h24v24H0z"></path>
                 <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
@@ -257,9 +327,6 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <th>Grado</th>
                 <th>Paralelo</th>
                 <th>Opciones</th>
-
-
-
 
 
             </tr>
@@ -315,6 +382,104 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         </tbody>
     </table>
 
+
+    <div class="overlay" id="modal1">
+        <div class="modal" style="width: 350px;">
+            <h1>Iniciar periodo</h1>
+            <div class="form-container" style="display: flex; flex-wrap: wrap;">
+                <div class="form">
+                    <label for="periodo">
+                        <p>Periodos Académicos</p>
+                    </label>
+                    <input type="text" class="input" id="periodos" name="periodos" required>
+                    <span class="input-border"></span>
+
+                </div>
+                <div class="form">
+
+                    <button class="btn-modal" onclick="culminarPeriodo()">Agregar nuevo perido <i class=" fas fa-check"
+                            style="padding-left:10px"></i>
+                    </button>
+                </div>
+                <button class="modal-button" onclick="closeModal('modal1')">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="modal2">
+        <div class="modal" style="width: 300px;">
+            <h1>Agregar grado</h1>
+            <div class="form-container" style="display: flex; flex-wrap: wrap;">
+                <div class="form">
+                    <label for="periodo">
+                        <p>Agregar grado</p>
+                    </label>
+                    <input type="text" class="input" id="grados" name="grados" required>
+                    <span class="input-border"></span>
+
+                </div>
+                <div class="form">
+                </div>
+                <button class="btn-modal" style=" margin-left:40px">Agregar grado<i class=" fas fa-check"
+                        style="margin-left:10px;"></i>
+                </button>
+            </div>
+
+            <button class="modal-button" onclick="closeModal('modal2')">&times;</button>
+        </div>
+    </div>
+    </div>
+
+    <div class="overlay" id="modal3">
+        <div class="modal" style="width: 350px;">
+            <h1>Agregar paralelo</h1>
+            <div class="form-container" style="display: flex; flex-wrap: wrap; ">
+                <div class="form">
+                    <label for=" grado">
+                        <p>Seleccionar Grado</p>
+                    </label>
+                    <div class="input-with-button" style="margin-bottom: 20px;">
+                        <select type="text" class="input" id="grado" name="grado" required onchange="cargarParalelos()">
+                            <option value="" selected disabled>Seleccione un grado</option>
+
+                            <?php
+                            $conn = conectarBaseDeDatos();
+                            try {
+                                // Consulta para obtener los grados desde la base de datos
+                                $sql = "SELECT id, grado FROM grado";
+                                $result = $conn->query($sql);
+
+                                // Llenar las opciones del select con los datos de la base de datos
+                                if ($result->rowCount() > 0) {
+                                    foreach ($result as $row) {
+                                        echo "<option style= 'color:#000000' value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
+                                    }
+                                } else {
+                                    echo "<option value=''>No hay grados disponibles</option>";
+                                }
+                            } catch (PDOException $e) {
+                                echo "Error de conexión: " . $e->getMessage();
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <label for="paralelo">
+                        <p>Seleccionar Paralelo</p>
+                    </label>
+                    <input type="text" class="input" id="paralelo" name="paralelo" required>
+                    <span class="input-border"></span>
+
+                </div>
+
+
+                <div class="form">
+                    <button class="btn-modal" style="margin-left: 40px" onclick="eliminarParalelo()">Agregar
+                        paralelo<i class="fas fa-check" style="margin-left: 10px;"></i></button>
+                </div>
+                <button class="modal-button" onclick="closeModal('modal3')">&times;</button>
+            </div>
+        </div>
+    </div>
 </main>
 <?php
 include_once "./header.php";
@@ -326,6 +491,15 @@ include_once "./header.php";
 <script src="../js/activo.js"></script>
 <script src="../js/menu.js"></script>
 
+<script>
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+</script>
 
 
 
@@ -365,7 +539,6 @@ include_once "./header.php";
 
         table.buttons().container().insertBefore('#example_filter');
     });
-
 
 
 </script>

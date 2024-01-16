@@ -31,7 +31,7 @@ include_once '../model/conexion.php';
             <label for="cedula_representante">
                 <p>22. Cédula del Representante</p>
             </label>
-            <input type="text" class="input" id="cedula_representante" name="cedula_representante" pattern="[0-9]*" required>
+            <input type="text" class="input" id="cedula_representante" name="cedula_representante" pattern="[0-9]*"  value="<?php echo $estudiante['cedula_repre']; ?>"required>
             <span class="input-border"></span>
         </div>
     </div>
@@ -40,7 +40,7 @@ include_once '../model/conexion.php';
             <label for="apellidos_nombes_">
                 <p>23. Apellidos y Nombres completos</p>
             </label>
-            <input type="text" class="input" id="apellidos_nombres" name="apellidos_nombres_representante" required>
+            <input type="text" class="input" id="apellidos_nombres" name="apellidos_nombres_representante" value="<?php echo $estudiante['apellidos_repre']; ?>" required>
             <span class="input-border"></span>
         </div>
     </div>
@@ -67,7 +67,7 @@ include_once '../model/conexion.php';
             <label for="telefono_representante">
                 <p>27. Teléfono/Celular del Representante</p>
             </label>
-            <input type="text" class="input" id="telefono_representante" name="telefono_representante" pattern="[0-9]*" required>
+            <input type="text" class="input" id="telefono_representante" name="telefono_representante" pattern="[0-9]*" value="<?php echo $estudiante['telefono_repre']; ?>" required>
             <span class="input-border"></span>
         </div>
         <div class="form">

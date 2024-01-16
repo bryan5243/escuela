@@ -34,7 +34,8 @@ include_once '../model/conexion.php';
         <label for="cedula_estudiante">
             <p>1. Cédula del Estudiante</p>
         </label>
-        <input class="input" type="text" id="cedula_estudiante" name="cedula_estudiante" pattern="[0-9]*" required>
+        <input class="input" type="text" id="cedula_estudiante" name="cedula_estudiante" pattern="[0-9]*"
+            value="<?php echo $estudiante['cedula']; ?>" required>
         <span class="input-border"></span>
     </div>
 </div>
@@ -45,7 +46,8 @@ include_once '../model/conexion.php';
         <label for="apellidos_estudiante">
             <p>2. Apellidos del Estudiante</p>
         </label>
-        <input class="input" type="text" id="apellidos_estudiante" name="apellidos_estudiante" required>
+        <input class="input" type="text" id="apellidos_estudiante" name="apellidos_estudiante"
+            value="<?php echo $estudiante['apellidos']; ?>" required>
         <span class="input-border"></span>
     </div>
 
@@ -53,7 +55,8 @@ include_once '../model/conexion.php';
         <label for="nombres_estudiante">
             <p>3. Nombres del Estudiante</p>
         </label>
-        <input type="text" class="input" id="nombres_estudiante" name="nombres_estudiante" required>
+        <input type="text" class="input" id="nombres_estudiante" name="nombres_estudiante"
+            value="<?php echo $estudiante['nombres']; ?>" required>
         <span class="input-border"></span>
     </div>
 
@@ -80,7 +83,8 @@ include_once '../model/conexion.php';
         <label for="direccion_estudiante">
             <p>6. Dirección del Estudiante</p>
         </label>
-        <input type="text" class="input" id="direccion_estudiante" name="direccion_estudiante" required>
+        <input type="text" class="input" id="direccion_estudiante" name="direccion_estudiante"
+            value="<?php echo $estudiante['direccion']; ?>" required>
         <span class="input-border"></span>
     </div>
 
@@ -164,9 +168,9 @@ include_once '../model/conexion.php';
         </label>
         <select class="input" id="condicion_estudiante" name="condicion_estudiante" required
             onchange="habilitarCampos()">
-            <option value="">Seleccionar</option>
-            <option value="SI">SI</option>
-            <option value="NO">NO</option>
+            <option value="" selected disabled>Seleccionar</option>
+            <option value="1" <?php echo ($estudiante['discapacidad'] == 'SI') ? 'selected' : ''; ?>>SI</option>
+            <option value="0" <?php echo ($estudiante['discapacidad'] == 'NO') ? 'selected' : ''; ?>>NO</option>
         </select>
         <span class="input-border"></span>
     </div>
@@ -206,12 +210,15 @@ include_once '../model/conexion.php';
 
         // Habilitar o deshabilitar los campos de discapacidad según la selección
         camposDiscapacidad.forEach(function (campo) {
-            campo.disabled = condicionEstudiante.value !== "SI";
+            campo.disabled = condicionEstudiante.value !== "1";
 
             // Establecer el valor en "NA" cuando se deshabilitan
             campo.value = campo.disabled ? "NA" : "";
         });
     }
+
+    // Llamada inicial para establecer el estado inicial de los campos
+    habilitarCampos();
 </script>
 
 

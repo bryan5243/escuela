@@ -430,6 +430,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             </div>
         </div>
     </div>
+
     <div class="overlay" id="modal2">
         <div class="modal" style="width: 300px;">
             <h1>Eliminar grado</h1>
@@ -480,7 +481,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         <div class="modal" style="width: 300px;">
             <h1>Eliminar paralelo</h1>
             <div class="form-container" style="display: flex; flex-wrap: wrap;">
-                <div class="form">
+                <div class="form" style="margin-bottom: 20px;">
                     <label for="grado">
                         <p>Seleccionar Grado</p>
                     </label>
@@ -498,7 +499,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                                 // Llenar las opciones del select con los datos de la base de datos
                                 if ($result->rowCount() > 0) {
                                     foreach ($result as $row) {
-                                        echo "<option style=color:#000000 value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
+                                        echo "<option style= 'color:#000000' value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
                                     }
                                 } else {
                                     echo "<option value=''>No hay grados disponibles</option>";
@@ -531,7 +532,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                                     // Llenar las opciones del select con los datos de la base de datos
                                     if ($result->rowCount() > 0) {
                                         foreach ($result as $row) {
-                                            echo "<option style=color:#000000 value='" . $row["id"] . "'>" . $row["paralelo"] . "</option>";
+                                            echo "<option value='" . $row["id"] . "'>" . $row["paralelo"] . "</option>";
                                         }
                                     } else {
                                         echo "<option value=''>No hay paralelos disponibles para este grado</option>";

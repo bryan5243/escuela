@@ -34,7 +34,8 @@ include_once '../model/conexion.php';
         <label for="cedula_papa">
             <p>16. Cédula del Papá</p>
         </label>
-        <input type="text" class="input" id="cedula_papa" name="cedula_papa" pattern="[0-9]*" required>
+        <input type="text" class="input" id="cedula_papa" name="cedula_papa" pattern="[0-9]*"
+            value="<?php echo $papa['cedula']; ?>" required>
         <span class="input-border"></span>
     </div>
 </div>
@@ -43,7 +44,8 @@ include_once '../model/conexion.php';
         <label for="apellidos_nombres_papa">
             <p>17. Apellidos y Nombres completos</p>
         </label>
-        <input type="text" class="input" id="apellidos_nombres_papa" name="apellidos_nombres_papa" required>
+        <input type="text" class="input" id="apellidos_nombres_papa" name="apellidos_nombres_papa"
+            value="<?php echo $papa['apellidos_nombres']; ?>" required>
         <span class="input-border"></span>
     </div>
 
@@ -72,7 +74,8 @@ include_once '../model/conexion.php';
         <label for="telefono_papa">
             <p>20. Teléfono/Celular del Papá</p>
         </label>
-        <input type="text" class="input" id="telefono_papa" name="telefono_papa" pattern="[0-9]*" required>
+        <input type="text" class="input" id="telefono_papa" name="telefono_papa" pattern="[0-9]*"
+            value="<?php echo $papa['telefono']; ?>" required>
         <span class="input-border"></span>
     </div>
     <div class="form">

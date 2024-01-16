@@ -15,6 +15,39 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         <input type="date" id="datePicker" readonly>
     </div>
     <style>
+
+    <?php
+    $conn = conectarBaseDeDatos();
+    $sqlInactive = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
+    FROM estudiante e
+    JOIN matricula m ON  m.id_estudiante=e.Id
+    JOIN periodo p ON m.id_periodo= p.Id
+    WHERE e.estado = 0 AND p.estado = 1 AND e.foto IS NOT NULL;";
+    $resultInactive = $conn->query($sqlInactive);
+    $totalInactive = $resultInactive->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
+    
+    // Obtener datos de pacientes activos
+    $sqlActive = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
+    FROM estudiante e
+    JOIN matricula m ON  m.id_estudiante=e.Id
+    JOIN periodo p ON m.id_periodo= p.Id
+    WHERE e.estado = 1 AND p.estado = 1 AND e.foto IS NOT NULL;";
+    $resultActive = $conn->query($sqlActive);
+    $totalActive = $resultActive->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
+    
+    // Obtener datos de  todos los pacientes 
+    $sqlTotal = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
+    FROM estudiante e
+    JOIN matricula m ON  m.id_estudiante=e.Id
+    JOIN periodo p ON m.id_periodo= p.Id
+    WHERE  p.estado = 1 AND e.foto IS NOT NULL;";
+    $resultTotal = $conn->query($sqlTotal);
+    $totalPatients = $resultTotal->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
+    ?>
+
+
+
+
         :root {
             --color-dark-variant: #222425;
 
@@ -85,6 +118,10 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
         integrity="sha384-..." crossorigin="anonymous">
 
+
+
+
+
     <h1>Dashboard</h1>
 
     <div class="insights">
@@ -93,7 +130,9 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             <div class="middle">
                 <div class="left">
                     <h3>Inactivos</h3>
-                    <h1>5</h1>
+                     <h2>
+                        <?php echo $totalInactive; ?>
+                    </h2>
                 </div>
 
             </div>
@@ -109,7 +148,9 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             <div class="middle">
                 <div class="left">
                     <h3>Matriculados</h3>
-                    <h1>50</h1>
+                    <h2>
+                        <?php echo $totalActive; ?>
+                    </h2>
                 </div>
 
 
@@ -122,7 +163,9 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             <div class="middle">
                 <div class="left">
                     <h3>Total estudiantes</h3>
-                    <h1>55</h1>
+                    <h2>
+                        <?php echo $totalActive; ?>
+                    </h2>
                 </div>
 
 
@@ -189,21 +232,21 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <td>' . $row['telefono'] . '</td>
                 <td>';
                 echo '<div style="display: flex; align-items: center;" >
-                <form action="" method="post" id="actForm">
+                <form action="matriculacion.php" method="post" id="actForm">
                     <input type="hidden" name="id" value="' . $row['id'] . '">
                     <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
-                    <i class="fas fa-pen-to-square" style="font-size: 28px; color: #167bae;"></i>
+                    <i class="fas fa-user-check" style="font-size: 28px; color: #ec1d17;"></i>
                     </button>
                 </form>';
                 echo '<form id="form_' . $row['id'] . '" action="../controller/reporte_estudiantes.php" method="post" target="_blank">
                 <button class="hand-cursor" type="submit" name="generar_reporte" value="' . $row['id'] . '" style="background-color: var(--c);">
-                    <i class="fas fa-print" style="font-size: 28px; color: #167bae; margin-left:10px;"></i>
+                    <i class="fas fa-eye " style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>
             <form action="" method="post" id="eliminarForm">
                 <input type="hidden" name="id" value="' . $row['id'] . '">
                 <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
-                    <i class="fas fa-trash-alt" style="font-size: 28px; color: #167bae; margin-left:10px;"></i>
+                    <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>
         </div>
