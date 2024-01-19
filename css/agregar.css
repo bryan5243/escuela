@@ -17,35 +17,40 @@
     margin-bottom: 20px;
 }
 
-.cssbuttons-io-button {
-    display: flex;
+.button-model {
+    position: relative;
+    background-color: rgba(20, 167, 62, 1);
+    border-radius: 5px;
+    box-shadow: rgb(5, 54, 19) 0px 4px 0px 0px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    box-sizing: border-box;
     align-items: center;
-    font-family: inherit;
+    width: 154px;
+    height: 49px;
+    color: #fff;
+    border: none;
     font-weight: 500;
+    color: var(--color-dark-variant);
     font-weight: bold;
     font-size: 14px;
-    padding: 0.7em 1.4em 0.7em 1.1em;
-    color: var(--color-dark-variant);
-    background: #ad5389;
-    background: linear-gradient(0deg, rgba(20, 167, 62, 1) 0%, rgba(102, 247, 113, 1) 100%);
-    border: none;
-    box-shadow: 0 0.7em 1.5em -0.5em #14a73e98;
-    letter-spacing: 0.05em;
-    border-radius: 20em;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
 }
 
-.cssbuttons-io-button svg {
-    margin-right: 6px;
+.button::before {
+    content: "";
+    background-color: rgb(115, 230, 148);
+    width: 0;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    transition: width 700ms ease-in-out;
+    display: inline-block;
 }
 
-.cssbuttons-io-button:hover {
-    box-shadow: 0 0.5em 1.5em -0.5em #14a73e98;
-}
-
-.cssbuttons-io-button:active {
-    box-shadow: 0 0.3em 1em -0.5em #14a73e98;
-}
-
-span {
-    color: var(--color-dark-variant);
+.button:hover::before {
+    width: 100%;
 }

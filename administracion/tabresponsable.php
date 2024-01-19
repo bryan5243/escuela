@@ -5,10 +5,6 @@ include_once "../administracion/menu.php";
 include_once '../model/conexion.php';
 
 
-if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['rol'])) {
-    header("Location: login.php");
-    exit();
-}
 
 ?>
 
@@ -46,51 +42,41 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 </style>
 
 <main>
-    <?php include_once("../controller/guardar_matricula.php");
-    ?>
-    <form action="" method="post" id="myForm" enctype="multipart/form-data">
+
+
+
+
+
+
+
+    <form action="../controller/guardar_responsables.php" method="post" id="myForm" enctype="multipart/form-data">
 
 
         <div>
             <ul class="tabs">
                 <li class="tab active" onclick="changeTab(0)">
-                    <h3>Estudiante</h3>
+                    <h3>Responsables</h3>
                 </li>
                 <li class="tab" onclick="changeTab(1)">
-                    <h3>Papá</p>
+                    <h3>Translado</p>
                     </h3>
-                <li class="tab" onclick="changeTab(2)">
-                    <h3>Mamá</h3>
                 </li>
-                <li class="tab" onclick="changeTab(3)">
-                    <h3>Representante</h3>
-                </li>
+
             </ul>
 
             <div class="tab-content">
                 <div id="tab1" style="display: block;">
-                    <?php include_once("./matricula.php"); ?>
+                    <?php include_once './responsables.php'; ?>
 
                 </div>
-                <div id="tab2" style="display: none;">
-                    <?php include_once("./matricula2.php"); ?>
-                </div>
-                <div id="tab3" style="display: none;">
-                    <?php include_once("./matricula3.php"); ?>
-                </div>
-                <div id="tab4" style="display: none;">
-                    <?php include_once("./representante.php"); ?>
-                </div>
-
-                <div class="navigation-buttons">
+                <div class="navigation-buttons" style="margin-top: 20px;">
                     <button type="button" class="custom-tab-label" onclick="changeTab('previous')">Anterior</button>
                     <button type="button" class="custom-tab-label" onclick="changeTab('next')">Siguiente</button>
 
                     <br><br>
                 </div>
             </div>
-
-
+        </div>
     </form>
 
 

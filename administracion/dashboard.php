@@ -25,7 +25,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     WHERE e.estado = 0 AND p.estado = 1 AND e.foto IS NOT NULL;";
     $resultInactive = $conn->query($sqlInactive);
     $totalInactive = $resultInactive->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
-    
+
     // Obtener datos de pacientes activos
     $sqlActive = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
     FROM estudiante e
@@ -34,7 +34,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     WHERE e.estado = 1 AND p.estado = 1 AND e.foto IS NOT NULL;";
     $resultActive = $conn->query($sqlActive);
     $totalActive = $resultActive->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
-    
+
     // Obtener datos de  todos los pacientes 
     $sqlTotal = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
     FROM estudiante e
@@ -184,7 +184,6 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <th>Nombres</th>
                 <th>Apellidos</th>
                 <th>Dirección</th>
-                <th>Grado</th>
                 <th>Discapacidad</th>
                 <th>Representante</th>
                 <th>telefono</th>
@@ -202,13 +201,11 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             e.nombres,
             e.apellidos,
             e.direccion,
-            g.grado,
             CASE WHEN e.condicion = 1 THEN 'SI' ELSE 'NO' END AS discapacidad,
             p.cedula,
             p.apellidos_nombres,
             p.telefono
             FROM estudiante e
-            JOIN grado g ON e.id_grado = g.id
             JOIN persona p ON e.Id = p.id_estudiante
             JOIN rol r ON p.Id = r.id_persona
             WHERE r.rol = 'representante' AND e.foto IS NULL;";
@@ -224,7 +221,6 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <td>' . $row['nombres'] . '</td>
                 <td>' . $row['apellidos'] . '</td>
                 <td>' . $row['direccion'] . '</td>
-                <td>' . $row['grado'] . '</td>
                 <td>' . $row['discapacidad'] . '</td>
 
                 <td>' . $row['apellidos_nombres'] . '</td>
@@ -272,6 +268,8 @@ include_once "./header.php";
 <script src="../js/menu.js"></script>
 <script src="../js/tema.js"></script>
 <script src="../src/datables/jquery-3.5.1.js"></script>
+<script src="../js/calendario.js"></script>
+
 
 <script src="../src/datables/DataTables-1.13.4/js/jquery.dataTables.min.js"></script>
 <script src="../src/datables/Responsive-2.4.1/js/dataTables.responsive.min.js"></script>

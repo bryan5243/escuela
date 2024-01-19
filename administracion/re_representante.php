@@ -16,7 +16,8 @@ include_once '../model/conexion.php';
     <label for="foto_representante">
         <h3>Foto del Representante:</h3><br>
     </label>
-    <input type="file" name="foto_representante" id="foto_representante" class="custom-file-input">
+    <input type="file" name="foto_representante" id="foto_representante" class="custom-file-input"
+        onchange="validarImagen(event)" required>
     <label for="foto_representante" class="custom-file-label">Seleccionar archivo</label>
     <br>
     <div id="mensaje-error-representante" style="display: none; color: red;"></div>
@@ -31,7 +32,7 @@ include_once '../model/conexion.php';
             <p>22. Cédula del Representante</p>
         </label>
         <input type="text" class="input" id="cedula_representante" name="cedula_representante" pattern="[0-9]*"
-            value="<?php echo $estudiante['cedula_repre']; ?>" required>
+            required>
         <span class="input-border"></span>
     </div>
 </div>
@@ -40,8 +41,7 @@ include_once '../model/conexion.php';
         <label for="apellidos_nombes_">
             <p>23. Apellidos y Nombres completos</p>
         </label>
-        <input type="text" class="input" id="apellidos_nombres" name="apellidos_nombres_representante"
-            value="<?php echo $estudiante['apellidos_repre']; ?>" required>
+        <input type="text" class="input" id="apellidos_nombres" name="apellidos_nombres_representante" required>
         <span class="input-border"></span>
     </div>
 </div>
@@ -69,7 +69,7 @@ include_once '../model/conexion.php';
             <p>27. Teléfono/Celular del Representante</p>
         </label>
         <input type="text" class="input" id="telefono_representante" name="telefono_representante" pattern="[0-9]*"
-            value="<?php echo $estudiante['telefono_repre']; ?>" required>
+            required>
         <span class="input-border"></span>
     </div>
     <div class="form">
@@ -81,7 +81,6 @@ include_once '../model/conexion.php';
     </div>
 </div>
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
-    <input type="hidden" name="id" value="<?php echo $idEstudiante; ?>">
     <button style="cursor: pointer; font-size: 20px; color:white; border-radius: 10px; background: #FF0000;"
         class="input" type="submit" name="btnregistrarestudiante" value="">
         Ingresar

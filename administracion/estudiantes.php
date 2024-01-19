@@ -284,18 +284,26 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <form action="" method="post" id="actForm">
                     <input type="hidden" name="id" value="' . $row['id'] . '">
                     <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
-                    <i class="fas fa-pen-to-square" style="font-size: 28px; color: #167bae;"></i>
+                    <i class="fas fa-pen-to-square" style="font-size: 28px; color: #ec1d17;"></i>
                     </button>
                 </form>';
-                echo '<form id="form_' . $row['id'] . '" action="../controller/reporte_estudiantes.php" method="post" target="_blank">
-                <button class="hand-cursor" type="submit" name="generar_reporte" value="' . $row['id'] . '" style="background-color: var(--c);">
-                    <i class="fas fa-print" style="font-size: 28px; color: #167bae; margin-left:10px;"></i>
+
+                echo '<form id="form_solicitud' . $row['id'] . '"  action="../controller/solicitud_ingreso.php" method="post" target="_blank">
+                <button class="hand-cursor" type="submit" name="generar_solicitud" value="' . $row['id'] . '" style="background-color: var(--c);">
+                    <i class="fas fa-file-pdf" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>
+            
+            <form id="form_' . $row['id'] . '" action="../controller/reporte_estudiantes.php" method="post" target="_blank">
+                <button class="hand-cursor" type="submit" name="generar_reporte" value="' . $row['id'] . '" style="background-color: var(--c);">
+                    <i class="fas fa-print" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>
+            
             <form action="" method="post" id="eliminarForm">
                 <input type="hidden" name="id" value="' . $row['id'] . '">
                 <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
-                    <i class="fas fa-trash-alt" style="font-size: 28px; color: #167bae; margin-left:10px;"></i>
+                    <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>
         </div>
@@ -338,6 +346,7 @@ include_once "./header.php";
 
 
 <script src="../src/datables/Responsive-2.4.1/js/dataTables.responsive.min.js"></script>
+<script src="../js/calendario.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -371,6 +380,26 @@ include_once "./header.php";
                 const input = document.createElement('input');
                 input.setAttribute('type', 'hidden');
                 input.setAttribute('name', 'generar_reporte');
+                input.setAttribute('value', estudianteId);
+                form.appendChild(input);
+                form.submit();
+            });
+        });
+    });
+</script>
+<script>
+    // JavaScript to handle button click and submit the form
+    document.addEventListener('DOMContentLoaded', function () {
+        const reportButtons = document.querySelectorAll('button[name="generar_solicitud"]');
+        reportButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Evita la acción de envío por defecto del botón
+
+                const estudianteId = this.value;
+                const form = document.getElementById('form_solicitud' + estudianteId); // Obtiene el formulario correspondiente por ID
+                const input = document.createElement('input');
+                input.setAttribute('type', 'hidden');
+                input.setAttribute('name', 'generar_solicitud');
                 input.setAttribute('value', estudianteId);
                 form.appendChild(input);
                 form.submit();

@@ -291,7 +291,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 <main>
 
     <div class="button-container">
-        <button class="cssbuttons-io-button" onclick="openModal('modal1')">
+        <button class="button-model" onclick="openModal('modal1')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                 <path fill="none" d="M0 0h24v24H0z"></path>
                 <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
@@ -299,7 +299,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             <span>Iniciar Período</span>
         </button>
 
-        <button class="cssbuttons-io-button" onclick="openModal('modal2')">
+        <button class="button-model" onclick="openModal('modal2')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                 <path fill="none" d="M0 0h24v24H0z"></path>
                 <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
@@ -307,7 +307,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             <span>Agregar Grado</span>
         </button>
 
-        <button class="cssbuttons-io-button" onclick="openModal('modal3')">
+        <button class="button-model" onclick="openModal('modal3')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                 <path fill="none" d="M0 0h24v24H0z"></path>
                 <path fill="currentColor" d="M11 11V5h2v6h6v2h-6v6h-2v-6H5v-2z"></path>
@@ -393,18 +393,17 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     </label>
                     <input type="text" class="input" id="periodos" name="periodos" required>
                     <span class="input-border"></span>
-
                 </div>
                 <div class="form">
-
-                    <button class="btn-modal" onclick="culminarPeriodo()">Agregar nuevo perido <i class=" fas fa-check"
-                            style="padding-left:10px"></i>
+                    <button id="btn-modal-periodo" class="btn-modal" style="margin-left: 20px;">
+                        Agregar nuevo periodo <i class="fas fa-check" style="padding-left:10px"></i>
                     </button>
                 </div>
                 <button class="modal-button" onclick="closeModal('modal1')">&times;</button>
             </div>
         </div>
     </div>
+
 
     <div class="overlay" id="modal2">
         <div class="modal" style="width: 300px;">
@@ -416,18 +415,15 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     </label>
                     <input type="text" class="input" id="grados" name="grados" required>
                     <span class="input-border"></span>
-
                 </div>
                 <div class="form">
                 </div>
-                <button class="btn-modal" style=" margin-left:40px">Agregar grado<i class=" fas fa-check"
-                        style="margin-left:10px;"></i>
+                <button id="btn-modal-grado" class="btn-modal" style="margin-left: 40px;">
+                    Agregar grado <i class="fas fa-check" style="margin-left:10px;"></i>
                 </button>
             </div>
-
             <button class="modal-button" onclick="closeModal('modal2')">&times;</button>
         </div>
-    </div>
     </div>
 
     <div class="overlay" id="modal3">
@@ -439,9 +435,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                         <p>Seleccionar Grado</p>
                     </label>
                     <div class="input-with-button" style="margin-bottom: 20px;">
-                        <select type="text" class="input" id="grado" name="grado" required onchange="cargarParalelos()">
+                        <select type="text" class="input" id="grado" name="grado" required>
                             <option value="" selected disabled>Seleccione un grado</option>
-
                             <?php
                             $conn = conectarBaseDeDatos();
                             try {
@@ -463,23 +458,21 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                             ?>
                         </select>
                     </div>
-                    <label for="paralelo">
+                    <label for=" paralelo">
                         <p>Seleccionar Paralelo</p>
                     </label>
                     <input type="text" class="input" id="paralelo" name="paralelo" required>
                     <span class="input-border"></span>
-
                 </div>
-
-
                 <div class="form">
-                    <button class="btn-modal" style="margin-left: 40px" onclick="eliminarParalelo()">Agregar
+                    <button class="btn-modal" id="btn-modal-paralelo" style="margin-left: 40px">Agregar
                         paralelo<i class="fas fa-check" style="margin-left: 10px;"></i></button>
                 </div>
                 <button class="modal-button" onclick="closeModal('modal3')">&times;</button>
             </div>
         </div>
     </div>
+
 </main>
 <?php
 include_once "./header.php";
@@ -500,6 +493,99 @@ include_once "./header.php";
         document.getElementById(modalId).style.display = 'none';
     }
 </script>
+
+<script>
+    $(document).ready(function () {
+        $("#btn-modal-periodo").click(function () {
+            // Obtener el valor del campo de texto
+            var periodos = $("#periodos").val();
+
+            // Obtener el nombre de usuario de la sesión
+            var usuario = "<?php echo $_SESSION['nombre']; ?>";
+
+            // Realizar la solicitud AJAX
+            $.ajax({
+                type: "POST",
+                url: "../controller/agregar_periodo.php",
+                data: { periodos: periodos, usuario: usuario },
+                success: function (response) {
+                    alert(response);
+                    closeModal('modal1');
+                },
+                error: function (xhr, status, error) {
+                    alert("Error al realizar la solicitud AJAX: " + error);
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $("#btn-modal-grado").click(function () {
+            // Obtener el valor del campo de texto
+            var grado = $("#grados").val();
+
+            // Obtener el nombre de usuario de la sesión
+            var usuario = "<?php echo $_SESSION['nombre']; ?>";
+
+            // Realizar la solicitud AJAX
+            $.ajax({
+                type: "POST",
+                url: "../controller/agregar_grado.php",
+                data: { grados: grado, usuario: usuario },
+                success: function (response) {
+                    alert(response);
+                    closeModal('modal2');
+                },
+                error: function (xhr, status, error) {
+                    alert("Error al realizar la solicitud AJAX: " + error);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    document.getElementById('btn-modal-paralelo').addEventListener('click', function () {
+        var gradoSeleccionado = document.getElementById('grado').value;
+        var paraleloIngresado = document.getElementById('paralelo').value;
+
+        var xhr = new XMLHttpRequest();
+        var url = '../controller/agregar_paralelo.php';
+        var params = 'action=agregar_paralelo&grado=' + encodeURIComponent(gradoSeleccionado) + '&paralelo=' + encodeURIComponent(paraleloIngresado);
+
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                console.log('Respuesta del servidor:', xhr.responseText);
+
+                if (xhr.status === 200) {
+                    try {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.success) {
+                            alert('Paralelo agregado exitosamente.');
+                            // Puedes realizar acciones adicionales si es necesario
+                        } else {
+                            alert('Error al agregar el paralelo: ' + response.error);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing JSON response: ' + e.message);
+                    }
+                } else {
+                    console.error('AJAX request failed with status: ' + xhr.status);
+                }
+            }
+        };
+
+        xhr.send(params);
+    });
+
+
+</script>
+
+
+
 
 
 

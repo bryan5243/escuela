@@ -25,4 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Manejar el caso en que la solicitud no sea POST
     echo "Acceso no permitido";
 }
+$conn = null;
+
 ?>

@@ -18,7 +18,8 @@ include_once '../model/conexion.php';
         <label for="foto_papa">
             <h3>Foto del Papá:</h3><br>
         </label>
-        <input type="file" name="foto_papa" id="foto_papa" class="custom-file-input">
+        <input type="file" name="foto_papa" id="foto_papa" class="custom-file-input" onchange="validarImagen(event)"
+            required>
         <label for="foto_papa" class="custom-file-label">Seleccionar archivo</label>
         <br>
         <div id="mensaje-error-papa" style="display: none; color: red;"></div>
@@ -34,7 +35,7 @@ include_once '../model/conexion.php';
             <p>16. Cédula del Papá</p>
         </label>
         <input type="text" class="input" id="cedula_papa" name="cedula_papa" pattern="[0-9]*"
-            value="<?php echo $papa['cedula']; ?>" required>
+            required>
         <span class="input-border"></span>
     </div>
 </div>
@@ -44,7 +45,7 @@ include_once '../model/conexion.php';
             <p>17. Apellidos y Nombres completos</p>
         </label>
         <input type="text" class="input" id="apellidos_nombres_papa" name="apellidos_nombres_papa"
-            value="<?php echo $papa['apellidos_nombres']; ?>" required>
+          " required>
         <span class="input-border"></span>
     </div>
 
@@ -74,7 +75,7 @@ include_once '../model/conexion.php';
             <p>20. Teléfono/Celular del Papá</p>
         </label>
         <input type="text" class="input" id="telefono_papa" name="telefono_papa" pattern="[0-9]*"
-            value="<?php echo $papa['telefono']; ?>" required>
+           required>
         <span class="input-border"></span>
     </div>
     <div class="form">

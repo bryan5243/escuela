@@ -40,11 +40,18 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             </a>
 
 
-            <a href="matriculacion.php">
+            <a href="re_matriculacion.php">
                 <span class="material-symbols-outlined">
                     group_add
                 </span>
                 <h3>Matricula</h3>
+            </a>
+
+            <a href="tabresponsable.php">
+                <span class="material-symbols-outlined">
+                    supervised_user_circle
+                </span>
+                <h3>Responsables</h3>
             </a>
             <a href="estudiantes.php">
                 <span class="material-symbols-outlined">

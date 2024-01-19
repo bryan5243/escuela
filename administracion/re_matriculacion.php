@@ -5,10 +5,6 @@ include_once "../administracion/menu.php";
 include_once '../model/conexion.php';
 
 
-if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['rol'])) {
-    header("Location: login.php");
-    exit();
-}
 
 ?>
 
@@ -49,19 +45,12 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
 
 
-    <?php
-    // Verificar si la solicitud proviene del formulario y tiene un valor de 'id'
-    if (isset($_POST['id'])) {
-        // Obtener el valor del ID del estudiante
-        $idEstudiante = $_POST['id'];
-        // Incluir cargar_prematricula.php solo si proviene del formulario
-    }
-    include_once("../controller/cargar_prematricula.php");
-    ?>
 
 
 
-    <form action="../controller/cargar_prematricula.php" method="post" id="myForm" enctype="multipart/form-data">
+
+    <form action="" method="post" id="myForm" enctype="multipart/form-data">
+
 
         <div>
             <ul class="tabs">
@@ -82,17 +71,17 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
             <div class="tab-content">
                 <div id="tab1" style="display: block;">
-                    <?php include_once("./matricula.php"); ?>
+                    <?php include_once("./re_matricula.php"); ?>
 
                 </div>
                 <div id="tab2" style="display: none;">
-                    <?php include_once("./matricula2.php"); ?>
+                    <?php include_once("./re_matricula2.php"); ?>
                 </div>
                 <div id="tab3" style="display: none;">
-                    <?php include_once("./matricula3.php"); ?>
+                    <?php include_once("./re_matricula3.php"); ?>
                 </div>
                 <div id="tab4" style="display: none;">
-                    <?php include_once("./representante.php"); ?>
+                    <?php include_once("./re_representante.php"); ?>
                 </div>
 
                 <div class="navigation-buttons">

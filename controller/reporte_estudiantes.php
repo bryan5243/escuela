@@ -61,7 +61,6 @@ class MiPDF extends FPDF
 
     function Footer()
     {
-
         $this->SetFont('Arial', 'B', 10);
         $this->SetY(270);
         $this->SetTextColor(236, 29, 23); // Establecer el color del texto en blanco para que sea legible en fondo rojo
@@ -70,6 +69,9 @@ class MiPDF extends FPDF
         $this->SetY(275);
         $this->SetTextColor(236, 29, 23); // Establecer el color del texto en blanco para que sea legible en fondo rojo
         $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '07h1462@gmail.com'), 0, 0, 'R');
+        $this->SetY(280);
+        $this->SetTextColor(236, 29, 23); // Establecer el color del texto en blanco para que sea legible en fondo rojo
+        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '2992-774-0997831372'), 0, 0, 'R');
 
     }
 }
@@ -261,7 +263,17 @@ function generateReport($estudianteId)
 
 
 
-    $sql = "SELECT * FROM persona p JOIN rol r on p.Id=r.id_persona where r.rol='papa'; AND id = :estudianteId ";
+    $sql = "SELECT 
+    p.apellidos_nombres,
+    p.cedula,
+    p.direccion,
+    p.ocupacion,
+    p.telefono,
+    p.correo,
+    p.foto
+    FROM persona p JOIN rol r on p.Id=r.id_persona
+    JOIN estudiante e on e.Id=p.id_estudiante
+    where r.rol='Padre' AND e.id = :estudianteId; ";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);
     $stmt->execute();
@@ -362,7 +374,18 @@ function generateReport($estudianteId)
 
 
 
-    $sql = "SELECT * FROM persona p JOIN rol r on p.Id=r.id_persona where r.rol='mama'; AND id = :estudianteId ";
+    $sql = "SELECT 
+    p.apellidos_nombres,
+    p.cedula,
+    p.direccion,
+    p.ocupacion,
+    p.telefono,
+    p.correo,
+    p.foto
+    
+    FROM persona p JOIN rol r on p.Id=r.id_persona
+    JOIN estudiante e on e.Id=p.id_estudiante
+    where r.rol='Madre' AND e.id = :estudianteId;";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);
     $stmt->execute();
@@ -428,7 +451,6 @@ function generateReport($estudianteId)
     $pdf->Cell(50, 8, '', 0, 1); // Alineado a la izquierda con salto de línea
     $pdf->SetXY($column3X, $posicionTituloY); // Establecer posición debajo del título para la columna 2
 
-
     if ($mamaDatos) {
         // Obtiene la imagen en formato blob
         $imagenBlobmama = $mamaDatos['foto'];
@@ -462,7 +484,19 @@ function generateReport($estudianteId)
     }
 
 
-    $sql = "SELECT * FROM persona p JOIN rol r on p.Id=r.id_persona where r.rol='representante'; AND id = :estudianteId ";
+
+    $sql = "SELECT 
+    p.apellidos_nombres,
+    p.cedula,
+    p.direccion,
+    p.ocupacion,
+    p.telefono,
+    p.correo,
+    p.foto
+    
+    FROM persona p JOIN rol r on p.Id=r.id_persona
+    JOIN estudiante e on e.Id=p.id_estudiante
+    where r.rol='Representante' AND e.id = :estudianteId;  ";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);
     $stmt->execute();
@@ -538,7 +572,7 @@ function generateReport($estudianteId)
         $imagenTemporalrepre = imagecreatetruecolor(200, 100);
 
         // Redimensiona la imagen original a 200x100 px
-        imagecopyresampled($imagenTemporalrepre, $imagenrepre, 0, 0, 0, 0, 200, 100, imagesx($imagenmama), imagesy($imagenmama));
+        imagecopyresampled($imagenTemporalrepre, $imagenrepre, 0, 0, 0, 0, 200, 100, imagesx($imagenrepre), imagesy($imagenrepre));
 
         // Guarda la imagen temporal como archivo
         $rutaTemporalrepre = 'temp_image_repre.jpg';

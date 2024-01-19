@@ -292,7 +292,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 <main>
 
     <div class="button-container">
-        <button class="cssbuttons-io-button" onclick="openModal('modal1')">
+        <button class="button-model" onclick="openModal('modal1')">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                 <path fill="none" d="M0 0h24v24H0z"></path>
                 <path fill="currentColor" d="M5 12h14v2H5z"></path>
@@ -300,21 +300,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             <span>Culminar Período</span>
         </button>
 
-        <button class="cssbuttons-io-button" onclick="openModal('modal2')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
-                <path fill="none" d="M0 0h24v24H0z"></path>
-                <path fill="currentColor" d="M5 12h14v2H5z"></path>
-            </svg>
-            <span>Eliminar Grado</span>
-        </button>
-
-        <button class="cssbuttons-io-button" onclick="openModal('modal3')">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
-                <path fill="none" d="M0 0h24v24H0z"></path>
-                <path fill="currentColor" d="M5 12h14v2H5z"></path>
-            </svg>
-            <span>Eliminar Paralelo</span>
-        </button>
+       
     </div>
 
     <table id="example" class="display compact nowrap" style="width:100%;min-width: 480px">
@@ -431,127 +417,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         </div>
     </div>
 
-    <div class="overlay" id="modal2">
-        <div class="modal" style="width: 300px;">
-            <h1>Eliminar grado</h1>
-            <div class="form-container" style="display: flex; flex-wrap: wrap;">
-                <div class="form">
-                    <label for="periodo">
-                        <p>Grado a eliminar</p>
-                    </label>
-                    <div class="input-with-button"> <!-- Nuevo contenedor para input y botón -->
-                        <select type="text" class="input" id="periodo" name="periodo" required>
-                            <option value="" selected disabled>Seleccione un grado</option>
-
-                            <?php
-                            $conn = conectarBaseDeDatos();
-                            try {
-                                // Consulta para obtener los periodos desde la base de datos
-                                $sql = "SELECT id, grado FROM grado";
-                                $result = $conn->query($sql);
-
-                                // Llenar las opciones del select con los datos de la base de datos
-                                if ($result->rowCount() > 0) {
-                                    foreach ($result as $row) {
-                                        echo "<option style=color:#000000 value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
-                                    }
-                                } else {
-                                    echo "<option value=''>No hay periodos disponibles</option>";
-                                }
-                            } catch (PDOException $e) {
-                                echo "Error de conexión: " . $e->getMessage();
-                            }
-                            $conn = null;
-                            ?>
-                        </select>
-
-                    </div>
-
-                    <button class="btn-modal" style=" margin-left:40px">Eliminar grado<i class=" fas fa-check"
-                            style="margin-left:10px;"></i>
-                    </button>
-                </div>
-
-                <button class="modal-button" onclick="closeModal('modal2')">&times;</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="overlay" id="modal3">
-        <div class="modal" style="width: 300px;">
-            <h1>Eliminar paralelo</h1>
-            <div class="form-container" style="display: flex; flex-wrap: wrap;">
-                <div class="form" style="margin-bottom: 20px;">
-                    <label for="grado">
-                        <p>Seleccionar Grado</p>
-                    </label>
-                    <div class="input-with-button">
-                        <select type="text" class="input" id="grado" name="grado" required onchange="cargarParalelos()">
-                            <option value="" selected disabled>Seleccione un grado</option>
-
-                            <?php
-                            $conn = conectarBaseDeDatos();
-                            try {
-                                // Consulta para obtener los grados desde la base de datos
-                                $sql = "SELECT id, grado FROM grado";
-                                $result = $conn->query($sql);
-
-                                // Llenar las opciones del select con los datos de la base de datos
-                                if ($result->rowCount() > 0) {
-                                    foreach ($result as $row) {
-                                        echo "<option style= 'color:#000000' value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
-                                    }
-                                } else {
-                                    echo "<option value=''>No hay grados disponibles</option>";
-                                }
-                            } catch (PDOException $e) {
-                                echo "Error de conexión: " . $e->getMessage();
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <label for="paralelo">
-                        <p>Seleccionar Paralelo</p>
-                    </label>
-                    <div class="input-with-button">
-                        <select type="text" class="input" id="paralelo" name="paralelo" required>
-                            <option value="" selected disabled>Seleccione un paralelo</option>
-
-                            <?php
-                            // Reiniciar la variable $result antes de realizar la segunda consulta
-                            $result = null;
-
-                            try {
-                                // Consulta para obtener los paralelos desde la base de datos según el grado seleccionado
-                                $selected_grado_id = isset($_POST['grado']) ? $_POST['grado'] : null;
-
-                                if ($selected_grado_id !== null) {
-                                    $sql = "SELECT id, paralelo FROM paralelo WHERE  id_grado = $selected_grado_id";
-                                    $result = $conn->query($sql);
-
-                                    // Llenar las opciones del select con los datos de la base de datos
-                                    if ($result->rowCount() > 0) {
-                                        foreach ($result as $row) {
-                                            echo "<option value='" . $row["id"] . "'>" . $row["paralelo"] . "</option>";
-                                        }
-                                    } else {
-                                        echo "<option value=''>No hay paralelos disponibles para este grado</option>";
-                                    }
-                                }
-                            } catch (PDOException $e) {
-                                echo "Error de conexión: " . $e->getMessage();
-                            }
-                            ?>
-                        </select>
-                    </div>
-                    <button class="btn-modal" style="margin-left: 40px" onclick="eliminarParalelo()">Eliminar paralelo<i
-                            class="fas fa-check" style="margin-left: 10px;"></i></button>
-
-                </div>
-
-                <button class="modal-button" onclick="closeModal('modal3')">&times;</button>
-            </div>
-        </div>
+   
     </div>
 
 
@@ -573,27 +439,14 @@ include_once "./header.php";
 </script>
 
 
-<script>
-    function eliminarParalelo() {
-        var selectedGrado = document.getElementById('grado').value;
-        var selectedParalelo = document.getElementById('paralelo').value;
+<!-- Asegúrate de incluir jQuery en tu proyecto -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-        console.log("Grado seleccionado:", selectedGrado);
-        console.log("Paralelo seleccionado:", selectedParalelo);
 
-        // Realizar una solicitud AJAX para eliminar el paralelo
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                // Manejar la respuesta del servidor (puedes mostrar un mensaje de éxito, recargar la página, etc.)
-                alert("Paralelo eliminado exitosamente");
-            }
-        };
-        xhttp.open("POST", "../controller/eliminar_paralelo.php", true);
-        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhttp.send("grado=" + selectedGrado + "&paralelo=" + selectedParalelo);
-    }
-</script>
+
+
+
+
 
 
 
@@ -602,35 +455,6 @@ include_once "./header.php";
 
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script>
-    function cargarParalelos() {
-        var selectedGrado = document.getElementById('grado').value;
-
-        // Realizar una solicitud AJAX para obtener los paralelos
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                // Parsear la respuesta JSON
-                var paralelos = JSON.parse(this.responseText);
-
-                // Obtener el select de paralelos
-                var paraleloSelect = document.getElementById('paralelo');
-
-                // Limpiar las opciones actuales
-                paraleloSelect.innerHTML = "";
-
-                // Llenar el select con las opciones recibidas del servidor
-                paralelos.forEach(function (paralelo) {
-                    var option = document.createElement('option');
-                    option.value = paralelo.id;
-                    option.text = paralelo.paralelo;
-                    paraleloSelect.add(option);
-                });
-            }
-        };
-        xhttp.open("GET", "../controller/obtener_paralelos.php?grado=" + selectedGrado, true);
-        xhttp.send();
-    }
 
 
 </script>
@@ -640,7 +464,6 @@ include_once "./header.php";
 <script src=" ../js/tema.js"></script>
 <script src="../js/activo.js"></script>
 <script src="../js/menu.js"></script>
-
 
 
 

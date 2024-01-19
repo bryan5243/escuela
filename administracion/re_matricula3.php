@@ -15,7 +15,8 @@ include_once '../model/conexion.php';
     <label for="foto_mama">
         <h3>Foto de la Mamá:</h3><br>
     </label>
-    <input type="file" name="foto_papa" id="foto_mama" class="custom-file-input">
+    <input type="file" name="foto_papa" id="foto_mama" class="custom-file-input" onchange="validarImagen(event)"
+        required>
     <label for="foto_mama" class="custom-file-label">Seleccionar archivo</label>
     <br>
     <div id="mensaje-error-mama" style="display: none; color: red;"></div>
@@ -29,8 +30,7 @@ include_once '../model/conexion.php';
         <label for="cedula_mama">
             <p>22. Cédula de la Mamá</p>
         </label>
-        <input type="text" class="input" id="cedula_mama" name="cedula_mama" pattern="[0-9]*"
-            value="<?php echo $mama['cedula']; ?>" required>
+        <input type="text" class="input" id="cedula_mama" name="cedula_mama" pattern="[0-9]*" required>
         <span class="input-border"></span>
     </div>
 </div>
@@ -39,8 +39,7 @@ include_once '../model/conexion.php';
         <label for="apellidos_nombres_mama">
             <p>23. Apellidos y Nombres completos</p>
         </label>
-        <input type="text" class="input" id="apellidos_nombres_mama" name="apellidos_nombres_mama"
-            value="<?php echo $mama['apellidos_nombres']; ?>" required>
+        <input type="text" class="input" id="apellidos_nombres_mama" name="apellidos_nombres_mama" required>
         <span class="input-border"></span>
     </div>
 
@@ -69,9 +68,8 @@ include_once '../model/conexion.php';
         <label for="telefono_mama">
             <p>27. Teléfono/Celular de la Mamá</p>
         </label>
-        <input type="text" class="input" id="telefono_mama" name="telefono_mama" pattern="[0-9]*"
-            value="<?php echo $mama['telefono']; ?>" required>
-        <span class="input-border"></span>
+        <input type="text" class="input" id="telefono_mama" name="telefono_mama" pattern="[0-9]*" " required>
+        <span class=" input-border"></span>
     </div>
     <div class="form">
         <label for="correo_mama">

@@ -25,5 +25,6 @@ if (isset($_GET['grado'])) {
         echo json_encode(['error' => 'Error al ejecutar la consulta']);
     }
 }
+$conn = null;
 
 ?>
