@@ -12,22 +12,22 @@ include_once '../model/conexion.php';
     <h2><b>DATOS DEL ESTUDIANTE</b></h2>
 </center>
 
+
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
     <div class="form">
-        <label for="foto">
-            <h3>Foto del estudiante:</h3><br>
+        <label for="foto1">
+            <h3>Foto del Estudiante :</h3><br>
         </label>
-        <input type="file" name="imagen" id="fileInput" class="custom-file-input" onchange="validarImagen(event)"
-            required>
-        <label for="fileInput" class="custom-file-label">Seleccionar archivo</label>
+        <input type="file" name="imagen" id="fileInput1" class="custom-file-input"
+            onchange="validarImagen(event, 'imagen-preview1', 'mensaje-error1')" required>
+        <label for="fileInput1" class="custom-file-label">Seleccionar archivo</label>
         <br>
-        <div id="mensaje-error" style="display: none; color: red;"></div>
+        <div id="mensaje-error1" style="display: none; color: red;"></div>
         <br><br>
-        <img id="imagen-preview" class="preview" style="display: none; width: 148px; height: 184px;">
+        <img id="imagen-preview1" class="preview" style="display: none; width: 148px; height: 184px;">
         <span class="input-border"></span>
     </div>
 </div>
-
 
 
 
@@ -183,8 +183,9 @@ include_once '../model/conexion.php';
         <label for="codigo_unico_estudiante">
             <p>11. Código de Servico básico (Código U Planilla de Luz)</p>
         </label>
-        <input type="text" class="input" id="codigo_unico_estudiante" name="codigo_unico_estudiante" required>
-        <span class="input-border"></span>
+        <input type="text" class="input" id="codigo_unico_estudiante" name="codigo_unico_estudiante"
+            value="<?php echo isset($tipoDiscapacidad) ? $tipoDiscapacidad : ''; ?>" required>
+        <span class=" input-border"></span>
     </div>
 
 </div>
@@ -198,20 +199,24 @@ include_once '../model/conexion.php';
         <select class="input" id="condicion_estudiante" name="condicion_estudiante" required
             onchange="habilitarCampos()">
             <option value="" selected disabled>Seleccionar</option>
-            <option value="1" <?php echo ($estudiante['discapacidad'] == 'SI') ? 'selected' : ''; ?>>SI</option>
-            <option value="0" <?php echo ($estudiante['discapacidad'] == 'NO') ? 'selected' : ''; ?>>NO</option>
+            <option value="1" <?php echo ($estudiante['discapacidades'] == 'SI') ? 'selected' : ''; ?>>SI</option>
+            <option value="0" <?php echo ($estudiante['discapacidades'] == 'NO') ? 'selected' : ''; ?>>NO</option>
         </select>
         <span class="input-border"></span>
     </div>
 
 </div>
+
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
     <div class="form">
         <label for="tipo_discapacidad">
             <p>13. Tipo de Discapacidad</p>
         </label>
+
         <input type="text" class="input" id="tipo_discapacidad" name="tipo_discapacidad"
-            value="<?php echo $discapacidad['tipo']; ?>" disabled>
+            value="<?php echo isset($tipoDiscapacidad) ? $tipoDiscapacidad : ''; ?>"
+            data-valor="<?php echo isset($tipoDiscapacidad) ? $tipoDiscapacidad : ''; ?>" required disabled>
+
         <span class="input-border"></span>
     </div>
 
@@ -220,8 +225,9 @@ include_once '../model/conexion.php';
             <p>14. Porcentaje de Discapacidad</p>
         </label>
         <input type="text" class="input" id="porcentaje_discapacidad" name="porcentaje_discapacidad"
-            value="<?php echo $porcentajeDiscapacidad; ?>" required disabled>
-        <span class=" input-border"></span>
+            value="<?php echo isset($porcentajeDiscapacidad) ? $porcentajeDiscapacidad : ''; ?>"
+            data-valor="<?php echo isset($porcentajeDiscapacidad) ? $porcentajeDiscapacidad : ''; ?>" required disabled>
+        <span class="input-border"></span>
     </div>
 
     <div class="form">
@@ -233,24 +239,43 @@ include_once '../model/conexion.php';
     </div>
 
 </div>
-
 <script>
-    function habilitarCampos() {
-        var condicionEstudiante = document.getElementById("condicion_estudiante");
-        var camposDiscapacidad = document.querySelectorAll('.form-container input[type="text"][name^="tipo_discapacidad"], .form-container input[type="text"][name^="porcentaje_discapacidad"], .form-container input[type="text"][name^="carnet_discapacidad"]');
+    document.addEventListener("DOMContentLoaded", function () {
+        habilitarCampos();
 
-        // Habilitar o deshabilitar los campos de discapacidad según la selección
-        camposDiscapacidad.forEach(function (campo) {
-            campo.disabled = condicionEstudiante.value !== "1";
-
-            // Establecer el valor en "NA" cuando se deshabilitan
-            campo.value = campo.disabled ? "NA" : "";
+        document.getElementById("condicion_estudiante").addEventListener("change", function () {
+            habilitarCampos();
         });
-    }
+    });
 
-    // Llamada inicial para establecer el estado inicial de los campos
-    habilitarCampos();
+    function habilitarCampos() {
+        var condicionEstudiante = document.getElementById("condicion_estudiante").value;
+        var tipoDiscapacidad = document.getElementById("tipo_discapacidad");
+        var porcentajeDiscapacidad = document.getElementById("porcentaje_discapacidad");
+        var carnetDiscapacidad = document.getElementById("carnet_discapacidad");
+
+        if (condicionEstudiante === "0") { // Si la condición es "NO"
+            tipoDiscapacidad.value = "N/A";
+            porcentajeDiscapacidad.value = "N/A";
+            carnetDiscapacidad.value = "N/A";
+            tipoDiscapacidad.setAttribute("disabled", true);
+            porcentajeDiscapacidad.setAttribute("disabled", true);
+            carnetDiscapacidad.setAttribute("disabled", true);
+        } else { // Si la condición es "SI"
+            tipoDiscapacidad.value = tipoDiscapacidad.dataset.valor || "";
+            porcentajeDiscapacidad.value = porcentajeDiscapacidad.dataset.valor || "";
+            carnetDiscapacidad.value = "";
+            tipoDiscapacidad.removeAttribute("disabled");
+            porcentajeDiscapacidad.removeAttribute("disabled");
+            carnetDiscapacidad.removeAttribute("disabled");
+        }
+    }
 </script>
+
+
+
+
+
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 

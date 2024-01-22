@@ -47,10 +47,8 @@ include_once '../model/conexion.php';
 
 
 
-
-
-    <form action="../controller/guardar_responsables.php" method="post" id="myForm" enctype="multipart/form-data">
-
+    <?php include_once '../controller/guardar_responsables.php' ?>
+    <form action="#" method="post" id="myForm" enctype="multipart/form-data">
 
         <div>
             <ul class="tabs">
@@ -89,4 +87,3 @@ include("header.php")
 <script src="../js/menu.js"></script>
 <script src="../js/tabs.js"></script>
 <script src="../js/tema.js"></script>
-<script src="../js/mostrarfoto.js"></script>

@@ -12,20 +12,22 @@ include_once '../model/conexion.php';
 
 <br><br>
 
-<div class="form">
-    <label for="foto_representante">
-        <h3>Foto del Representante:</h3><br>
-    </label>
-    <input type="file" name="foto_representante" id="foto_representante" class="custom-file-input"
-        onchange="validarImagen(event)" required>
-    <label for="foto_representante" class="custom-file-label">Seleccionar archivo</label>
-    <br>
-    <div id="mensaje-error-representante" style="display: none; color: red;"></div>
-    <br><br>
-    <img id="imagen-preview-representante" class="preview" style="display: none; width: 148px; height: 184px;">
-    <span class="input-border"></span>
-</div>
+<div class="form-container" style="display: flex; flex-wrap: wrap;">
+    <div class="form">
+        <label for="foto_representante">
+            <h3>Foto del Representante</h3><br>
+        </label>
+        <input type="file" name="imagen_representante" id="fileInput4" class="custom-file-input"
+            onchange="validarImagen(event, 'imagen-preview4', 'mensaje-error4')" required>
+        <label for="fileInput4" class="custom-file-label">Seleccionar archivo</label>
+        <br>
+        <div id="mensaje-error4" style="display: none; color: red;"></div>
+        <br><br>
+        <img id="imagen-preview4" class="preview" style="display: none; width: 148px; height: 184px;">
+        <span class="input-border"></span>
+    </div>
 
+</div>
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
     <div class="form">
         <label for="cedula_representante">
@@ -82,8 +84,8 @@ include_once '../model/conexion.php';
 </div>
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
     <button style="cursor: pointer; font-size: 20px; color:white; border-radius: 10px; background: #FF0000;"
-        class="input" type="submit" name="btnregistrarestudiante" value="">
-        Ingresar
+        class="input" type="submit" name="btnregistrarestudiante">
+        Matricular Estudiante
     </button>
 </div>
 <br><br>

@@ -7,25 +7,25 @@ include_once '../model/conexion.php';
 
 ?>
 
-
 <center>
     <h2><b>DATOS DEL PAPÁ</b></h2>
 </center>
 
-
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
     <div class="form">
-        <label for="foto_papa">
-            <h3>Foto del Papá:</h3><br>
+        <label for="foto_padre">
+            <h3>Foto del Padre</h3><br>
         </label>
-        <input type="file" name="foto_papa" id="foto_papa" class="custom-file-input">
-        <label for="foto_papa" class="custom-file-label">Seleccionar archivo</label>
+        <input type="file" name="imagen_papa" id="fileInput2" class="custom-file-input"
+            onchange="validarImagen(event, 'imagen-preview2', 'mensaje-error2')" required>
+        <label for="fileInput2" class="custom-file-label">Seleccionar archivo</label>
         <br>
-        <div id="mensaje-error-papa" style="display: none; color: red;"></div>
+        <div id="mensaje-error2" style="display: none; color: red;"></div>
         <br><br>
-        <img id="imagen-preview-papa" class="preview" style="display: none; width: 148px; height: 184px;">
+        <img id="imagen-preview2" class="preview" style="display: none; width: 148px; height: 184px;">
         <span class="input-border"></span>
     </div>
+
 </div>
 
 <div class="form-container" style="display: flex; flex-wrap: wrap;">

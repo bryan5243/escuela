@@ -2,7 +2,8 @@
 include_once '../model/conexion.php';
 
 try {
-    if (isset($_POST["btnregistrar"])) {
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cedulaEstudiante = $_POST['cedulaEstudiante'];
 
         $conn = conectarBaseDeDatos();
@@ -48,14 +49,31 @@ try {
         // Confirmar transacción
         $conn->commit();
 
-        echo "Guardado con éxito";
         imagedestroy($originalImage);
         imagedestroy($newImage);
-        $conn = null;
+
+
+        echo '<script>
+        Swal.fire({
+            title: "Éxito",
+            text: "Los datos se han guardado correctamente.",
+            icon: "success",
+            confirmButtonText: "Aceptar",
+            showCancelButton: false
+        }).then((result) => {
+            // Redirige a la página después de hacer clic en "Aceptar y redirigir"
+            if (result.isConfirmed) {
+                window.location.href = "../administracion/listado_estudiantes.php"; // Reemplaza con la URL de tu página destino
+            }
+        });
+    </script>';
+
     }
 } catch (Exception $e) {
     // Manejar errores y revertir transacción si es necesario
     $conn->rollBack();
     echo "Error: " . $e->getMessage();
 }
+$conn = null;
+
 ?>

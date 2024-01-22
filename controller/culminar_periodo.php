@@ -6,12 +6,16 @@ $conn = conectarBaseDeDatos();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Obtener el valor del periodo enviado desde JavaScript
     $periodoSeleccionado = $_POST["periodo"];
+    $usuario = $_SESSION['nombre'];
+
 
     try {
         // Actualizar el estado en la base de datos
-        $sql = "UPDATE periodo SET estado = 0 WHERE id = :periodo";
+        $sql = "UPDATE periodo SET estado = 0 , set updated_by=:usuarios WHERE id = :periodo";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':periodo', $periodoSeleccionado);
+        $stmt->bindParam(':usuario', $usuario);
+
         $stmt->execute();
 
         echo "Culminación exitosa";

@@ -299,13 +299,15 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     <i class="fas fa-print" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>
+
+            <form id="form_' . $row['id'] . '" action="" method="post" target="_blank">
+    <button class="hand-cursor show-details-btn" type="button" name="student_id" value="' . $row['id'] . '" style="background-color: var(--c);">
+        <i class="fas fa-person" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+    </button>
+</form>
+
             
-            <form action="" method="post" id="eliminarForm">
-                <input type="hidden" name="id" value="' . $row['id'] . '">
-                <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
-                    <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
-                </button>
-            </form>
+            
         </div>
                 </td>';
             }
@@ -324,6 +326,27 @@ include_once "./header.php";
 <script src="../js/menu.js"></script>
 
 
+<script>
+    $(document).ready(function () {
+        $('.show-details-btn').click(function () {
+            var studentId = $(this).val();
+
+            // Realiza una solicitud AJAX para obtener datos de la tabla de responsables
+            $.ajax({
+                type: 'POST',
+                url: '../controller/obtener responsables.php',
+                data: { student_id: studentId },
+                success: function (response) {
+                    // Aquí puedes manejar la respuesta y mostrar la ventana flotante con los datos
+                    alert(response); // Solo como ejemplo, reemplázalo con tu lógica de visualización
+                },
+                error: function () {
+                    alert('Error al obtener los datos');
+                }
+            });
+        });
+    });
+</script>
 
 
 <!-- jQuery -->

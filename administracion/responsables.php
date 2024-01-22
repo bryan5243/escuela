@@ -6,6 +6,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 include_once '../model/conexion.php';
 
 ?>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
 
 <center>
@@ -155,12 +157,18 @@ include_once '../model/conexion.php';
 
 </div>
 
+
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
     <button style="cursor: pointer; font-size: 20px; color:white; border-radius: 10px; background: #FF0000;"
-        class="input" type="submit" name="btnregistrar" value="">
+        class="input" type="submit" name="btnregistrar">
         Ingresar
     </button>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+
 <script>
     $(document).ready(function () {
         // Evento keyup para detectar cambios en el input

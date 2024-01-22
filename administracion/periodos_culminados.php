@@ -300,7 +300,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             <span>Culminar Período</span>
         </button>
 
-       
+
     </div>
 
     <table id="example" class="display compact nowrap" style="width:100%;min-width: 480px">
@@ -417,7 +417,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         </div>
     </div>
 
-   
+
     </div>
 
 
@@ -532,6 +532,10 @@ include_once "./header.php";
         // Obtener el valor seleccionado del select
         var periodoSeleccionado = document.getElementById("periodo").value;
 
+        if (periodoSeleccionado.trim() === "") {
+            alert("Por favor, ingresa un valor en el campo de periodos.");
+            return; // Detener la ejecución si el campo está vacío
+        }
         // Verificar si se ha seleccionado un periodo
         if (periodoSeleccionado) {
             // Hacer una solicitud AJAX para enviar el periodo al servidor

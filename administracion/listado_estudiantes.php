@@ -371,9 +371,16 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <form action="" method="post" id="actForm">
                     <input type="hidden" name="id" value="' . $row['id'] . '">
                     <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
-                    <i class="fas fa-pen-to-square" style="font-size: 28px; color: #167bae;"></i>
+                    <i class="fas fa-pen-to-square" style="font-size: 28px; color: #ec1d17;"></i>
                     </button>
                 </form>';
+                echo '<form action="" method="post" id="eliminarForm">
+                <input type="hidden" name="id" value="' . $row['id'] . '">
+                <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
+                    <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>';
+                '</div>';
                 '<td> ';
 
             }
@@ -503,6 +510,10 @@ include_once "./header.php";
             // Obtener el nombre de usuario de la sesión
             var usuario = "<?php echo $_SESSION['nombre']; ?>";
 
+            if (periodos.trim() === "") {
+                alert("Por favor, ingresa un valor en el campo de periodos.");
+                return; // Detener la ejecución si el campo está vacío
+            }
             // Realizar la solicitud AJAX
             $.ajax({
                 type: "POST",
@@ -526,6 +537,11 @@ include_once "./header.php";
 
             // Obtener el nombre de usuario de la sesión
             var usuario = "<?php echo $_SESSION['nombre']; ?>";
+
+            if (grado.trim() === "") {
+                alert("Por favor, ingresa un valor en el campo de grado.");
+                return; // Detener la ejecución si el campo está vacío
+            }
 
             // Realizar la solicitud AJAX
             $.ajax({
@@ -553,6 +569,15 @@ include_once "./header.php";
         var url = '../controller/agregar_paralelo.php';
         var params = 'action=agregar_paralelo&grado=' + encodeURIComponent(gradoSeleccionado) + '&paralelo=' + encodeURIComponent(paraleloIngresado);
 
+        if (gradoSeleccionado === "") {
+            alert("Por favor, seleccione un grado.");
+            return; // Detener la ejecución si el grado no está seleccionado
+        }
+
+        if (paraleloIngresado.trim() === "") {
+            alert("Por favor, ingresa un valor en el campo de paralelo.");
+            return; // Detener la ejecución si el campo está vacío
+        }
         xhr.open('POST', url, true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 

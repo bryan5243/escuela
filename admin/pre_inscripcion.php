@@ -1,9 +1,4 @@
 <?php
-// Agrega este bloque de código al principio del script
-// Resto del código...
-?>
-
-<?php
 session_start();
 use PgSql\Connection\Connection;
 
@@ -11,6 +6,8 @@ use PgSql\Connection\Connection;
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="../css/pre_inscripcion.css">
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
     .card {
         display: center;
@@ -73,7 +70,7 @@ use PgSql\Connection\Connection;
 
 
 <main class="container mt-5">
-    <form action="guardar_prematricula.php" method="post" id="preInscripcionForm">
+    <form action="#" method="post" id="preInscripcionForm">
         <div class="card">
             <img src="../img/logo.jpeg" alt="Avatar Logo" class="logo">
             <div class="school-container">
@@ -222,7 +219,102 @@ use PgSql\Connection\Connection;
 
 
     </form>
+    <?php
+    include_once '../model/conexion.php';
+    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+';
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $pdo = conectarBaseDeDatos();
+
+        try {
+            $pdo->beginTransaction();
+
+            // Obtener datos del formulario de Estudiante
+            $cedulaEstudiante = $_POST['cedula'];
+            $apellidosEstudiante = $_POST['apellidos'];
+            $nombresEstudiante = $_POST['nombres'];
+            $direccionEstudiante = $_POST['direccion'];
+            $condicionEstudiante = ($_POST['discapacidad'] == 'si') ? 1 : 0; // Convert 'si' to 1, 'no' to 0
+    
+            // Insertar datos en la tabla Estudiante
+            $stmtEstudiante = $pdo->prepare("INSERT INTO estudiante (cedula, apellidos, nombres, direccion, condicion) VALUES (?, ?, ?, ?, ?)");
+            $stmtEstudiante->execute([
+                $cedulaEstudiante,
+                $apellidosEstudiante,
+                $nombresEstudiante,
+                $direccionEstudiante,
+                $condicionEstudiante
+            ]);
+
+            $idEstudiante = $pdo->lastInsertId();
+
+            // Verificar si el estudiante tiene discapacidad
+            if ($_POST['discapacidad'] == 'si') {
+                $tipoDiscapacidad = $_POST['tipoDiscapacidad'];
+                $porcentajeDiscapacidad = $_POST['porcentajeDiscapacidad'];
+
+                // Insertar datos en la tabla Discapacidad
+                $stmtDiscapacidad = $pdo->prepare("INSERT INTO discapacidad (tipo, porcentaje, id_estudiante) VALUES (?, ?, ?)");
+                $stmtDiscapacidad->execute([
+                    $tipoDiscapacidad,
+                    $porcentajeDiscapacidad,
+                    $idEstudiante
+                ]);
+            }
+
+            // Insertar datos en la tabla Persona y Rol para Mamá
+            guardarPersonaRol($pdo, 'Madre', $idEstudiante);
+
+            // Insertar datos en la tabla Persona y Rol para Papá
+            guardarPersonaRol($pdo, 'Padre', $idEstudiante);
+
+            // Insertar datos en la tabla Persona y Rol para Representante
+            guardarPersonaRol($pdo, 'Representante', $idEstudiante);
+
+            $pdo->commit();
+            echo '
+        <script>
+            Swal.fire({
+                title: "¡Prematrícula exitosa!",
+                text: "Los datos se han guardado correctamente.",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 2000 // Cierra automáticamente después de 2 segundos
+            }).then(function() {
+                window.location.href = "pre_inscripcion.php";
+            });
+        </script>';
+            exit();
+        } catch (Exception $e) {
+            $pdo->rollback();
+
+            // Mostrar SweetAlert2 en caso de error
+    
+            exit();
+        }
+    }
+
+    function guardarPersonaRol($pdo, $rol, $idEstudiante)
+    {
+        $cedulaPersona = $_POST['cedula_' . ucfirst($rol)];
+        $apellidosNombresPersona = $_POST['apellidosNombres_' . ucfirst($rol)];
+        $telefonoPersona = $_POST['telefono_' . ucfirst($rol)];
+
+        $stmtPersona = $pdo->prepare("INSERT INTO persona (cedula, apellidos_nombres, telefono, id_estudiante) VALUES (?, ?, ?, ?)");
+        $stmtPersona->execute([
+            $cedulaPersona,
+            $apellidosNombresPersona,
+            $telefonoPersona,
+            $idEstudiante
+        ]);
+
+        $idPersona = $pdo->lastInsertId();
+        $stmtRol = $pdo->prepare("INSERT INTO rol (rol, id_persona) VALUES (?, ?)");
+        $stmtRol->execute([$rol, $idPersona]);
+    }
+    ?>
 </main>
+
 
 
 <script>

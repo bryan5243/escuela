@@ -171,7 +171,7 @@ function generateReport($estudianteId)
     // Definir la posición de inicio de las columnas
     $column1X = 15;
     $column2X = 80;
-    $column3X = 150; // Nueva posición para la tercera columna
+    $column3X = 160; // Nueva posición para la tercera columna
 
     // Columnas: Textos y Resultados obtenidos de la base de datos
     $pdf->SetFont('Arial', 'B', 10); // Regular font style
@@ -245,7 +245,7 @@ function generateReport($estudianteId)
         imagejpeg($imagenTemporal, $rutaTemporal);
 
         // Establecer la posición XY para la imagen
-        $column3X = 150; // Ajusta la posición X según tus necesidades
+        $column3X = 155; // Ajusta la posición X según tus necesidades
         $pdf->SetXY($column3X, $pdf->GetY());
 
         // Calcula las nuevas dimensiones reduciendo en un 20%
@@ -292,7 +292,7 @@ function generateReport($estudianteId)
     // Definir la posición de inicio de las columnas
     $column1X = 15;
     $column2X = 80;
-    $column3X = 150; // Nueva posición para la tercera columna
+    $column3X = 160; // Nueva posición para la tercera columna
 
     // Columnas: Textos y Resultados obtenidos de la base de datos
     $pdf->SetFont('Arial', 'B', 10); // Regular font style
@@ -358,7 +358,7 @@ function generateReport($estudianteId)
         imagejpeg($imagenTemporalpapa, $rutaTemporalpapa);
 
         // Establecer la posición XY para la imagen
-        $column3X = 150; // Ajusta la posición X según tus necesidades
+        $column3X = 155; // Ajusta la posición X según tus necesidades
         $pdf->SetXY($column3X, $pdf->GetY());
 
         // Calcula las nuevas dimensiones reduciendo en un 20%
@@ -404,7 +404,7 @@ function generateReport($estudianteId)
     // Definir la posición de inicio de las columnas
     $column1X = 15;
     $column2X = 80;
-    $column3X = 150; // Nueva posición para la tercera columna
+    $column3X = 160; // Nueva posición para la tercera columna
 
     // Columnas: Textos y Resultados obtenidos de la base de datos
     $pdf->SetFont('Arial', 'B', 10); // Regular font style
@@ -469,7 +469,7 @@ function generateReport($estudianteId)
         imagejpeg($imagenTemporalmama, $rutaTemporalmama);
 
         // Establecer la posición XY para la imagen
-        $column3X = 150; // Ajusta la posición X según tus necesidades
+        $column3X = 155; // Ajusta la posición X según tus necesidades
         $pdf->SetXY($column3X, $pdf->GetY());
 
         // Calcula las nuevas dimensiones reduciendo en un 20%
@@ -579,7 +579,7 @@ function generateReport($estudianteId)
         imagejpeg($imagenTemporalrepre, $rutaTemporalrepre);
 
         // Establecer la posición XY para la imagen
-        $column3X = 150; // Ajusta la posición X según tus necesidades
+        $column3X = 155; // Ajusta la posición X según tus necesidades
         $pdf->SetXY($column3X, $pdf->GetY());
 
         // Calcula las nuevas dimensiones reduciendo en un 20%

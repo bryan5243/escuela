@@ -234,12 +234,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     <i class="fas fa-user-check" style="font-size: 28px; color: #ec1d17;"></i>
                     </button>
                 </form>';
-                echo '<form id="form_' . $row['id'] . '" action="../controller/reporte_estudiantes.php" method="post" target="_blank">
-                <button class="hand-cursor" type="submit" name="generar_reporte" value="' . $row['id'] . '" style="background-color: var(--c);">
-                    <i class="fas fa-eye " style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
-                </button>
-            </form>
-            <form action="" method="post" id="eliminarForm">
+                echo ' <form action="" method="post" id="eliminarForm">
                 <input type="hidden" name="id" value="' . $row['id'] . '">
                 <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
                     <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>

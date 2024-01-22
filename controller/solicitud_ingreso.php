@@ -109,19 +109,32 @@ function generateReport($estudianteId)
         'December' => 'diciembre'
     ];
     if (!$fechaGenerada) {
-        $fechaActual = new DateTime();
-        $fechaActual->setTimeZone(new DateTimeZone('Europe/Berlin')); // Establecer la zona horaria si es necesario
-        $fechaFormatter = new IntlDateFormatter('es_ES', IntlDateFormatter::LONG, IntlDateFormatter::NONE);
-        $dia = $fechaActual->format('d');
-        $mes = $mesesEnEspanol[$fechaActual->format('F')];
-        $ano = $fechaActual->format('Y');
 
-        // Establecer la configuración local para obtener el mes en español
-        $pdf->Ln(25);
-        $pdf->SetX(100); // Ajusta la posición horizontal del texto según sea necesario
-        $pdf->SetFont('Arial', '', 12);
-        $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', ("El Cambio, $dia de $mes del $ano")), 0, 1, 'C');
-        $fechaGenerada = true;
+
+        $sql = "SELECT updated_at from estudiante where Id=:estudianteId";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);
+        $stmt->execute();
+        $fecha = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($fecha) {
+            $row = $fecha;
+            $fechaActual = new DateTime($row['updated_at']);
+            $fechaActual->setTimeZone(new DateTimeZone('Europe/Berlin'));
+
+            $dia = $fechaActual->format('d');
+            $mes = $mesesEnEspanol[$fechaActual->format('F')];
+            $ano = $fechaActual->format('Y');
+
+            // Establecer la configuración local para obtener el mes en español
+            $pdf->Ln(25);
+            $pdf->SetX(100); // Ajusta la posición horizontal del texto según sea necesario
+            $pdf->SetFont('Arial', '', 12);
+            $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', ("El Cambio, $dia de $mes del $ano")), 0, 1, 'C');
+            $fechaGenerada = true;
+        } else {
+            echo "Error al ejecutar la consulta: ";
+        }
     }
 
     $pdf->Ln(0);

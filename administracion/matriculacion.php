@@ -9,6 +9,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     header("Location: login.php");
     exit();
 }
+$usuario = $_SESSION['nombre'];
 
 ?>
 
@@ -61,7 +62,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
 
 
-    <form action="../controller/cargar_prematricula.php" method="post" id="myForm" enctype="multipart/form-data">
+    <form action="#" method="post" id="myForm" enctype="multipart/form-data">
 
         <div>
             <ul class="tabs">
@@ -112,8 +113,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 <?php
 include("header.php")
     ?>
-
+<script src="../js/mostrarfoto.js"></script>
 <script src="../js/menu.js"></script>
 <script src="../js/tabs.js"></script>
 <script src="../js/tema.js"></script>
-<script src="../js/mostrarfoto.js"></script>

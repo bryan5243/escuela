@@ -4,12 +4,19 @@ include_once "../layout/plantilla.php";
 include_once "../administracion/menu.php";
 include_once '../model/conexion.php';
 
+if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['rol'])) {
+    header("Location: login.php");
+    exit();
+}
+$usuario = $_SESSION['nombre'];
 
 
 ?>
 
 <link rel="stylesheet" href="../css/tabs.css">
 <link rel="stylesheet" href="../css/inputs.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <style>
     .custom-file-input {
         display: none;
@@ -42,16 +49,8 @@ include_once '../model/conexion.php';
 </style>
 
 <main>
-
-
-
-
-
-
-
-    <form action="" method="post" id="myForm" enctype="multipart/form-data">
-
-
+    <?php include_once '../controller/guardar_matricula.php'; ?>
+    <form action="#" method="post" id="myForm" enctype="multipart/form-data">
         <div>
             <ul class="tabs">
                 <li class="tab active" onclick="changeTab(0)">
@@ -95,14 +94,14 @@ include_once '../model/conexion.php';
 
     </form>
 
-
 </main>
 
 <?php
 include("header.php")
     ?>
 
+<script src="../js/mostrarfoto.js"></script>
+
 <script src="../js/menu.js"></script>
 <script src="../js/tabs.js"></script>
 <script src="../js/tema.js"></script>
-<script src="../js/mostrarfoto.js"></script>

@@ -11,18 +11,23 @@ include_once '../model/conexion.php';
     <h2><b>DATOS DE LA MAMÁ</b></h2>
 </center>
 
-<div class="form">
-    <label for="foto_mama">
-        <h3>Foto de la Mamá:</h3><br>
-    </label>
-    <input type="file" name="foto_papa" id="foto_mama" class="custom-file-input">
-    <label for="foto_mama" class="custom-file-label">Seleccionar archivo</label>
-    <br>
-    <div id="mensaje-error-mama" style="display: none; color: red;"></div>
-    <br><br>
-    <img id="imagen-preview-mama" class="preview" style="display: none; width: 148px; height: 184px;">
-    <span class="input-border"></span>
+<div class="form-container" style="display: flex; flex-wrap: wrap;">
+    <div class="form">
+        <label for="foto_madre">
+            <h3>Foto de la Madre</h3><br>
+        </label>
+        <input type="file" name="imagen_mama" id="fileInput3" class="custom-file-input"
+            onchange="validarImagen(event, 'imagen-preview3', 'mensaje-error3')" required>
+        <label for="fileInput3" class="custom-file-label">Seleccionar archivo</label>
+        <br>
+        <div id="mensaje-error3" style="display: none; color: red;"></div>
+        <br><br>
+        <img id="imagen-preview3" class="preview" style="display: none; width: 148px; height: 184px;">
+        <span class="input-border"></span>
+    </div>
+
 </div>
+
 
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
     <div class="form">

@@ -4,7 +4,6 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     exit();
 }
 include_once '../model/conexion.php';
-
 ?>
 
 
@@ -14,20 +13,19 @@ include_once '../model/conexion.php';
 
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
     <div class="form">
-        <label for="foto">
-            <h3>Foto del estudiante:</h3><br>
+        <label for="foto1">
+            <h3>Foto del Estudiante :</h3><br>
         </label>
-        <input type="file" name="imagen" id="fileInput" class="custom-file-input" onchange="validarImagen(event)"
-            required>
-        <label for="fileInput" class="custom-file-label">Seleccionar archivo</label>
+        <input type="file" name="imagen" id="fileInput1" class="custom-file-input"
+            onchange="validarImagen(event, 'imagen-preview1', 'mensaje-error1')" required>
+        <label for="fileInput1" class="custom-file-label">Seleccionar archivo</label>
         <br>
-        <div id="mensaje-error" style="display: none; color: red;"></div>
+        <div id="mensaje-error1" style="display: none; color: red;"></div>
         <br><br>
-        <img id="imagen-preview" class="preview" style="display: none; width: 148px; height: 184px;">
+        <img id="imagen-preview1" class="preview" style="display: none; width: 148px; height: 184px;">
         <span class="input-border"></span>
     </div>
 </div>
-
 
 
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
