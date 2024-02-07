@@ -4,7 +4,6 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     exit();
 }
 include_once '../model/conexion.php';
-
 ?>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
@@ -14,11 +13,12 @@ include_once '../model/conexion.php';
     <h2><b>DATOS DEL LOS RESPONSABLES</b></h2>
 </center>
 
+
 <div class="form" style="margin-top: 20px;">
     <label for="cedulaEstudiante">
         <p>Ingrese la cédula del estudiante:</p>
     </label>
-    <input class="input" type="text" id="cedulaEstudiante" required name="cedulaEstudiante">
+    <input class="input" type="text"  id="cedulaEstudiante" required name="cedulaEstudiante">
     <span class="input-border"></span>
 
     <!-- Contenedor para mostrar sugerencias -->
@@ -48,7 +48,7 @@ include_once '../model/conexion.php';
         <label for="apellidos_nombres1">
             <p>1. Apellidos y Nombres</p>
         </label>
-        <input class="input" type="text" id="apellidos_nombres1" name="apellidos_nombres1" required>
+        <input class="input" type="text" id="apellidos_nombres1" name="apellidos_nombres1"  oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 
@@ -56,14 +56,14 @@ include_once '../model/conexion.php';
         <label for="telefono1">
             <p>2. Telefono</p>
         </label>
-        <input class="input" type="text" id="telefono1" name="telefono1" required>
+        <input class="input" type="text" id="telefono1" name="telefono1" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
         <span class="input-border"></span>
     </div>
     <div class="form">
         <label for="parentesco1">
             <p>3. Parentesco</p>
         </label>
-        <input class="input" type="text" id="parentesco1" name="parentesco1" required>
+        <input class="input" type="text" id="parentesco1" name="parentesco1" oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 
@@ -92,7 +92,7 @@ include_once '../model/conexion.php';
         <label for="apellidos_nombres2">
             <p>4. Apellidos y Nombres</p>
         </label>
-        <input class="input" type="text" id="apellidos_nombres2" name="apellidos_nombres2" required>
+        <input class="input" type="text" id="apellidos_nombres2" name="apellidos_nombres2"  oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 
@@ -100,14 +100,14 @@ include_once '../model/conexion.php';
         <label for="telefono2">
             <p>5. Telefono</p>
         </label>
-        <input class="input" type="text" id="telefono2" name="telefono2" required>
+        <input class="input" type="text" id="telefono2" name="telefono2" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
         <span class="input-border"></span>
     </div>
     <div class="form">
         <label for="parentesco2">
             <p>6. Parentesco</p>
         </label>
-        <input class="input" type="text" id="parentesco2" name="parentesco2" required>
+        <input class="input" type="text" id="parentesco2" name="parentesco2"  oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 
@@ -136,7 +136,7 @@ include_once '../model/conexion.php';
         <label for="apellidos_nombres2">
             <p>5. Apellidos y Nombres</p>
         </label>
-        <input class="input" type="text" id="apellidos_nombres3" name="apellidos_nombres3" required>
+        <input class="input" type="text" id="apellidos_nombres3" name="apellidos_nombres3"  oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 
@@ -144,26 +144,20 @@ include_once '../model/conexion.php';
         <label for="telefono3">
             <p>6. Telefono</p>
         </label>
-        <input class="input" type="text" id="telefono3" name="telefono3" required>
+        <input class="input" type="text" id="telefono3" name="telefono3"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
         <span class="input-border"></span>
     </div>
     <div class="form">
         <label for="parentesco3">
             <p>7. Parentesco</p>
         </label>
-        <input class="input" type="text" id="parentesco3" name="parentesco3" required>
+        <input class="input" type="text" id="parentesco3" name="parentesco3"  oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 
 </div>
 
 
-<div class="form-container" style="display: flex; flex-wrap: wrap;">
-    <button style="cursor: pointer; font-size: 20px; color:white; border-radius: 10px; background: #FF0000;"
-        class="input" type="submit" name="btnregistrar">
-        Ingresar
-    </button>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 

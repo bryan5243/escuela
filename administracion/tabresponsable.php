@@ -46,8 +46,11 @@ include_once '../model/conexion.php';
 
 
 
+    <?php 
 
-    <?php include_once '../controller/guardar_responsables.php' ?>
+    include_once '../controller/guardar_responsables.php';
+    ?>
+   
     <form action="#" method="post" id="myForm" enctype="multipart/form-data">
 
         <div>
@@ -56,26 +59,35 @@ include_once '../model/conexion.php';
                     <h3>Responsables</h3>
                 </li>
                 <li class="tab" onclick="changeTab(1)">
-                    <h3>Translado</p>
+                    <h3>Traslado
                     </h3>
                 </li>
-
+                
+               
             </ul>
 
             <div class="tab-content">
                 <div id="tab1" style="display: block;">
-                    <?php include_once './responsables.php'; ?>
+                    <?php include_once("./responsables.php"); ?>
 
                 </div>
-                <div class="navigation-buttons" style="margin-top: 20px;">
+                <div id="tab2" style="display: none;">
+                    <?php include_once("./traslado.php"); ?>
+                </div>
+                <br><br>
+
+
+                <div class="navigation-buttons">
                     <button type="button" class="custom-tab-label" onclick="changeTab('previous')">Anterior</button>
                     <button type="button" class="custom-tab-label" onclick="changeTab('next')">Siguiente</button>
 
                     <br><br>
                 </div>
             </div>
-        </div>
+
+
     </form>
+
 
 
 </main>
@@ -87,3 +99,4 @@ include("header.php")
 <script src="../js/menu.js"></script>
 <script src="../js/tabs.js"></script>
 <script src="../js/tema.js"></script>
+<script src="../js/re_estudiante.js"></script>

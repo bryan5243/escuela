@@ -14,10 +14,8 @@ try {
         $direccion_estudiante = $_POST['direccion_estudiante'];
         $sector_estudiante = $_POST['sector_estudiante'];
         $fecha_nacimiento_estudiante = $_POST['fecha_nacimiento_estudiante'];
-        $id_grado_estudiante = $_POST['grado'];
         $codigo_unico_estudiante = $_POST['codigo_unico_estudiante'];
         $condicion_estudiante = $_POST['condicion_estudiante'];
-        $id_paralelo_estudiante = $_POST['id_paralelo_estudiante'];
         $imagePath = $_FILES["imagen"]["tmp_name"];
 
         $originalImage = imagecreatefromstring(file_get_contents($imagePath));
@@ -28,7 +26,7 @@ try {
         imagejpeg($newImage, NULL, 100); // 100 es la calidad, puedes ajustarla según tus necesidades
         $newImageContent = ob_get_contents();
         ob_end_clean();
-        $sql_insert_estudiante = "INSERT INTO estudiante (cedula, apellidos, nombres, lugar_nacimiento, residencia, direccion, sector, fecha_nacimiento, foto, id_grado, codigo_unico, condicion, id_paralelo,created_by) VALUES (:cedula_estudiante, :apellidos_estudiante, :nombres_estudiante, :lugar_nacimiento_estudiante, :residencia_estudiante, :direccion_estudiante, :sector_estudiante, :fecha_nacimiento_estudiante, :foto, :grado, :codigo_unico_estudiante, :condicion_estudiante, :id_paralelo_estudiante,:usuario)";
+        $sql_insert_estudiante = "INSERT INTO estudiante (cedula, apellidos, nombres, lugar_nacimiento, residencia, direccion, sector, fecha_nacimiento, foto,  codigo_unico, condicion, created_by) VALUES (:cedula_estudiante, :apellidos_estudiante, :nombres_estudiante, :lugar_nacimiento_estudiante, :residencia_estudiante, :direccion_estudiante, :sector_estudiante, :fecha_nacimiento_estudiante, :foto,  :codigo_unico_estudiante, :condicion_estudiante, :usuario)";
         $stmt_insert_estudiante = $conn->prepare($sql_insert_estudiante);
 
         $stmt_insert_estudiante->bindParam(':cedula_estudiante', $cedula_estudiante);
@@ -39,10 +37,8 @@ try {
         $stmt_insert_estudiante->bindParam(':direccion_estudiante', $direccion_estudiante);
         $stmt_insert_estudiante->bindParam(':sector_estudiante', $sector_estudiante);
         $stmt_insert_estudiante->bindParam(':fecha_nacimiento_estudiante', $fecha_nacimiento_estudiante);
-        $stmt_insert_estudiante->bindParam(':grado', $id_grado_estudiante); // Cambiado el nombre del parámetro
         $stmt_insert_estudiante->bindParam(':codigo_unico_estudiante', $codigo_unico_estudiante);
         $stmt_insert_estudiante->bindParam(':condicion_estudiante', $condicion_estudiante);
-        $stmt_insert_estudiante->bindParam(':id_paralelo_estudiante', $id_paralelo_estudiante);
         $stmt_insert_estudiante->bindParam(':usuario', $usuario);
 
         $stmt_insert_estudiante->bindParam(':foto', $newImageContent, PDO::PARAM_LOB);
@@ -61,6 +57,9 @@ try {
 
         $conn->beginTransaction();
 
+        $id_grado_estudiante = $_POST['grado'];
+        $id_paralelo_estudiante = $_POST['id_paralelo_estudiante'];
+
         // Obtener el ID del periodo cuyo estado sea 1
         $idPeriodo = $conn->query("SELECT id FROM periodo WHERE estado = 1")->fetch(PDO::FETCH_ASSOC)['id'];
 
@@ -71,14 +70,15 @@ try {
         $nuevoNumeroMatricula = $ultimoNumeroMatricula + 1;
 
         // Preparar la consulta de inserción
-        $matricula = "INSERT INTO matricula (numero, id_estudiante, id_periodo) VALUES (:numeroMatricula, :idEstudiante, :idPeriodo)";
+        $matricula = "INSERT INTO matricula (numero, id_estudiante, id_periodo,id_grado,id_paralelo) VALUES (:numeroMatricula, :idEstudiante, :idPeriodo,:id_grado_estudiante,:id_paralelo_estudiante)";
         $statement_matricula = $conn->prepare($matricula);
 
         // Asignar valores a los parámetros
         $statement_matricula->bindParam(':numeroMatricula', $nuevoNumeroMatricula);
         $statement_matricula->bindParam(':idEstudiante', $idEstudiante);
         $statement_matricula->bindParam(':idPeriodo', $idPeriodo);
-
+        $statement_matricula->bindParam(':id_grado_estudiante', $id_grado_estudiante);
+        $statement_matricula->bindParam(':id_paralelo_estudiante', $id_paralelo_estudiante);
         // Ejecutar la consulta
         $statement_matricula->execute();
         $conn->commit();

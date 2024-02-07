@@ -288,6 +288,9 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
 <!-- DataTables Buttons CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.jqueryui.min.css">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
 </head>
 <main>
 
@@ -298,6 +301,21 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <path fill="currentColor" d="M5 12h14v2H5z"></path>
             </svg>
             <span>Culminar Período</span>
+            <button class="button-model" onclick="openModal('modal2')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path fill="currentColor" d="M5 12h14v2H5z"></path>
+            </svg>
+            <span>Eliminar Grado</span>
+        </button>
+
+        <button class="button-model" onclick="openModal('modal3')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path fill="currentColor" d="M5 12h14v2H5z"></path>
+            </svg>
+            <span>Eliminar Paralelo</span>
+        </button>
         </button>
 
 
@@ -338,14 +356,13 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             pa.paralelo,
             pe.periodo
             FROM estudiante e
-            JOIN grado g ON e.id_grado = g.id
-            JOIN persona p ON e.Id = p.id_estudiante
-            JOIN paralelo  pa ON pa.id_grado=g.id
-            JOIN rol r ON  p.Id= r.id_persona  
             JOIN matricula m on e.Id=m.id_estudiante
-            JOIN periodo pe on m.Id_periodo=pe.id
-            
-            WHERE r.rol = 'representante' AND pe.estado=0 AND e.id_paralelo=pa.id";
+            JOIN grado g ON m.id_grado=g.id
+            JOIN persona p ON e.Id = p.id_estudiante
+            JOIN paralelo  pa ON g.id=pa.id_grados
+            JOIN rol r ON  p.Id= r.id_persona  
+            JOIN periodo pe on m.id_periodo=pe.Id
+            WHERE r.rol = 'representante' AND pe.estado=0 AND  m.id_paralelo=pa.id;";
             $result = $conn->query($sql);
             if (!$result) {
                 echo "Error al obtener los datos: " . $conn->errorInfo()[2];
@@ -416,9 +433,99 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             </div>
         </div>
     </div>
+<div class="overlay" id="modal2">
+    <div class="modal" style="width: 300px;">
+        <h1>Eliminar grado</h1>
+        <div class="form-container" style="display: flex; flex-wrap: wrap;">
+            <div class="form">
+                <label for="grado">
+                    <p>Grado a eliminar</p>
+                </label>
+                <div class="input-with-button">
+                    <select type="text" class="input" id="grados" name="grados" required>
+                        <option value="" selected disabled>Seleccione un grado</option>
 
+                        <?php
+                        $conn = conectarBaseDeDatos();
+                        try {
+                            $sql = "SELECT id, grado FROM grado";
+                            $result = $conn->query($sql);
+                        
+                            if ($result->rowCount() > 0) {
+                                foreach ($result as $row) {
+                                    echo "<option value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
+                                }
+                            } else {
+                                echo "<option value='' disabled selected>No hay grados disponibles</option>";
+                            }
+                        } catch (PDOException $e) {
+                            echo "Error de conexión: " . $e->getMessage();
+                        } finally {
+                            $conn = null;
+                        }
+                        ?>
+                    </select>
+                </div>
 
+                <button class="btn-modal" style="margin-left:40px" onclick="eliminarGrado()">Eliminar grado<i class="fas fa-check" style="margin-left:10px;"></i></button>
+            </div>
+
+            <button class="modal-button" onclick="closeModal('modal2')">&times;</button>
+        </div>
     </div>
+</div>
+
+<div class="overlay" id="modal3">
+        <div class="modal" style="width: 300px;">
+            <h1>Eliminar Paralelo</h1>
+            <div class="form-container" style="display: flex; flex-wrap: wrap;">
+                <div class="form">
+                    <label for="grado">
+                        <p>Seleccionar Grado</p>
+                    </label>
+                    <div class="input-with-button">
+                    <select type="text" class="input" id="grado" name="grado" required onchange="cargarParalelos()">
+                            <option value="" selected disabled>Seleccione un grado</option>
+
+                            <?php
+                            $conn = conectarBaseDeDatos();
+                            try {
+                                // Consulta para obtener los grados desde la base de datos
+                                $sql = "SELECT id, grado FROM grado";
+                                $result = $conn->query($sql);
+
+                                // Llenar las opciones del select con los datos de la base de datos
+                                if ($result->rowCount() > 0) {
+                                    foreach ($result as $row) {
+                                        echo "<option style=color:#000000 value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
+                                    }
+                                } else {
+                                    echo "<option value=''>No hay grados disponibles</option>";
+                                }
+                            } catch (PDOException $e) {
+                                echo "Error de conexión: " . $e->getMessage();
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    <label for="paralelo">
+                        <p>Seleccionar Paralelo</p>
+                    </label>
+                    <div class="input-with-button">
+                    <select class="input" id="id_paralelo_estudiante" name="id_paralelo_estudiante" required>
+            <option value="" selected disabled>Seleccione un paralelo</option>
+        </select>
+                    </div>
+                    <button class="btn-modal" style="margin-left: 40px">Eliminar paralelo<i
+                            class="fas fa-check" style="margin-left: 10px;"></i></button>
+
+                </div>
+
+                <button class="modal-button" onclick="closeModal('modal3')">&times;</button>
+            </div>
+        </div>
+    </div>
+
 
 
 
@@ -439,12 +546,218 @@ include_once "./header.php";
 </script>
 
 
+
+<script>
+   function cargarParalelos() {
+    var selectedGrado = document.getElementById('grado').value;
+    console.log('Selected Grado:', selectedGrado);
+
+    // Realizar una solicitud Fetch para obtener los paralelos
+    fetch("../controller/obtener_paralelos.php?grado=" + encodeURIComponent(selectedGrado))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('La red no respondió correctamente');
+            }
+            return response.json();
+        })
+        .then(paralelos => {
+            console.log('Paralelos recibidos:', paralelos);
+
+            // Obtener el select de paralelos
+            var paraleloSelect = document.getElementById('id_paralelo_estudiante');
+
+            // Limpiar las opciones actuales
+            paraleloSelect.innerHTML = "";
+
+            // Llenar el select con las opciones recibidas del servidor
+            paralelos.forEach(paralelo => {
+                var option = document.createElement('option');
+                option.value = paralelo.id;
+                option.text = paralelo.paralelo;
+                paraleloSelect.add(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error.message);
+            // Manejar el error de manera adecuada, por ejemplo, mostrando un mensaje al usuario.
+        });
+}
+
+</script>
+
+
+
+
+<script>
+    function eliminarParalelo() {
+        var selectedGrado = document.getElementById('grado').value;
+        var selectedParalelo = document.getElementById('paralelo').value;
+
+        console.log("Grado seleccionado:", selectedGrado);
+        console.log("Paralelo seleccionado:", selectedParalelo);
+
+        // Realizar una solicitud AJAX para eliminar el paralelo
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4) {
+                console.log("HTTP status:", this.status); // Log HTTP status for debugging
+
+                if (this.status == 200) {
+                    // Utilizar SweetAlert2 para mostrar un mensaje de éxito
+                    Swal.fire({
+                        title: "Éxito",
+                        text: "Paralelo eliminado exitosamente.",
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                        showCancelButton: false
+                    }).then((result) => {
+                         if (result.isConfirmed) {
+                            location.reload();
+                         }
+                    });
+                } else {
+                    // Utilizar SweetAlert2 para mostrar un mensaje de error
+                    Swal.fire({
+                        title: "Error",
+                        text: "Error al intentar eliminar el paralelo.",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                        showCancelButton: false
+                    });
+                }
+            }
+        };
+        xhttp.open("POST", "../controller/eliminar_paralelo.php", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("grado=" + selectedGrado + "&paralelo=" + selectedParalelo);
+    }
+</script>
+
+
+<script>
+    function eliminarGrado() {
+        var selectedGrado = document.getElementById('grado').value;
+
+        // Log the selected value to check
+        console.log("Grado seleccionado:", selectedGrado);
+
+        // Verificar si se ha seleccionado un grado
+        if (selectedGrado === "") {
+            // Utilizar SweetAlert2 para mostrar un mensaje de advertencia
+            Swal.fire({
+                title: "Advertencia",
+                text: "Por favor, selecciona un grado antes de intentar eliminar.",
+                icon: "warning",
+                confirmButtonText: "Aceptar",
+                showCancelButton: false
+            });
+            return;
+        }
+
+        // Realizar una solicitud AJAX para eliminar el grado
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4) {
+                console.log("HTTP status:", this.status); // Log HTTP status for debugging
+
+                if (this.status == 200) {
+                    // Utilizar SweetAlert2 para mostrar un mensaje de éxito
+                    Swal.fire({
+                        title: "Éxito",
+                        text: "Grado eliminado con éxito.",
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                        showCancelButton: false
+                    }).then((result) => {
+                         if (result.isConfirmed) {
+                            location.reload();
+                         }
+                    });
+                } else {
+                    // Utilizar SweetAlert2 para mostrar un mensaje de error
+                    Swal.fire({
+                        title: "Error",
+                        text: "Error al intentar eliminar el grado.",
+                        icon: "error",
+                        confirmButtonText: "Aceptar",
+                        showCancelButton: false
+                    });
+                }
+            }
+        };
+        xhttp.open("POST", "../controller/eliminar_grado.php", true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhttp.send("grado=" + selectedGrado);
+    }
+</script>
+
+
+
+
+
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+
+
 <!-- Asegúrate de incluir jQuery en tu proyecto -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+<script>
+    function culminarPeriodo() {
+        // Obtener el valor seleccionado del select
+        var periodoSeleccionado = document.getElementById("periodo").value;
+        var usuario = "<?php echo $_SESSION['nombre']; ?>";
 
+        if (periodoSeleccionado.trim() === "") {
+            alert("Por favor, ingresa un valor en el campo de periodos.");
+            return; // Detener la ejecución si el campo está vacío
+        }
 
-
+        // Verificar si se ha seleccionado un periodo
+        if (periodoSeleccionado) {
+            // Hacer una solicitud AJAX para enviar el periodo al servidor
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "../controller/culminar_periodo.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        // Utilizar SweetAlert2 para mostrar un mensaje de éxito
+                        Swal.fire({
+                            title: "Éxito",
+                            text: "Periodo culminado con éxito.",
+                            icon: "success",
+                            confirmButtonText: "Aceptar",
+                            showCancelButton: false
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                            location.reload();
+                        }
+                        });
+                    } else {
+                        console.error("Error en la solicitud AJAX");
+                    }
+                }
+            };
+            // Enviar el periodo al servidor
+            xhr.send("periodo=" + periodoSeleccionado);
+        } else {
+            // Utilizar SweetAlert2 para mostrar un mensaje de advertencia
+            Swal.fire({
+                title: "Advertencia",
+                text: "Selecciona un periodo antes de culminar.",
+                icon: "warning",
+                confirmButtonText: "Aceptar",
+                showCancelButton: false
+            });
+        }
+    }
+</script>
 
 
 
@@ -457,7 +770,6 @@ include_once "./header.php";
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 
-</script>
 
 
 
@@ -507,56 +819,4 @@ include_once "./header.php";
 
 
 </script>
-<script>
-    // JavaScript to handle button click and submit the form
-    document.addEventListener('DOMContentLoaded', function () {
-        const reportButtons = document.querySelectorAll('button[name="generar_reporte"]');
-        reportButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
-                event.preventDefault(); // Evita la acción de envío por defecto del botón
 
-                const estudianteId = this.value;
-                const form = document.getElementById('form_' + estudianteId); // Obtiene el formulario correspondiente por ID
-                const input = document.createElement('input');
-                input.setAttribute('type', 'hidden');
-                input.setAttribute('name', 'generar_reporte');
-                input.setAttribute('value', estudianteId);
-                form.appendChild(input);
-                form.submit();
-            });
-        });
-    });
-</script>
-<script>
-    function culminarPeriodo() {
-        // Obtener el valor seleccionado del select
-        var periodoSeleccionado = document.getElementById("periodo").value;
-
-        if (periodoSeleccionado.trim() === "") {
-            alert("Por favor, ingresa un valor en el campo de periodos.");
-            return; // Detener la ejecución si el campo está vacío
-        }
-        // Verificar si se ha seleccionado un periodo
-        if (periodoSeleccionado) {
-            // Hacer una solicitud AJAX para enviar el periodo al servidor
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "../controller/culminar_periodo.php", true);
-            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        // Manejar la respuesta del servidor, si es necesario
-                        console.log(xhr.responseText);
-                        alert(xhr.responseText); // Mostrar la respuesta en una alerta
-                    } else {
-                        console.error("Error en la solicitud AJAX");
-                    }
-                }
-            };
-            // Enviar el periodo al servidor
-            xhr.send("periodo=" + periodoSeleccionado);
-        } else {
-            alert("Selecciona un periodo antes de culminar");
-        }
-    }
-</script>

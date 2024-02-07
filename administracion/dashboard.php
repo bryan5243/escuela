@@ -16,12 +16,12 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     </div>
     <style>
 
-    <?php
+<?php
     $conn = conectarBaseDeDatos();
     $sqlInactive = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
     FROM estudiante e
-    JOIN matricula m ON  m.id_estudiante=e.Id
-    JOIN periodo p ON m.id_periodo= p.Id
+    JOIN matricula m ON e.Id=m.id_estudiante
+    JOIN periodo p on p.Id=m.id_periodo
     WHERE e.estado = 0 AND p.estado = 1 AND e.foto IS NOT NULL;";
     $resultInactive = $conn->query($sqlInactive);
     $totalInactive = $resultInactive->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
@@ -29,17 +29,17 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     // Obtener datos de pacientes activos
     $sqlActive = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
     FROM estudiante e
-    JOIN matricula m ON  m.id_estudiante=e.Id
-    JOIN periodo p ON m.id_periodo= p.Id
-    WHERE e.estado = 1 AND p.estado = 1 AND e.foto IS NOT NULL;";
+   JOIN matricula m ON e.Id=m.id_estudiante
+   JOIN periodo p on p.Id=m.id_periodo
+    WHERE e.estado = 1 AND p.estado = 1 AND e.foto IS NOT NULL;;";
     $resultActive = $conn->query($sqlActive);
     $totalActive = $resultActive->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
 
     // Obtener datos de  todos los pacientes 
     $sqlTotal = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
     FROM estudiante e
-    JOIN matricula m ON  m.id_estudiante=e.Id
-    JOIN periodo p ON m.id_periodo= p.Id
+    JOIN matricula m ON e.Id=m.id_estudiante
+    JOIN periodo p on p.Id=m.id_periodo
     WHERE  p.estado = 1 AND e.foto IS NOT NULL;";
     $resultTotal = $conn->query($sqlTotal);
     $totalPatients = $resultTotal->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
@@ -234,7 +234,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     <i class="fas fa-user-check" style="font-size: 28px; color: #ec1d17;"></i>
                     </button>
                 </form>';
-                echo ' <form action="" method="post" id="eliminarForm">
+                echo ' <form action="../controller/eliminado.php" method="post" id="eliminarForm">
                 <input type="hidden" name="id" value="' . $row['id'] . '">
                 <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
                     <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>

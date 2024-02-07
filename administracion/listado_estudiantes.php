@@ -277,6 +277,9 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     integrity="sha384-..." crossorigin="anonymous">
 <link rel="stylesheet" href="../css/agregar.css">
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
 <!-- //link de botones  -->
 
 <!-- jQuery UI CSS -->
@@ -333,33 +336,29 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         </thead>
         <tbody>
             <?php
-            $conn = conectarBaseDeDatos();
-            $sql = "SELECT DISTINCT
+$conn = conectarBaseDeDatos();
+$sql = "SELECT DISTINCT
             e.id,
             e.cedula,
             e.apellidos,
             e.nombres,
             g.grado,
             pa.paralelo
-            FROM 
-                estudiante e
-            JOIN 
-                grado g ON e.id_grado = g.id
-            JOIN 
-                matricula m ON e.id = m.id_estudiante
-            JOIN 
-                periodo pe ON m.id_periodo = pe.id
-            JOIN 
-                paralelo pa ON pa.id_grado = g.id
-            WHERE 
-                e.id_paralelo=pa.id;";
-            $result = $conn->query($sql);
-            if (!$result) {
-                echo "Error al obtener los datos: " . $conn->errorInfo()[2];
-                exit;
-            }
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                echo '<tr>
+            FROM
+            estudiante e
+            JOIN
+            matricula m ON e.Id=m.id_estudiante
+            JOIN periodo pe on pe.Id=m.id_periodo
+            JOIN grado g on g.id=m.id_grado
+            JOIN paralelo pa on g.id=pa.id_grados
+            where m.id_paralelo=pa.id;";
+$result = $conn->query($sql);
+if (!$result) {
+    echo "Error al obtener los datos: " . $conn->errorInfo()[2];
+    exit;
+}
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+    echo '<tr>
                 <td>' . $row['id'] . '</td>
                 <td>' . $row['cedula'] . '</td>
                 <td>' . $row['apellidos'] . '</td>
@@ -367,24 +366,24 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <td>' . $row['grado'] . '</td>
                 <td>' . $row['paralelo'] . '</td>
                 <td>';
-                echo '<div style="display: flex; align-items: center;" >
+    echo '<div style="display: flex; align-items: center;" >
                 <form action="" method="post" id="actForm">
                     <input type="hidden" name="id" value="' . $row['id'] . '">
                     <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
                     <i class="fas fa-pen-to-square" style="font-size: 28px; color: #ec1d17;"></i>
                     </button>
                 </form>';
-                echo '<form action="" method="post" id="eliminarForm">
+    echo '<form action="" method="post" id="eliminarForm">
                 <input type="hidden" name="id" value="' . $row['id'] . '">
                 <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
                     <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>';
-                '</div>';
-                '<td> ';
+    '</div>';
+    '<td> ';
 
-            }
-            ?>
+}
+?>
 
         </tbody>
     </table>
@@ -434,51 +433,58 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     </div>
 
     <div class="overlay" id="modal3">
-        <div class="modal" style="width: 350px;">
-            <h1>Agregar paralelo</h1>
-            <div class="form-container" style="display: flex; flex-wrap: wrap; ">
+        <div class="modal" style="width: 300px;">
+            <h1>Eliminar paralelo</h1>
+            <div class="form-container" style="display: flex; flex-wrap: wrap;">
                 <div class="form">
-                    <label for=" grado">
+                    <label for="grado">
                         <p>Seleccionar Grado</p>
                     </label>
-                    <div class="input-with-button" style="margin-bottom: 20px;">
-                        <select type="text" class="input" id="grado" name="grado" required>
+                    <div class="input-with-button">
+                        <select type="text" class="input" id="grado" name="grado" required onchange="cargarParalelos()">
                             <option value="" selected disabled>Seleccione un grado</option>
-                            <?php
-                            $conn = conectarBaseDeDatos();
-                            try {
-                                // Consulta para obtener los grados desde la base de datos
-                                $sql = "SELECT id, grado FROM grado";
-                                $result = $conn->query($sql);
 
-                                // Llenar las opciones del select con los datos de la base de datos
-                                if ($result->rowCount() > 0) {
-                                    foreach ($result as $row) {
-                                        echo "<option style= 'color:#000000' value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
-                                    }
-                                } else {
-                                    echo "<option value=''>No hay grados disponibles</option>";
-                                }
-                            } catch (PDOException $e) {
-                                echo "Error de conexión: " . $e->getMessage();
-                            }
-                            ?>
+                            <?php
+$conn = conectarBaseDeDatos();
+try {
+    // Consulta para obtener los grados desde la base de datos
+    $sql = "SELECT id, grado FROM grado";
+    $result = $conn->query($sql);
+
+    // Llenar las opciones del select con los datos de la base de datos
+    if ($result->rowCount() > 0) {
+        foreach ($result as $row) {
+            echo "<option style=color:#000000 value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
+        }
+    } else {
+        echo "<option value=''>No hay grados disponibles</option>";
+    }
+} catch (PDOException $e) {
+    echo "Error de conexión: " . $e->getMessage();
+}
+?>
                         </select>
                     </div>
-                    <label for=" paralelo">
+                    </div>
+                    <div class="form">
+                    <label for="paralelo">
                         <p>Seleccionar Paralelo</p>
                     </label>
+                    <div class="input-with-button">
                     <input type="text" class="input" id="paralelo" name="paralelo" required>
                     <span class="input-border"></span>
-                </div>
-                <div class="form">
-                    <button class="btn-modal" id="btn-modal-paralelo" style="margin-left: 40px">Agregar
-                        paralelo<i class="fas fa-check" style="margin-left: 10px;"></i></button>
-                </div>
+                    </div>
+                    </div>
+
+                    <button class="btn-modal" style="margin-left: 40px">Agregar paralelo<i
+                            class="fas fa-check" style="margin-left: 10px;"></i></button>
+                            </div>
+
                 <button class="modal-button" onclick="closeModal('modal3')">&times;</button>
-            </div>
         </div>
     </div>
+
+
 
 </main>
 <?php
@@ -486,10 +492,6 @@ include_once "./header.php";
 ?>
 
 
-
-<script src="../js/tema.js"></script>
-<script src="../js/activo.js"></script>
-<script src="../js/menu.js"></script>
 
 <script>
     function openModal(modalId) {
@@ -500,6 +502,45 @@ include_once "./header.php";
         document.getElementById(modalId).style.display = 'none';
     }
 </script>
+
+<script>
+   function cargarParalelos() {
+    var selectedGrado = document.getElementById('grado').value;
+    console.log('Selected Grado:', selectedGrado);
+
+    // Realizar una solicitud Fetch para obtener los paralelos
+    fetch("../controller/obtener_paralelos.php?grado=" + encodeURIComponent(selectedGrado))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('La red no respondió correctamente');
+            }
+            return response.json();
+        })
+        .then(paralelos => {
+            console.log('Paralelos recibidos:', paralelos);
+
+            // Obtener el select de paralelos
+            var paraleloSelect = document.getElementById('id_paralelo_estudiante');
+
+            // Limpiar las opciones actuales
+            paraleloSelect.innerHTML = "";
+
+            // Llenar el select con las opciones recibidas del servidor
+            paralelos.forEach(paralelo => {
+                var option = document.createElement('option');
+                option.value = paralelo.id;
+                option.text = paralelo.paralelo;
+                paraleloSelect.add(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error.message);
+            // Manejar el error de manera adecuada, por ejemplo, mostrando un mensaje al usuario.
+        });
+}
+
+</script>
+
 
 <script>
     $(document).ready(function () {
@@ -520,7 +561,19 @@ include_once "./header.php";
                 url: "../controller/agregar_periodo.php",
                 data: { periodos: periodos, usuario: usuario },
                 success: function (response) {
-                    alert(response);
+                    Swal.fire({
+                        title: "Éxito",
+                        text: "Los datos se han guardado correctamente.",
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                        showCancelButton: false
+                    }).then((result) => {
+                        // Recargar la página solo si se hace clic en "Aceptar"
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+
                     closeModal('modal1');
                 },
                 error: function (xhr, status, error) {
@@ -529,7 +582,10 @@ include_once "./header.php";
             });
         });
     });
+</script>
 
+
+<script>
     $(document).ready(function () {
         $("#btn-modal-grado").click(function () {
             // Obtener el valor del campo de texto
@@ -549,7 +605,19 @@ include_once "./header.php";
                 url: "../controller/agregar_grado.php",
                 data: { grados: grado, usuario: usuario },
                 success: function (response) {
-                    alert(response);
+                    Swal.fire({
+                        title: "Éxito",
+                        text: response,
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                        showCancelButton: false
+                    }).then((result) => {
+                        // Recargar la página solo si se hace clic en "Aceptar"
+                        if (result.isConfirmed) {
+                            location.reload();
+                        }
+                    });
+
                     closeModal('modal2');
                 },
                 error: function (xhr, status, error) {
@@ -559,6 +627,7 @@ include_once "./header.php";
         });
     });
 </script>
+
 
 <script>
     document.getElementById('btn-modal-paralelo').addEventListener('click', function () {
@@ -578,6 +647,7 @@ include_once "./header.php";
             alert("Por favor, ingresa un valor en el campo de paralelo.");
             return; // Detener la ejecución si el campo está vacío
         }
+
         xhr.open('POST', url, true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
@@ -589,10 +659,28 @@ include_once "./header.php";
                     try {
                         var response = JSON.parse(xhr.responseText);
                         if (response.success) {
-                            alert('Paralelo agregado exitosamente.');
-                            // Puedes realizar acciones adicionales si es necesario
+                            // Utiliza SweetAlert2 en lugar de la alerta estándar
+                            Swal.fire({
+                                title: "Éxito",
+                                text: "Paralelo agregado exitosamente.",
+                                icon: "success",
+                                confirmButtonText: "Aceptar",
+                                showCancelButton: false
+                            }).then((result) => {
+                                // Recargar la página solo si se hace clic en "Aceptar"
+                                if (result.isConfirmed) {
+                                    location.reload();
+                                }
+                            });
                         } else {
-                            alert('Error al agregar el paralelo: ' + response.error);
+                            // Utiliza SweetAlert2 en lugar de la alerta estándar
+                            Swal.fire({
+                                title: "Error",
+                                text: "Error al agregar el paralelo: " + response.error,
+                                icon: "error",
+                                confirmButtonText: "Aceptar",
+                                showCancelButton: false
+                            });
                         }
                     } catch (e) {
                         console.error('Error parsing JSON response: ' + e.message);
@@ -605,10 +693,7 @@ include_once "./header.php";
 
         xhr.send(params);
     });
-
-
 </script>
-
 
 
 
@@ -616,6 +701,12 @@ include_once "./header.php";
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+
+<script src="../js/tema.js"></script>
+<script src="../js/activo.js"></script>
+<script src="../js/menu.js"></script>
+
 
 <!-- DataTables -->
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>

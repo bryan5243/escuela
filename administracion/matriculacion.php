@@ -117,3 +117,4 @@ include("header.php")
 <script src="../js/menu.js"></script>
 <script src="../js/tabs.js"></script>
 <script src="../js/tema.js"></script>
+<script src="../js/re_estudiante.js"></script>

@@ -22,3 +22,16 @@ function validarImagen(event, previewId, errorMessageId) {
         }
     }
 }
+
+function ocultarImagen(event) {
+    var imagenContainer = document.getElementById("imagen-container");
+    var mensajeError = document.getElementById("mensaje-error");
+
+    if (event.target.files && event.target.files[0]) {
+        imagenContainer.style.display = "none";
+    } else {
+        imagenContainer.style.display = "block";
+    }
+
+    mensajeError.style.display = "none";
+}

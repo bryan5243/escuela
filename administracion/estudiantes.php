@@ -194,6 +194,40 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         border: none;
         box-shadow: none;
     }
+
+    .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+  }
+
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
 </style>
 <link rel="stylesheet" href="../src/datables//Responsive-2.4.1/css/responsive.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css"
@@ -243,32 +277,35 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         </thead>
         <tbody>
             <?php
-            $conn = conectarBaseDeDatos();
-            $sql = "SELECT 
+$conn = conectarBaseDeDatos();
+$sql = "SELECT DISTINCT
             e.id,
             e.cedula,
-            e.nombres,
             e.apellidos,
+            e.nombres,
             e.fecha_nacimiento,
             g.grado,
-            P.apellidos_nombres,
-            P.direccion,
-            P.telefono,
-            pe.estado
-            FROM estudiante e
-            JOIN grado g ON e.id_grado = g.id
-            JOIN persona p ON e.Id = p.id_estudiante
-            JOIN rol r ON  p.Id= r.id_persona  
-            JOIN matricula m on e.Id=m.id_estudiante
-            JOIN periodo pe on m.id_periodo=pe.Id
-            WHERE r.rol = 'representante' AND pe.estado=1;";
-            $result = $conn->query($sql);
-            if (!$result) {
-                echo "Error al obtener los datos: " . $conn->errorInfo()[2];
-                exit;
-            }
-            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-                echo '<tr>
+            pa.paralelo,
+            per.apellidos_nombres,
+            per.direccion,
+            per.telefono
+            FROM
+            estudiante e
+            JOIN
+            matricula m ON e.Id=m.id_estudiante
+            JOIN periodo pe on pe.Id=m.id_periodo
+            JOIN grado g on g.id=m.id_grado
+            JOIN paralelo pa on g.id=pa.id_grados
+            JOIN persona per on e.Id=per.id_estudiante
+            JOIN rol r on r.id_persona=per.Id
+            where m.id_paralelo=pa.id AND r.rol='Representante' AND pe.estado=1";
+$result = $conn->query($sql);
+if (!$result) {
+    echo "Error al obtener los datos: " . $conn->errorInfo()[2];
+    exit;
+}
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+    echo '<tr>
                 <td>' . $row['id'] . '</td>
                 <td>' . $row['cedula'] . '</td>
                 <td>' . $row['nombres'] . '</td>
@@ -280,41 +317,64 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <td>' . $row['direccion'] . '</td>
                 <td>' . $row['telefono'] . '</td>
                 <td>';
-                echo '<div style="display: flex; align-items: center;" >
-                <form action="" method="post" id="actForm">
+    echo '<div style="display: flex; align-items: center;" >
+
+                <form action="./actuali_matriculacion.php" method="post" id="actForm">
                     <input type="hidden" name="id" value="' . $row['id'] . '">
                     <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
                     <i class="fas fa-pen-to-square" style="font-size: 28px; color: #ec1d17;"></i>
                     </button>
                 </form>';
 
-                echo '<form id="form_solicitud' . $row['id'] . '"  action="../controller/solicitud_ingreso.php" method="post" target="_blank">
+                echo '<form id="form_modal' . $row['id'] . '" action="javascript:abrirModal(' . $row['id'] . ')" method="post" data-id="' . $row['id'] . '">
+                <input type="hidden" id="estudiante_id" name="estudiante_id" value="' . $row['id'] . '">
+                <button class="hand-cursor" name="fecha" style="background-color: var(--c);">
+                    <i class="fas fa-calendar-days" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>';
+    
+
+    echo '<form id="form_solicitud' . $row['id'] . '"  action="../controller/solicitud_ingreso.php" method="post" target="_blank">
                 <button class="hand-cursor" type="submit" name="generar_solicitud" value="' . $row['id'] . '" style="background-color: var(--c);">
                     <i class="fas fa-file-pdf" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>
-            
+
             <form id="form_' . $row['id'] . '" action="../controller/reporte_estudiantes.php" method="post" target="_blank">
                 <button class="hand-cursor" type="submit" name="generar_reporte" value="' . $row['id'] . '" style="background-color: var(--c);">
                     <i class="fas fa-print" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>
 
-            <form id="form_' . $row['id'] . '" action="" method="post" target="_blank">
-    <button class="hand-cursor show-details-btn" type="button" name="student_id" value="' . $row['id'] . '" style="background-color: var(--c);">
+            <form id="form_' . $row['id'] . '" action="../administracion/tabresponsable.php" method="post" >
+    <button class="hand-cursor show-details-btn" type="submit" name="" value="' . $row['id'] . '" style="background-color: var(--c);" >
         <i class="fas fa-person" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
     </button>
 </form>
 
-            
-            
+<form id="form_acuerdo' . $row['id'] . '"  action="../controller/acuerdo_ministerial.php" method="post" target="_blank">
+                <button class="hand-cursor" type="submit" name="generar_acuerdo" value="' . $row['id'] . '" style="background-color: var(--c);">
+                    <i class="fas fa-book" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>
+
+
         </div>
                 </td>';
-            }
-            ?>
+}
+?>
 
         </tbody>
     </table>
+
+    <div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="cerrarModal()">&times;</span>
+        <label for="fecha">Seleccione una fecha:</label>
+        <input type="date" id="fecha" name="fecha">
+        <button onclick="guardarFecha()">Guardar</button>
+    </div>
+</div>
 
 </main>
 <?php
@@ -325,28 +385,56 @@ include_once "./header.php";
 <script src="../js/activo.js"></script>
 <script src="../js/menu.js"></script>
 
-
 <script>
-    $(document).ready(function () {
-        $('.show-details-btn').click(function () {
-            var studentId = $(this).val();
+// Función para abrir la ventana modal
+function abrirModal(id) {
+    console.log("ID del estudiante:", id);
 
-            // Realiza una solicitud AJAX para obtener datos de la tabla de responsables
-            $.ajax({
-                type: 'POST',
-                url: '../controller/obtener responsables.php',
-                data: { student_id: studentId },
-                success: function (response) {
-                    // Aquí puedes manejar la respuesta y mostrar la ventana flotante con los datos
-                    alert(response); // Solo como ejemplo, reemplázalo con tu lógica de visualización
-                },
-                error: function () {
-                    alert('Error al obtener los datos');
-                }
-            });
-        });
+  // Aquí puedes realizar acciones adicionales antes de abrir el modal, si es necesario
+  document.getElementById('myModal').style.display = 'block';
+}
+
+// Función para cerrar la ventana modal
+function cerrarModal() {
+  document.getElementById('myModal').style.display = 'none';
+}
+
+function guardarFecha() {
+    var estudianteId = document.getElementById('estudiante_id').value;
+    var nuevaFecha = document.getElementById('fecha').value;
+
+    // Realizar una solicitud AJAX al servidor para actualizar la fecha
+    fetch('actualizar_fecha.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            estudianteId: estudianteId,
+            nuevaFecha: nuevaFecha,
+        }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('La solicitud no fue exitosa');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Manejar la respuesta del servidor si es necesario
+        console.log(data);
+        cerrarModal(); // Cerrar el modal después de la actualización
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        cerrarModal(); // Cerrar el modal en caso de error
     });
+}
+
+
 </script>
+
+
 
 
 <!-- jQuery -->
@@ -423,6 +511,27 @@ include_once "./header.php";
                 const input = document.createElement('input');
                 input.setAttribute('type', 'hidden');
                 input.setAttribute('name', 'generar_solicitud');
+                input.setAttribute('value', estudianteId);
+                form.appendChild(input);
+                form.submit();
+            });
+        });
+    });
+</script>
+
+<script>
+    // JavaScript to handle button click and submit the form
+    document.addEventListener('DOMContentLoaded', function () {
+        const reportButtons = document.querySelectorAll('button[name="generar_acuerdo"]');
+        reportButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Evita la acción de envío por defecto del botón
+
+                const estudianteId = this.value;
+                const form = document.getElementById('form_acuerdo' + estudianteId); // Obtiene el formulario correspondiente por ID
+                const input = document.createElement('input');
+                input.setAttribute('type', 'hidden');
+                input.setAttribute('name', 'generar_acuerdo');
                 input.setAttribute('value', estudianteId);
                 form.appendChild(input);
                 form.submit();

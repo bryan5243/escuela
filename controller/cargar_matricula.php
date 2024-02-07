@@ -8,16 +8,32 @@ if (isset($_POST['id'])) {
     e.cedula,
     e.apellidos,
     e.nombres,
+    e.lugar_nacimiento,
+    e.residencia,
     e.direccion,
-     CASE WHEN e.condicion = 1 THEN 'SI' ELSE 'NO' END AS discapacidades,
-     p.id,
-     p.cedula as cedula_repre,
-     p.apellidos_nombres as apellidos_repre,
-    p.telefono as telefono_repre
+    e.sector,
+    e.fecha_nacimiento,
+    e.foto,
+    e.codigo_unico,
+    CASE WHEN e.condicion = 1 THEN 'SI' ELSE 'NO' END AS discapacidades,
+    p.id as id_repre,
+    p.cedula as cedula_repre,
+    p.apellidos_nombres as apellidos_repre,
+    p.telefono as telefono_repre,
+    p.direccion as direccion_repre,
+    p.correo,
+    p.foto as foto_repre,
+    pa.id as id_paralelo,
+    g.id as  id_grado,
+    p.ocupacion
+  
     FROM estudiante e
+    JOIN matricula m on e.Id=m.id_estudiante
+    JOIN grado g on g.id=m.id_grado
+    JOIN paralelo pa on pa.id_grados=g.id
     JOIN persona p on e.Id=p.id_estudiante
     JOIN rol r on p.Id=r.id_persona
-    WHERE r.rol='Representante' AND e.Id=:id;";
+    WHERE r.rol='Representante' AND  m.id_paralelo=pa.id  AND e.Id=:id;";
     $statement = $conn->prepare($query);
     $statement->bindParam(':id', $idEstudiante);
     $statement->execute();
@@ -27,11 +43,46 @@ if (isset($_POST['id'])) {
     $preestudiante_apellidos = $estudiante['apellidos'];
     $preestudiante_nombres = $estudiante['nombres'];
     $preestudiante_direccion = $estudiante['direccion'];
+    $preestudiante_lugar = $estudiante['lugar_nacimiento'];
+    $preestudiante_residencia = $estudiante['residencia'];
+    $preestudiante_sector = $estudiante['sector'];
+    $preestudiante_nacimiento = $estudiante['fecha_nacimiento'];
+    $preestudiante_codigo = $estudiante['codigo_unico'];
+    $preestudiante_grado = $estudiante['id_grado'];
+    $preestudiante_paralelo = $estudiante['id_paralelo'];
+    $imagen_repre = $estudiante['foto_repre'];
+
+    if ($imagen_repre) {
+        $imageData3 = base64_encode($imagen_repre);
+        $imageSrc3 = "data:image/png;base64," . $imageData3;
+    } else {
+        echo "No se encontró la imagen";
+    }
+
+
+
+    $imagen = $estudiante['foto'];
+
+
+    if ($imagen) {
+        $imageData = base64_encode($imagen);
+        $imageSrc = "data:image/png;base64," . $imageData;
+    } else {
+        echo "No se encontró la imagen";
+    }
+
+
     $preestudiante_discapacidad = $estudiante['discapacidades'];
     $prerepre_cedula = $estudiante['cedula_repre'];
     $prerepre_apellidos = $estudiante['apellidos_repre'];
     $prerepre_telefono = $estudiante['telefono_repre'];
-    $prerepre_id = $estudiante['id'];
+    $prerepre_telefono = $estudiante['telefono_repre'];
+    $prerepre_direccion = $estudiante['direccion_repre'];
+    $prerepre_ocupacion = $estudiante['ocupacion'];
+    $prerepre_telefono = $estudiante['correo'];
+
+
+    $prerepre_id = $estudiante['id_repre'];
 
 
     $tipoDiscapacidad = ''; // Inicializamos las variables fuera del bloque de condición
@@ -54,23 +105,22 @@ if (isset($_POST['id'])) {
 
         $tipoDiscapacidad = $discapacidad['tipo'];
         $porcentajeDiscapacidad = $discapacidad['porcentaje'];
-
     }
-
-
-
-
 
 
     $query = "SELECT
     p.id,
     p.apellidos_nombres,
     p.cedula,
-    p.telefono
-     FROM persona p
-     JOIN estudiante e on e.Id=p.id_estudiante
-     JOIN rol r on p.Id=r.id_persona
-     WHERE r.rol='Madre' AND e.Id=:id;";
+    p.telefono,
+    p.direccion,
+    p.ocupacion,
+    p.correo,
+    p.foto
+    FROM persona p
+    JOIN estudiante e on e.Id=p.id_estudiante
+    JOIN rol r on p.Id=r.id_persona
+    WHERE r.rol='Madre' AND e.Id=:id;";
     $statement = $conn->prepare($query);
     $statement->bindParam(':id', $idEstudiante);
     $statement->execute();
@@ -79,6 +129,19 @@ if (isset($_POST['id'])) {
     $mama_apellidos = $mama['apellidos_nombres'];
     $mama_cedula = $mama['cedula'];
     $mama_telefono = $mama['telefono'];
+    $mama_direccion = $mama['direccion'];
+    $mama_ocupacion = $mama['ocupacion'];
+    $mama_correo = $mama['correo'];
+    $mama_imagen = $mama['foto'];
+
+    if ($mama_imagen) {
+        $imageData2 = base64_encode($mama_imagen);
+        $imageSrc2 = "data:image/png;base64," . $imageData2;
+    } else {
+        echo "No se encontró la imagen de la madre";
+    }
+
+
     $idMama = $mama['id'];
 
 
@@ -90,11 +153,15 @@ if (isset($_POST['id'])) {
     p.apellidos_nombres,
     p.cedula,
     p.telefono,
+    p.direccion,
+    p.ocupacion,
+    p.correo,
+    p.foto,
     r.id_persona as id_papa
-    FROM persona p
-    JOIN estudiante e on e.Id = p.id_estudiante
-    JOIN rol r on p.Id = r.id_persona
-    WHERE r.rol = 'Padre' AND e.Id = :id;";
+FROM persona p
+JOIN estudiante e on e.Id = p.id_estudiante
+JOIN rol r on p.Id = r.id_persona
+WHERE r.rol = 'Padre' AND e.Id = :id;";
 
     $statement = $conn->prepare($query);
     $statement->bindParam(':id', $idEstudiante);
@@ -105,6 +172,22 @@ if (isset($_POST['id'])) {
     $datospapa = $papa['apellidos_nombres'];
     $cedulaPapa = $papa['cedula'];
     $telefonoPapa = $papa['telefono'];
+    $direccionPapa = $papa['direccion'];
+    $ocupacionPapa = $papa['ocupacion'];
+    $correoPapa = $papa['correo'];
+    $imagenPapa = $papa['foto'];
+
+    if ($imagenPapa) {
+        $imageData1 = base64_encode($imagenPapa);
+        $imageSrc1 = "data:image/png;base64," . $imageData1;  // Corregido a $imageData1
+    } else {
+        echo "No se encontró la imagen de papa";
+    }
+
+
+
+
+
     $idPapa = $papa['id'];
 
 
@@ -112,20 +195,18 @@ if (isset($_POST['id'])) {
 
 
     $conn = null;
-
-
-
 }
-$conn = null;
 try {
-    if (isset($_POST["btnregistrarestudiante"])) {
+    if (isset($_POST["btnactualizarestudiante"])) {
 
 
         // Obtener el id del estudiante desde el formulario
         $conn = conectarBaseDeDatos();
         $idEstudiante = $_POST['id'];
+
         $conn->beginTransaction();
         $usuario = $_SESSION['nombre'];
+
 
         // Actualizar datos en la tabla estudiante
         $cedula_estudiante = $_POST['cedula_estudiante'];
@@ -138,17 +219,26 @@ try {
         $fecha_nacimiento_estudiante = $_POST['fecha_nacimiento_estudiante'];
         $codigo_unico_estudiante = $_POST['codigo_unico_estudiante'];
         $condicion_estudiante = $_POST['condicion_estudiante'];
-        
-        $imagePath = $_FILES["imagen"]["tmp_name"];
 
-        $originalImage = imagecreatefromstring(file_get_contents($imagePath));
-        $newImage = imagecreatetruecolor(148, 178);
-        imagecopyresampled($newImage, $originalImage, 0, 0, 0, 0, 148, 178, imagesx($originalImage), imagesy($originalImage));
-        // Obtener el contenido de la nueva imagen como un flujo de bytes
-        ob_start();
-        imagejpeg($newImage, NULL, 100); // 100 es la calidad, puedes ajustarla según tus necesidades
-        $newImageContent = ob_get_contents();
-        ob_end_clean();
+
+        // Verificar si se ha cargado una nueva imagen
+        if (!empty($_FILES['imagen']['tmp_name'])) {
+            // Obtener la ruta temporal de la imagen subida
+            $imagePath = $_FILES['imagen']['tmp_name'];
+
+            // Crear una nueva imagen a partir de la original
+            $originalImage = imagecreatefromstring(file_get_contents($imagePath));
+            $newImage = imagecreatetruecolor(148, 178);
+
+            // Redimensionar la imagen a la nueva resolución
+            imagecopyresampled($newImage, $originalImage, 0, 0, 0, 0, 148, 178, imagesx($originalImage), imagesy($originalImage));
+
+            // Obtener el contenido de la nueva imagen como un flujo de bytes
+            ob_start();
+            imagejpeg($newImage, NULL, 100); // 100 es la calidad, puedes ajustarla según tus necesidades
+            $newImageContent = ob_get_contents();
+            ob_end_clean();
+        }
 
         $sql_update_estudiante = "UPDATE estudiante SET
             cedula = :cedula_estudiante,
@@ -164,9 +254,12 @@ try {
             condicion = :condicion_estudiante,
             created_by = :usuario";
 
-        $sql_update_estudiante .= ", foto = :foto";
-
+        if (!empty($_FILES['imagen']['tmp_name'])) {
+            $sql_update_estudiante .= ", foto = :foto";
+        }
+        // Conservar la foto existente
         $sql_update_estudiante .= " WHERE id = :id";
+
 
         $stmt_update_estudiante = $conn->prepare($sql_update_estudiante);
         // Vincular parámetros
@@ -184,10 +277,12 @@ try {
         $stmt_update_estudiante->bindParam(':id', $idEstudiante);
         $stmt_update_estudiante->bindParam(':usuario', $usuario);
 
+        if (!empty($_FILES['imagen']['tmp_name'])) {
+            $stmt_update_estudiante->bindParam(':foto', $newImageContent, PDO::PARAM_LOB);
+            imagedestroy($originalImage);
+            imagedestroy($newImage);
+        }
 
-        $stmt_update_estudiante->bindParam(':foto', $newImageContent, PDO::PARAM_LOB);
-        imagedestroy($originalImage);
-        imagedestroy($newImage);
 
         $stmt_update_estudiante->execute();
         // Confirmar la primera transacción
@@ -267,16 +362,22 @@ try {
             $telefono_padre = $_POST['telefono_papa'];
             $correo_padre = $_POST['correo_papa'];
 
-            // Procesar los datos para el padre
-            $imagePathPadre = $_FILES['imagen_papa']["tmp_name"];
-            $originalImagePadre = imagecreatefromstring(file_get_contents($imagePathPadre));
-            $newImagePadre = imagecreatetruecolor(148, 178);
-            imagecopyresampled($newImagePadre, $originalImagePadre, 0, 0, 0, 0, 148, 178, imagesx($originalImagePadre), imagesy($originalImagePadre));
+            // Verificar si se ha cargado una nueva imagen
+            if (!empty($_FILES['imagen_papa']['tmp_name'])) {
+                // Obtener la ruta temporal de la imagen subida
+                // Procesar los datos para el padre
+                $imagePathPadre = $_FILES['imagen_papa']["tmp_name"];
+                $originalImagePadre = imagecreatefromstring(file_get_contents($imagePathPadre));
+                $newImagePadre = imagecreatetruecolor(148, 178);
+                imagecopyresampled($newImagePadre, $originalImagePadre, 0, 0, 0, 0, 148, 178, imagesx($originalImagePadre), imagesy($originalImagePadre));
 
-            ob_start();
-            imagejpeg($newImagePadre, NULL, 100);
-            $newImageContentPadre = ob_get_contents();
-            ob_end_clean();
+                ob_start();
+                imagejpeg($newImagePadre, NULL, 100);
+                $newImageContentPadre = ob_get_contents();
+                ob_end_clean();
+            }
+
+
 
             $sql_update_padre = "UPDATE persona SET
             cedula = :cedula_padre,
@@ -285,9 +386,15 @@ try {
             ocupacion = :ocupacion_padre,
             telefono = :telefono_padre,
             correo = :correo_padre,
-            created_by = :usuario,
-            foto = :foto
-            WHERE id_estudiante = :id AND id= :idPapa"; // Ajustar a la columna que identifica al padre
+            created_by = :usuario";
+
+            if (!empty($_FILES['imagen_papa']['tmp_name'])) {
+                $sql_update_padre .= ", foto = :foto";
+            }
+            $sql_update_padre .= "  WHERE id_estudiante = :id AND id= :idPapa";
+
+
+            // Ajustar a la columna que identifica al padre
 
             $stmt_update_padre = $conn->prepare($sql_update_padre);
 
@@ -298,19 +405,20 @@ try {
             $stmt_update_padre->bindParam(':ocupacion_padre', $ocupacion_padre);
             $stmt_update_padre->bindParam(':telefono_padre', $telefono_padre);
             $stmt_update_padre->bindParam(':correo_padre', $correo_padre);
-            $stmt_update_padre->bindParam(':foto', $newImageContentPadre, PDO::PARAM_LOB);
             $stmt_update_padre->bindParam(':id', $idEstudiante);
             $stmt_update_padre->bindParam(':idPapa', $idPapa); // Vincular el parámetro idPapa
             $stmt_update_padre->bindParam(':usuario', $usuario);
 
+            if (!empty($_FILES['imagen_papa']['tmp_name'])) {
+                $stmt_update_padre->bindParam(':foto', $newImageContentPadre, PDO::PARAM_LOB);
+                imagedestroy($originalImagePadre);
+                imagedestroy($newImagePadre);
+            }
 
             $stmt_update_padre->execute();
 
-            imagedestroy($originalImagePadre);
-            imagedestroy($newImagePadre);
+
             $conn->commit();
-
-
 
 
             $conn->beginTransaction();
@@ -322,15 +430,22 @@ try {
             $telefono_mama = $_POST['telefono_mama'];
             $correo_mama = $_POST['correo_mama'];
 
-            $imagePathMama = $_FILES['imagen_mama']["tmp_name"];
-            $originalImageMama = imagecreatefromstring(file_get_contents($imagePathMama));
-            $newImageMama = imagecreatetruecolor(148, 178);
-            imagecopyresampled($newImageMama, $originalImageMama, 0, 0, 0, 0, 148, 178, imagesx($originalImageMama), imagesy($originalImageMama));
+            if (!empty($_FILES['imagen_mama']['tmp_name'])) {
+                // Obtener la ruta temporal de la imagen subida
+                $imagePathMama = $_FILES['imagen_mama']["tmp_name"];
+                $originalImageMama = imagecreatefromstring(file_get_contents($imagePathMama));
+                $newImageMama = imagecreatetruecolor(148, 178);
+                imagecopyresampled($newImageMama, $originalImageMama, 0, 0, 0, 0, 148, 178, imagesx($originalImageMama), imagesy($originalImageMama));
 
-            ob_start();
-            imagejpeg($newImageMama, NULL, 100);
-            $newImageContentMama = ob_get_contents();
-            ob_end_clean();
+                ob_start();
+                imagejpeg($newImageMama, NULL, 100);
+                $newImageContentMama = ob_get_contents();
+                ob_end_clean();
+            }
+
+
+
+
             // Procesar los datos según el rol (papa, mama, representante)
             $sql_update_mama = "UPDATE persona SET
             cedula = :cedula_mama,
@@ -339,11 +454,16 @@ try {
             ocupacion = :ocupacion_mama,
             telefono = :telefono_mama,
             correo = :correo_mama,
-            created_by = :usuario,
-            foto = :foto
-            WHERE id_estudiante = :id AND id = :idMama";
+            created_by = :usuario";
+
+            if (!empty($_FILES['imagen_mama']['tmp_name'])) {
+                $sql_update_mama .= ", foto = :foto";
+            }
+
+            $sql_update_mama .= " WHERE id_estudiante = :id AND id = :idMama";
 
             $stmt_update_mama = $conn->prepare($sql_update_mama);
+
             // Vincular parámetros
             $stmt_update_mama->bindParam(':cedula_mama', $cedula_mama);
             $stmt_update_mama->bindParam(':apellidos_nombres_mama', $apellidos_nombres_mama);
@@ -351,18 +471,18 @@ try {
             $stmt_update_mama->bindParam(':ocupacion_mama', $ocupacion_mama);
             $stmt_update_mama->bindParam(':telefono_mama', $telefono_mama);
             $stmt_update_mama->bindParam(':correo_mama', $correo_mama);
-            $stmt_update_mama->bindParam(':foto', $newImageContentMama, PDO::PARAM_LOB);
             $stmt_update_mama->bindParam(':id', $idEstudiante);
             $stmt_update_mama->bindParam(':idMama', $idMama);
             $stmt_update_mama->bindParam(':usuario', $usuario);
 
             // Ajustar el nombre del parámetro según tu estructura de base de datos
-
+            if (!empty($_FILES['imagen_mama']['tmp_name'])) {
+                $stmt_update_mama->bindParam(':foto', $newImageContentMama, PDO::PARAM_LOB);
+                imagedestroy($originalImageMama);
+                imagedestroy($newImageMama);
+            }
 
             $stmt_update_mama->execute();
-
-            imagedestroy($originalImageMama);
-            imagedestroy($newImageMama);
 
             $conn->commit();
 
@@ -378,17 +498,25 @@ try {
             $telefono_representante = $_POST['telefono_representante'];
             $correo_representante = $_POST['correo_representante'];
 
-            $imagePathRepresentante = $_FILES['imagen_representante']["tmp_name"];
-            $originalImageRepresentante = imagecreatefromstring(file_get_contents($imagePathRepresentante));
-            $newImageRepresentante = imagecreatetruecolor(148, 178);
-            imagecopyresampled($newImageRepresentante, $originalImageRepresentante, 0, 0, 0, 0, 148, 178, imagesx($originalImageRepresentante), imagesy($originalImageRepresentante));
+            if (!empty($_FILES['imagen_representante']['tmp_name'])) {
+                // Obtener la ruta temporal de la imagen subida
+                // Procesar los datos para el padre
+                $imagePathRepresentante = $_FILES['imagen_representante']["tmp_name"];
+                $originalImageRepresentante = imagecreatefromstring(file_get_contents($imagePathRepresentante));
+                $newImageRepresentante = imagecreatetruecolor(148, 178);
+                imagecopyresampled($newImageRepresentante, $originalImageRepresentante, 0, 0, 0, 0, 148, 178, imagesx($originalImageRepresentante), imagesy($originalImageRepresentante));
 
-            ob_start();
-            imagejpeg($newImageRepresentante, NULL, 100);
-            $newImageContentRepresentante = ob_get_contents();
-            ob_end_clean();
+                ob_start();
+                imagejpeg($newImageRepresentante, NULL, 100);
+                $newImageContentRepresentante = ob_get_contents();
+                ob_end_clean();
+            }
+
+
+
+
             // Procesar los datos según el rol (papa, mama, representante)
-// Aquí p
+            // Aquí p
             $sql_update_representante = "UPDATE persona SET
             cedula = :cedula_representante,
             apellidos_nombres = :apellidos_nombres_representante,
@@ -396,9 +524,12 @@ try {
             ocupacion = :ocupacion_representante,
             telefono = :telefono_representante,
             correo = :correo_representante,
-            created_by = :usuario,
-            foto = :foto
-            WHERE id_estudiante = :id AND id = :idRepresentante"; // Ajustar a la columna que identifica al representante
+            created_by = :usuario";
+
+            if (!empty($_FILES['imagen_representante']['tmp_name'])) {
+                $sql_update_representante .= ", foto = :foto";
+            }
+            $sql_update_representante .= " WHERE id_estudiante = :id AND id = :idRepresentante";
 
             $stmt_update_representante = $conn->prepare($sql_update_representante);
             // Vincular parámetros
@@ -408,28 +539,30 @@ try {
             $stmt_update_representante->bindParam(':ocupacion_representante', $ocupacion_representante);
             $stmt_update_representante->bindParam(':telefono_representante', $telefono_representante);
             $stmt_update_representante->bindParam(':correo_representante', $correo_representante);
-            $stmt_update_representante->bindParam(':foto', $newImageContentRepresentante, PDO::PARAM_LOB);
             $stmt_update_representante->bindParam(':id', $idEstudiante);
             $stmt_update_representante->bindParam(':idRepresentante', $prerepre_id);
             $stmt_update_representante->bindParam(':usuario', $usuario);
             // Ajustar el nombre del parámetro según tu estructura de base de datos
 
+            if (!empty($_FILES['imagen_representante']['tmp_name'])) {
+                $stmt_update_representante->bindValue(':foto', $newImageContentRepresentante, PDO::PARAM_LOB);
+                imagedestroy($originalImageRepresentante);
+                imagedestroy($newImageRepresentante);
+            }
+
+
             $stmt_update_representante->execute();
-            imagedestroy($originalImageRepresentante);
-            imagedestroy($newImageRepresentante);
 
             $conn->commit();
-
         } catch (PDOException $e) {
             // Retrocede en caso de un error
             $conn->rollBack();
-            echo "Error: " . $e->getMessage();
         }
 
         echo '<script>
         Swal.fire({
             title: "Éxito",
-            text: "Los datos se han guardado correctamente.",
+            text: "Los datos se han actualizado correctamente.",
             icon: "success",
             confirmButtonText: "Aceptar",
             showCancelButton: false
@@ -440,9 +573,6 @@ try {
             }
         });
     </script>';
-
     }
-
 } catch (Exception $e) {
-    //throw $th;
 }

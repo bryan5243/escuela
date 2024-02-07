@@ -1,6 +1,6 @@
 <?php
 include '../model/conexion.php';
-
+session_start();
 $conn = conectarBaseDeDatos();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // Actualizar el estado en la base de datos
-        $sql = "UPDATE periodo SET estado = 0 , set updated_by=:usuarios WHERE id = :periodo";
+        $sql = "UPDATE periodo SET estado = 0, updated_by = :usuario WHERE id = :periodo";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':periodo', $periodoSeleccionado);
         $stmt->bindParam(':usuario', $usuario);

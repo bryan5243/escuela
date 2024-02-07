@@ -36,7 +36,7 @@ include_once '../model/conexion.php';
         <label for="cedula_estudiante">
             <p>1. Cédula del Estudiante</p>
         </label>
-        <input class="input" type="text" id="cedula_estudiante" name="cedula_estudiante" pattern="[0-9]*"
+        <input class="input" type="text" id="cedula_estudiante" name="cedula_estudiante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
             value="<?php echo $estudiante['cedula']; ?>" required>
         <span class="input-border"></span>
     </div>
@@ -48,7 +48,7 @@ include_once '../model/conexion.php';
         <label for="apellidos_estudiante">
             <p>2. Apellidos del Estudiante</p>
         </label>
-        <input class="input" type="text" id="apellidos_estudiante" name="apellidos_estudiante"
+        <input class="input" type="text" id="apellidos_estudiante" name="apellidos_estudiante"  oninput="validarTexto(this)"
             value="<?php echo $estudiante['apellidos']; ?>" required>
         <span class="input-border"></span>
     </div>
@@ -57,7 +57,7 @@ include_once '../model/conexion.php';
         <label for="nombres_estudiante">
             <p>3. Nombres del Estudiante</p>
         </label>
-        <input type="text" class="input" id="nombres_estudiante" name="nombres_estudiante"
+        <input type="text" class="input" id="nombres_estudiante" name="nombres_estudiante"  oninput="validarTexto(this)"
             value="<?php echo $estudiante['nombres']; ?>" required>
         <span class="input-border"></span>
     </div>
@@ -106,85 +106,53 @@ include_once '../model/conexion.php';
     </div>
 
     <div class="form">
-        <label for="id_grado_estudiante">
-            <p>9. Grado del Estudiante</p>
-        </label>
-        <select type="text" class="input" id="grado" name="grado" required onchange="cargarParalelos()">
-            <option value="" selected disabled>Seleccione un grado</option>
-            <?php
-            $conn = conectarBaseDeDatos();
-            try {
-                // Consulta para obtener los grados desde la base de datos
-                $sql = "SELECT id, grado FROM grado";
-                $result = $conn->query($sql);
+    <label for="id_grado_estudiante">
+        <p>9. Grado del Estudiante</p>
+    </label>
+    <select type="text" class="input" id="grado" name="grado" required onchange="cargarParalelos()">
+        <option value="" selected disabled>Seleccione un grado</option>
+        <?php
+        $conn = conectarBaseDeDatos();
+        try {
+            // Consulta para obtener los grados desde la base de datos
+            $sql = "SELECT id, grado FROM grado";
+            $result = $conn->query($sql);
 
-                // Llenar las opciones del select con los datos de la base de datos
-                if ($result->rowCount() > 0) {
-                    foreach ($result as $row) {
-                        echo "<option style= 'color:#000000' value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
-                    }
-                } else {
-                    echo "<option value=''>No hay grados disponibles</option>";
+            // Llenar las opciones del select con los datos de la base de datos
+            if ($result->rowCount() > 0) {
+                foreach ($result as $row) {
+                    echo "<option style='color:#000000' value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
                 }
-            } catch (PDOException $e) {
-                echo "Error de conexión: " . $e->getMessage();
+            } else {
+                echo "<option value=''>No hay grados disponibles</option>";
             }
-            $conn = null;
-
-            ?>
-        </select>
-        <span class="input-border"></span>
+        } catch (PDOException $e) {
+            echo "Error de conexión: " . $e->getMessage();
+        }
+        $conn = null;
+        ?>
+    </select>
+    <span class="input-border"></span>
     </div>
-
 </div>
 
 <div class="form-container" style="display: flex; flex-wrap: wrap;">
-
-
     <div class="form">
         <label for="id_paralelo_estudiante">
             <p>10. Paralelo</p>
         </label>
         <select class="input" id="id_paralelo_estudiante" name="id_paralelo_estudiante" required>
             <option value="" selected disabled>Seleccione un paralelo</option>
-
-            <?php
-            // Reiniciar la variable $result antes de realizar la segunda consulta
-            $result = null;
-            $conn = conectarBaseDeDatos();
-
-            try {
-                // Consulta para obtener los paralelos desde la base de datos según el grado seleccionado
-                $selected_grado_id = isset($_POST['grado']) ? $_POST['grado'] : null;
-
-                if ($selected_grado_id !== null) {
-                    $sql = "SELECT id, paralelo FROM paralelo WHERE  id_grado = $selected_grado_id";
-                    $result = $conn->query($sql);
-
-                    // Llenar las opciones del select con los datos de la base de datos
-                    if ($result->rowCount() > 0) {
-                        foreach ($result as $row) {
-                            echo "<option value='" . $row["id"] . "'>" . $row["paralelo"] . "</option>";
-                        }
-                    } else {
-                        echo "<option value=''>No hay paralelos disponibles para este grado</option>";
-                    }
-                }
-            } catch (PDOException $e) {
-                echo "Error de conexión: " . $e->getMessage();
-            }
-            $conn = null;
-
-            ?>
         </select>
-        <span class="input-border"></span>
     </div>
+
+
     <div class="form">
         <label for="codigo_unico_estudiante">
             <p>11. Código de Servico básico (Código U Planilla de Luz)</p>
         </label>
-        <input type="text" class="input" id="codigo_unico_estudiante" name="codigo_unico_estudiante"
-            value="<?php echo isset($tipoDiscapacidad) ? $tipoDiscapacidad : ''; ?>" required>
+        <input type="text" class="input" id="codigo_unico_estudiante" name="codigo_unico_estudiante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+           required>
         <span class=" input-border"></span>
     </div>
 
@@ -278,39 +246,43 @@ include_once '../model/conexion.php';
 
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-
 <script>
-    function cargarParalelos() {
-        var selectedGrado = document.getElementById('grado').value;
+   function cargarParalelos() {
+    console.log('cargarParalelos() se ejecutó');
+    
+    var selectedGrado = document.getElementById('grado').value;
 
-        // Realizar una solicitud AJAX para obtener los paralelos
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                // Parsear la respuesta JSON
-                var paralelos = JSON.parse(this.responseText);
-
-                // Obtener el select de paralelos
-                var paraleloSelect = document.getElementById('id_paralelo_estudiante');
-
-                // Limpiar las opciones actuales
-                paraleloSelect.innerHTML = "";
-
-                // Llenar el select con las opciones recibidas del servidor
-                paralelos.forEach(function (paralelo) {
-                    var option = document.createElement('option');
-                    option.value = paralelo.id;
-                    option.text = paralelo.paralelo;
-                    paraleloSelect.add(option);
-                });
+    // Realizar una solicitud Fetch para obtener los paralelos
+    fetch("../controller/obtener_paralelos.php?grado=" + encodeURIComponent(selectedGrado))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('La red no respondió correctamente');
             }
-        };
-        xhttp.open("GET", "../controller/obtener_paralelos.php?grado=" + selectedGrado, true);
-        xhttp.send();
-    }
+            return response.json();
+        })
+        .then(paralelos => {
+            // Obtener el select de paralelos
+            var paraleloSelect = document.getElementById('id_paralelo_estudiante');
 
+            // Limpiar las opciones actuales
+            paraleloSelect.innerHTML = "";
+
+            // Llenar el select con las opciones recibidas del servidor
+            paralelos.forEach(paralelo => {
+                var option = document.createElement('option');
+                option.value = paralelo.id;
+                option.text = paralelo.paralelo;
+                paraleloSelect.add(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error.message);
+            // Manejar el error de manera adecuada, por ejemplo, mostrando un mensaje al usuario.
+        });
+}
 
 </script>
+
 
 
 <br><br>

@@ -71,7 +71,7 @@ class MiPDF extends FPDF
         $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '07h1462@gmail.com'), 0, 0, 'R');
         $this->SetY(280);
         $this->SetTextColor(236, 29, 23); // Establecer el color del texto en blanco para que sea legible en fondo rojo
-        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '2992-774-0997831372'), 0, 0, 'R');
+        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '+593 969998542 '), 0, 0, 'R');
 
     }
 }
@@ -131,7 +131,7 @@ function generateReport($estudianteId)
     FROM
     matricula m join periodo p on m.id_periodo=p.id 
     JOIN estudiante e on e.Id=m.id_estudiante 
-    join grado g on e.id_grado=g.id
+    join grado g on m.id_grado=g.id
      WHERE e.id = :estudianteId";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);

@@ -88,18 +88,18 @@ use PgSql\Connection\Connection;
         <div class="row">
             <div class="mb-3">
                 <label for="cedula" class="form-label">1. Cedula:</label>
-                <input type="text" class="form-control" name="cedula" required>
+                <input type="text" class="form-control" name="cedula" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="apellidos" class="form-label">2. Apellidos:</label>
-                    <input type="text" class="form-control" name="apellidos" required>
+                    <input type="text" class="form-control" name="apellidos"  oninput="validarTexto(this)" required>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="nombres" class="form-label">3. Nombres:</label>
-                    <input type="text" class="form-control" name="nombres" required>
+                    <input type="text" class="form-control" name="nombres"  oninput="validarTexto(this)" required>
                 </div>
             </div>
         </div>
@@ -146,18 +146,18 @@ use PgSql\Connection\Connection;
 
                 <div class="mb-3">
                     <label for="cedula_Padre" class="form-label">6. Cedula:</label>
-                    <input type="text" class="form-control" name="cedula_Padre" id="cedula_Padre" required>
+                    <input type="text" class="form-control" name="cedula_Padre" id="cedula_Padre" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="apellidosNombres_Padre" class="form-label">9. Apellidos y Nombres:</label>
-                    <input type="text" class="form-control" name="apellidosNombres_Padre" id="apellidosNombres_Padre"
+                    <input type="text" class="form-control" name="apellidosNombres_Padre" id="apellidosNombres_Padre"  oninput="validarTexto(this)"
                         required>
                 </div>
 
                 <div class="mb-3">
                     <label for="telefono_Padre" class="form-label">10. Teléfono Celular:</label>
-                    <input type="text" class="form-control" id="telefono_Padre" name="telefono_Padre">
+                    <input type="text" class="form-control" id="telefono_Padre" name="telefono_Padre" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" require>
                 </div>
             </div>
 
@@ -166,18 +166,18 @@ use PgSql\Connection\Connection;
 
                 <div class="mb-3">
                     <label for="cedula_Madre" class="form-label">11. Cedula:</label>
-                    <input type="text" class="form-control" id="cedula_Madre" name="cedula_Madre" required>
+                    <input type="text" class="form-control" id="cedula_Madre" name="cedula_Madre" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
                 </div>
 
                 <div class=" mb-3">
                     <label for="apellidosNombres_Madre" class="form-label">12. Apellidos y Nombres:</label>
-                    <input type="text" class="form-control" id="apellidosNombres_Madre" name="apellidosNombres_Madre"
+                    <input type="text" class="form-control" id="apellidosNombres_Madre" name="apellidosNombres_Madre"  oninput="validarTexto(this)"
                         required>
                 </div>
 
                 <div class=" mb-3">
                     <label for="telefono_Madre" class="form-label">13. Teléfono Celular:</label>
-                    <input type="text" class="form-control" id="telefono_Madre" name=" telefono_Madre">
+                    <input type="text" class="form-control" id="telefono_Madre" name=" telefono_Madre" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" require>
                 </div>
             </div>
 
@@ -197,19 +197,19 @@ use PgSql\Connection\Connection;
 
                 <div class="mb-3">
                     <label for="cedula_Representante" class="form-label">14. Cedula:</label>
-                    <input type="text" class="form-control" id="cedula_Representante" name="cedula_Representante"
+                    <input type="text" class="form-control" id="cedula_Representante" name="cedula_Representante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
                         required>
                 </div>
 
                 <div class="mb-3">
                     <label for="apellidosNombres_Representante" class="form-label">15. Apellidos y Nombres:</label>
                     <input type="text" class="form-control" id="apellidosNombres_Representante"
-                        name="apellidosNombres_Representante" required>
+                        name="apellidosNombres_Representante"   oninput="validarTexto(this)" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="telefono_Representante" class="form-label">16. Teléfono Celular:</label>
-                    <input type="text" class="form-control" id="telefono_Representante" name="telefono_Representante">
+                    <input type="text" class="form-control" id="telefono_Representante" name="telefono_Representante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" require>
                 </div>
             </div>
 
@@ -372,3 +372,4 @@ use PgSql\Connection\Connection;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="../js/pre_inscripcion.js"></script>
+<script src="../js/re_estudiante.js"></script>

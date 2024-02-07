@@ -34,7 +34,7 @@ include_once '../model/conexion.php';
         <label for="cedula_mama">
             <p>22. Cédula de la Mamá</p>
         </label>
-        <input type="text" class="input" id="cedula_mama" name="cedula_mama" pattern="[0-9]*"
+        <input type="text" class="input" id="cedula_mama" name="cedula_mama" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
             value="<?php echo $mama['cedula']; ?>" required>
         <span class="input-border"></span>
     </div>
@@ -44,7 +44,7 @@ include_once '../model/conexion.php';
         <label for="apellidos_nombres_mama">
             <p>23. Apellidos y Nombres completos</p>
         </label>
-        <input type="text" class="input" id="apellidos_nombres_mama" name="apellidos_nombres_mama"
+        <input type="text" class="input" id="apellidos_nombres_mama" name="apellidos_nombres_mama"  oninput="validarTexto(this)"
             value="<?php echo $mama['apellidos_nombres']; ?>" required>
         <span class="input-border"></span>
     </div>
@@ -74,7 +74,7 @@ include_once '../model/conexion.php';
         <label for="telefono_mama">
             <p>27. Teléfono/Celular de la Mamá</p>
         </label>
-        <input type="text" class="input" id="telefono_mama" name="telefono_mama" pattern="[0-9]*"
+        <input type="text" class="input" id="telefono_mama" name="telefono_mama" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
             value="<?php echo $mama['telefono']; ?>" required>
         <span class="input-border"></span>
     </div>

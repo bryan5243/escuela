@@ -33,7 +33,7 @@ include_once '../model/conexion.php';
         <label for="cedula_representante">
             <p>22. Cédula del Representante</p>
         </label>
-        <input type="text" class="input" id="cedula_representante" name="cedula_representante" pattern="[0-9]*"
+        <input type="text" class="input" id="cedula_representante" name="cedula_representante"oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
             required>
         <span class="input-border"></span>
     </div>
@@ -43,7 +43,7 @@ include_once '../model/conexion.php';
         <label for="apellidos_nombes_">
             <p>23. Apellidos y Nombres completos</p>
         </label>
-        <input type="text" class="input" id="apellidos_nombres" name="apellidos_nombres_representante" required>
+        <input type="text" class="input" id="apellidos_nombres" name="apellidos_nombres_representante"  oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 </div>
@@ -70,7 +70,7 @@ include_once '../model/conexion.php';
         <label for="telefono_representante">
             <p>27. Teléfono/Celular del Representante</p>
         </label>
-        <input type="text" class="input" id="telefono_representante" name="telefono_representante" pattern="[0-9]*"
+        <input type="text" class="input" id="telefono_representante" name="telefono_representante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
             required>
         <span class="input-border"></span>
     </div>

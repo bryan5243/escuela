@@ -75,9 +75,9 @@ class MiPDF extends FPDF
         $this->SetY(275);
         $this->SetX(100);
         $this->SetTextColor(236, 29, 23);
-        $this->SetX(123);
+        $this->SetX(132);
         // Establecer el color del texto en blanco para que sea legible en fondo rojo
-        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '2992-774-0997831372'), 0, 0, 'C');
+        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '+593 969998542 '), 0, 0, 'C');
 
     }
 
@@ -173,12 +173,13 @@ function generateReport($estudianteId)
     P.cedula,
     pe.estado
     FROM estudiante e
-    JOIN grado g ON e.id_grado = g.id
     JOIN persona p ON e.Id = p.id_estudiante
     JOIN rol r ON  p.Id= r.id_persona  
     JOIN matricula m on e.Id=m.id_estudiante
+    JOIN grado g on g.id=m.id_grado
     JOIN periodo pe on m.id_periodo=pe.Id
     WHERE r.rol = 'representante' AND pe.estado=1 AND e.Id=:estudianteId";
+
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);
     $stmt->execute();

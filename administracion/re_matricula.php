@@ -33,7 +33,7 @@ include_once '../model/conexion.php';
         <label for="cedula_estudiante">
             <p>1. Cédula del Estudiante</p>
         </label>
-        <input class="input" type="text" id="cedula_estudiante" name="cedula_estudiante" pattern="[0-9]*" required>
+        <input class="input" type="text" id="cedula_estudiante" name="cedula_estudiante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"required>
         <span class="input-border"></span>
     </div>
 </div>
@@ -44,7 +44,7 @@ include_once '../model/conexion.php';
         <label for="apellidos_estudiante">
             <p>2. Apellidos del Estudiante</p>
         </label>
-        <input class="input" type="text" id="apellidos_estudiante" name="apellidos_estudiante" required>
+        <input class="input" type="text" id="apellidos_estudiante" name="apellidos_estudiante"   oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 
@@ -52,7 +52,7 @@ include_once '../model/conexion.php';
         <label for="nombres_estudiante">
             <p>3. Nombres del Estudiante</p>
         </label>
-        <input type="text" class="input" id="nombres_estudiante" name="nombres_estudiante" required>
+        <input type="text" class="input" id="nombres_estudiante" name="nombres_estudiante"  oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 
@@ -173,11 +173,12 @@ include_once '../model/conexion.php';
         <span class="input-border"></span>
     </div>
     <div class="form">
-        <label for="codigo_unico_estudiante">
-            <p>11. Código de Servico básico (Código U Planilla de Luz)</p>
+        <label for="id_paralelo_estudiante">
+            <p>10. Paralelo</p>
         </label>
-        <input type="text" class="input" id="codigo_unico_estudiante" name="codigo_unico_estudiante" required>
-        <span class="input-border"></span>
+        <select class="input" id="id_paralelo_estudiante" name="id_paralelo_estudiante" required>
+            <option value="" selected disabled>Seleccione un paralelo</option>
+        </select>
     </div>
 
 </div>
@@ -246,37 +247,42 @@ include_once '../model/conexion.php';
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <script>
-    function cargarParalelos() {
-        var selectedGrado = document.getElementById('grado').value;
+   function cargarParalelos() {
+    console.log('cargarParalelos() se ejecutó');
+    
+    var selectedGrado = document.getElementById('grado').value;
 
-        // Realizar una solicitud AJAX para obtener los paralelos
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                // Parsear la respuesta JSON
-                var paralelos = JSON.parse(this.responseText);
-
-                // Obtener el select de paralelos
-                var paraleloSelect = document.getElementById('id_paralelo_estudiante');
-
-                // Limpiar las opciones actuales
-                paraleloSelect.innerHTML = "";
-
-                // Llenar el select con las opciones recibidas del servidor
-                paralelos.forEach(function (paralelo) {
-                    var option = document.createElement('option');
-                    option.value = paralelo.id;
-                    option.text = paralelo.paralelo;
-                    paraleloSelect.add(option);
-                });
+    // Realizar una solicitud Fetch para obtener los paralelos
+    fetch("../controller/obtener_paralelos.php?grado=" + encodeURIComponent(selectedGrado))
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('La red no respondió correctamente');
             }
-        };
-        xhttp.open("GET", "../controller/obtener_paralelos.php?grado=" + selectedGrado, true);
-        xhttp.send();
-    }
+            return response.json();
+        })
+        .then(paralelos => {
+            // Obtener el select de paralelos
+            var paraleloSelect = document.getElementById('id_paralelo_estudiante');
 
+            // Limpiar las opciones actuales
+            paraleloSelect.innerHTML = "";
+
+            // Llenar el select con las opciones recibidas del servidor
+            paralelos.forEach(paralelo => {
+                var option = document.createElement('option');
+                option.value = paralelo.id;
+                option.text = paralelo.paralelo;
+                paraleloSelect.add(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error.message);
+            // Manejar el error de manera adecuada, por ejemplo, mostrando un mensaje al usuario.
+        });
+}
 
 </script>
+
 
 
 <br><br>

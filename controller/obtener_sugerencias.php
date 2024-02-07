@@ -6,10 +6,11 @@ $conn = conectarBaseDeDatos();
 $cedula = $_POST['cedula'];
 
 // Consulta preparada para obtener sugerencias de la base de datos
-$query = "SELECT e.cedula, e.nombres, e.apellidos 
+$query = "SELECT DISTINCT e.cedula, e.nombres, e.apellidos 
 FROM estudiante e 
-JOIN matricula m ON e.Id=m.id_estudiante
-WHERE cedula LIKE :cedula AND m.id_estudiante IS NOT NULL;";
+JOIN matricula m ON e.Id = m.id_estudiante
+LEFT JOIN responsables r ON r.id_estudiante = e.Id
+WHERE e.cedula LIKE :cedula AND m.id_estudiante IS NOT NULL AND r.id_estudiante IS NULL;";
 $statement = $conn->prepare($query);
 $statement->bindValue(':cedula', "$cedula%", PDO::PARAM_STR);
 $statement->execute();
