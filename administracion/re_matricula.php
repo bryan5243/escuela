@@ -16,8 +16,7 @@ include_once '../model/conexion.php';
         <label for="foto1">
             <h3>Foto del Estudiante :</h3><br>
         </label>
-        <input type="file" name="imagen" id="fileInput1" class="custom-file-input"
-            onchange="validarImagen(event, 'imagen-preview1', 'mensaje-error1')" required>
+        <input type="file" name="imagen" id="fileInput1" class="custom-file-input" onchange="validarImagen(event, 'imagen-preview1', 'mensaje-error1')" required>
         <label for="fileInput1" class="custom-file-label">Seleccionar archivo</label>
         <br>
         <div id="mensaje-error1" style="display: none; color: red;"></div>
@@ -33,8 +32,10 @@ include_once '../model/conexion.php';
         <label for="cedula_estudiante">
             <p>1. Cédula del Estudiante</p>
         </label>
-        <input class="input" type="text" id="cedula_estudiante" name="cedula_estudiante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"required>
+        <input class="input" type="text" id="cedula_estudiante" name="cedula_estudiante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" id="cedula" oninput="verificarCedula()" required>
         <span class="input-border"></span>
+        <div id="mensaje"></div>
+
     </div>
 </div>
 
@@ -44,7 +45,7 @@ include_once '../model/conexion.php';
         <label for="apellidos_estudiante">
             <p>2. Apellidos del Estudiante</p>
         </label>
-        <input class="input" type="text" id="apellidos_estudiante" name="apellidos_estudiante"   oninput="validarTexto(this)" required>
+        <input class="input" type="text" id="apellidos_estudiante" name="apellidos_estudiante" oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 
@@ -52,7 +53,7 @@ include_once '../model/conexion.php';
         <label for="nombres_estudiante">
             <p>3. Nombres del Estudiante</p>
         </label>
-        <input type="text" class="input" id="nombres_estudiante" name="nombres_estudiante"  oninput="validarTexto(this)" required>
+        <input type="text" class="input" id="nombres_estudiante" name="nombres_estudiante" oninput="validarTexto(this)" required>
         <span class="input-border"></span>
     </div>
 
@@ -189,8 +190,7 @@ include_once '../model/conexion.php';
         <label for="condicion_estudiante">
             <p>12. Condición del Estudiante ¿Posee Discapacidad?</p>
         </label>
-        <select class="input" id="condicion_estudiante" name="condicion_estudiante" required
-            onchange="habilitarCampos()">
+        <select class="input" id="condicion_estudiante" name="condicion_estudiante" required onchange="habilitarCampos()">
             <option value="" selected disabled>Seleccionar</option>
             <option value="1">SI</option>
             <option value="0">NO</option>
@@ -232,7 +232,7 @@ include_once '../model/conexion.php';
         var camposDiscapacidad = document.querySelectorAll('.form-container input[type="text"][name^="tipo_discapacidad"], .form-container input[type="text"][name^="porcentaje_discapacidad"], .form-container input[type="text"][name^="carnet_discapacidad"]');
 
         // Habilitar o deshabilitar los campos de discapacidad según la selección
-        camposDiscapacidad.forEach(function (campo) {
+        camposDiscapacidad.forEach(function(campo) {
             campo.disabled = condicionEstudiante.value !== "1";
 
             // Establecer el valor en "NA" cuando se deshabilitan
@@ -247,42 +247,71 @@ include_once '../model/conexion.php';
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <script>
-   function cargarParalelos() {
-    console.log('cargarParalelos() se ejecutó');
-    
-    var selectedGrado = document.getElementById('grado').value;
+    function cargarParalelos() {
+        console.log('cargarParalelos() se ejecutó');
 
-    // Realizar una solicitud Fetch para obtener los paralelos
-    fetch("../controller/obtener_paralelos.php?grado=" + encodeURIComponent(selectedGrado))
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('La red no respondió correctamente');
-            }
-            return response.json();
-        })
-        .then(paralelos => {
-            // Obtener el select de paralelos
-            var paraleloSelect = document.getElementById('id_paralelo_estudiante');
+        var selectedGrado = document.getElementById('grado').value;
 
-            // Limpiar las opciones actuales
-            paraleloSelect.innerHTML = "";
+        // Realizar una solicitud Fetch para obtener los paralelos
+        fetch("../controller/obtener_paralelos.php?grado=" + encodeURIComponent(selectedGrado))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('La red no respondió correctamente');
+                }
+                return response.json();
+            })
+            .then(paralelos => {
+                // Obtener el select de paralelos
+                var paraleloSelect = document.getElementById('id_paralelo_estudiante');
 
-            // Llenar el select con las opciones recibidas del servidor
-            paralelos.forEach(paralelo => {
-                var option = document.createElement('option');
-                option.value = paralelo.id;
-                option.text = paralelo.paralelo;
-                paraleloSelect.add(option);
+                // Limpiar las opciones actuales
+                paraleloSelect.innerHTML = "";
+
+                // Llenar el select con las opciones recibidas del servidor
+                paralelos.forEach(paralelo => {
+                    var option = document.createElement('option');
+                    option.value = paralelo.id;
+                    option.text = paralelo.paralelo;
+                    paraleloSelect.add(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+                // Manejar el error de manera adecuada, por ejemplo, mostrando un mensaje al usuario.
             });
-        })
-        .catch(error => {
-            console.error('Error:', error.message);
-            // Manejar el error de manera adecuada, por ejemplo, mostrando un mensaje al usuario.
-        });
-}
-
+    }
 </script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Función para verificar la cédula en tiempo real
+        function verificarCedula() {
+            var cedula = $("#cedula_estudiante").val();
 
+            // Realizar una solicitud AJAX para verificar la existencia en la base de datos
+            $.ajax({
+                type: "POST",
+                url: "../admin/verificar_cedula.php",
+                data: {
+                    cedula: cedula
+                },
+                success: function(response) {
+                    if (response.trim() === "existente") {
+                        $("#mensaje").html("<span style='color:red;'>Estudiante ya inscrito</span>");
+                    } else {
+                        $("#mensaje").html("<span style='color:green;'>Cédula válida</span>");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", error);
+                    // Manejar errores según sea necesario
+                }
+            });
+        }
 
+        // Agregar el evento oninput al campo de cédula_estudiante
+        $("#cedula_estudiante").on("input", verificarCedula);
+    });
+</script>
 
 <br><br>

@@ -1,7 +1,6 @@
 <?php
 // ... (código de conexión y configuración)
 include_once '../model/conexion.php';
-var_dump($_POST);
 
 if (isset($_POST['grado']) && isset($_POST['paralelo'])) {
     $conn = conectarBaseDeDatos();
@@ -9,7 +8,7 @@ if (isset($_POST['grado']) && isset($_POST['paralelo'])) {
     $selectedParalelo = $_POST['paralelo'];
 
     // Consulta para eliminar el paralelo
-    $sql = "DELETE FROM paralelo WHERE id_grado = :selectedGrado AND id = :selectedParalelo";
+    $sql = "DELETE FROM paralelo WHERE id_grados = :selectedGrado AND id = :selectedParalelo";
 
     try {
 

@@ -234,7 +234,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     <i class="fas fa-user-check" style="font-size: 28px; color: #ec1d17;"></i>
                     </button>
                 </form>';
-                echo ' <form action="../controller/eliminado.php" method="post" id="eliminarForm">
+                
+                echo ' <form action="../controller/eliminar_prematricula.php" method="post" id="eliminarForm">
                 <input type="hidden" name="id" value="' . $row['id'] . '">
                 <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
                     <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
@@ -264,6 +265,8 @@ include_once "./header.php";
 <script src="../js/tema.js"></script>
 <script src="../src/datables/jquery-3.5.1.js"></script>
 <script src="../js/calendario.js"></script>
+<script src="../js/eliminar_prematricula.js"></script>
+
 
 
 <script src="../src/datables/DataTables-1.13.4/js/jquery.dataTables.min.js"></script>

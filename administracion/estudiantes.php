@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 use PgSql\Connection\Connection;
 
 include_once "../layout/plantilla.php";
@@ -12,21 +13,23 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 }
 
 ?>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    integrity="sha512-ez+oQUa5o2Y6LRpeW4tzZSsck4m4XLqf3qIrxFmUfcHA70SE1k/b1juv+7Sg1lfj+Ps6C2lG5LUdi8FwA2EwCQ=="
-    crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-ez+oQUa5o2Y6LRpeW4tzZSsck4m4XLqf3qIrxFmUfcHA70SE1k/b1juv+7Sg1lfj+Ps6C2lG5LUdi8FwA2EwCQ==" crossorigin="anonymous" />
 
 <style>
     :root {
         --color-dark-variant: #222425;
-
+        --border-before-color: rgba(255, 255, 255);
+        --color-text: #222425;
+        --color-modal: #e0e0e0;
     }
 
     .dark-theme-variables {
-
-        --color-dark-variant: #a3bdcc;
-
+        --color-dark-variant: #ffffff;
+        --border-before-color: rgba(254, 251, 251, 0.39);
+        --color-text: #222425;
+        --color-modal: rgba(0, 0, 0, 0.7)
     }
+
 
 
 
@@ -117,6 +120,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     nav,
     thead,
     span,
+    date,
     .dt-buttons.ui-buttonset button,
     .dt-buttons.ui-buttonset span,
     .dt-button.ui-button.ui-corner-all.buttons-collection.buttons-colvis,
@@ -196,46 +200,90 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     }
 
     .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-  }
 
-  .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-  }
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+        color: var(--color-dark-variant);
+        background-color: rgba(0, 0, 0, 0.4);
+        font-size: 16px;
+    }
 
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
+    .modal-content {
+        background-color: var(--color-modal);
+        margin: 15% auto;
+        padding: 10px;
+        width: 18%;
 
-  .close:hover,
-  .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-  }
+    }
+
+    .modal-button {
+        top: 20px;
+        right: 5px;
+        font-size: 20px;
+        width: 100%;
+        /* Ancho al 100% del contenedor */
+        height: 100%;
+        /* Alto al 100% del contenedor */
+        padding: 0;
+        margin-top: 10px;
+        background-color: red;
+        color: white;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+
+        top: 10px;
+        right: 10px;
+        font-size: 30px;
+        width: 25px;
+        height: 25px;
+        padding: 0;
+        background-color: red;
+        color: white;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        /* Cambia el cursor al pasar sobre el botón */
+        border-radius: 50%;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    #fecha {
+        height: 25px;
+        width: 120px;
+        /* Puedes ajustar el valor según tus necesidades */
+        color: black;
+    }
 </style>
 <link rel="stylesheet" href="../src/datables//Responsive-2.4.1/css/responsive.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css"
-    integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    integrity="sha384-..." crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-..." crossorigin="anonymous">
 
 
 
@@ -277,8 +325,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         </thead>
         <tbody>
             <?php
-$conn = conectarBaseDeDatos();
-$sql = "SELECT DISTINCT
+            $conn = conectarBaseDeDatos();
+            $sql = "SELECT DISTINCT
             e.id,
             e.cedula,
             e.apellidos,
@@ -298,14 +346,14 @@ $sql = "SELECT DISTINCT
             JOIN paralelo pa on g.id=pa.id_grados
             JOIN persona per on e.Id=per.id_estudiante
             JOIN rol r on r.id_persona=per.Id
-            where m.id_paralelo=pa.id AND r.rol='Representante' AND pe.estado=1";
-$result = $conn->query($sql);
-if (!$result) {
-    echo "Error al obtener los datos: " . $conn->errorInfo()[2];
-    exit;
-}
-while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-    echo '<tr>
+            where m.id_paralelo=pa.id AND r.rol='Representante' AND pe.estado=1 AND e.estado=1";
+            $result = $conn->query($sql);
+            if (!$result) {
+                echo "Error al obtener los datos: " . $conn->errorInfo()[2];
+                exit;
+            }
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                echo '<tr>
                 <td>' . $row['id'] . '</td>
                 <td>' . $row['cedula'] . '</td>
                 <td>' . $row['nombres'] . '</td>
@@ -317,7 +365,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 <td>' . $row['direccion'] . '</td>
                 <td>' . $row['telefono'] . '</td>
                 <td>';
-    echo '<div style="display: flex; align-items: center;" >
+                echo '<div style="display: flex; align-items: center;" >
 
                 <form action="./actuali_matriculacion.php" method="post" id="actForm">
                     <input type="hidden" name="id" value="' . $row['id'] . '">
@@ -332,9 +380,9 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     <i class="fas fa-calendar-days" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>';
-    
 
-    echo '<form id="form_solicitud' . $row['id'] . '"  action="../controller/solicitud_ingreso.php" method="post" target="_blank">
+
+                echo '<form id="form_solicitud' . $row['id'] . '"  action="../controller/solicitud_ingreso.php" method="post" target="_blank">
                 <button class="hand-cursor" type="submit" name="generar_solicitud" value="' . $row['id'] . '" style="background-color: var(--c);">
                     <i class="fas fa-file-pdf" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
@@ -344,37 +392,77 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 <button class="hand-cursor" type="submit" name="generar_reporte" value="' . $row['id'] . '" style="background-color: var(--c);">
                     <i class="fas fa-print" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
-            </form>
+            </form>';
+                // Verificar si hay registros en la tabla responsables para este estudiante
+                $id_estudiante = $row['id'];
+                $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                $result_responsables = $conn->query($query_responsables);
 
-            <form id="form_' . $row['id'] . '" action="../administracion/tabresponsable.php" method="post" >
-    <button class="hand-cursor show-details-btn" type="submit" name="" value="' . $row['id'] . '" style="background-color: var(--c);" >
-        <i class="fas fa-person" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
-    </button>
-</form>
+                if ($result_responsables) {
+                    $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                    $count_responsables = $fila_responsables['count'];
+                    if ($count_responsables == 0) {
 
-<form id="form_acuerdo' . $row['id'] . '"  action="../controller/acuerdo_ministerial.php" method="post" target="_blank">
+                        echo '<form id="form_' . $row['id'] . '" action="../administracion/tabresponsable.php" method="get">
+                        <input type="hidden" name="cedula" value="' . $row['cedula'] . '">
+                        <button class="hand-cursor show-details-btn" type="submit" name="" value="' . $row['id'] . '" style="background-color: var(--c);">
+                            <i class="fas fa-person" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                        </button>
+                      </form>';
+                    } else {
+                        // No hay registros, no mostrar el botón
+                    }
+
+                    // Liberar resultado de la consulta de responsables
+                    $result_responsables->closeCursor();
+                } else {
+                    echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                }
+
+                // Verificar si hay registros en la tabla responsables para este estudiante
+                $id_estudiante = $row['id'];
+                $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                $result_responsables = $conn->query($query_responsables);
+
+                if ($result_responsables) {
+                    $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                    $count_responsables = $fila_responsables['count'];
+                    if ($count_responsables > 0) {
+                        echo '<form id="form_acuerdo' . $row['id'] . '"  action="../controller/acuerdo_ministerial.php" method="post" target="_blank">
                 <button class="hand-cursor" type="submit" name="generar_acuerdo" value="' . $row['id'] . '" style="background-color: var(--c);">
                     <i class="fas fa-book" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
-            </form>
+            </form>';
+                    } else {
+                        // No hay registros, no mostrar el botón
+                    }
+
+                    // Liberar resultado de la consulta de responsables
+                    $result_responsables->closeCursor();
+                } else {
+                    echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                }
 
 
-        </div>
+                echo ' </div>
                 </td>';
-}
-?>
+            }
+            ?>
 
         </tbody>
     </table>
 
     <div id="myModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="cerrarModal()">&times;</span>
-        <label for="fecha">Seleccione una fecha:</label>
-        <input type="date" id="fecha" name="fecha">
-        <button onclick="guardarFecha()">Guardar</button>
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2 style="margin-left: 15px;margin-bottom: 10px;">Cambiar fecha de solicitud</h2>
+
+            <label for="fecha" style="margin-left: 15px;">Seleccione una fecha:</label>
+            <input type="date" id="fecha" name="fecha" onclick="validarFecha()" onchange="validarFecha()">
+
+            <button class="modal-button" onclick="guardarFecha()">Guardar</button>
+        </div>
     </div>
-</div>
 
 </main>
 <?php
@@ -386,52 +474,85 @@ include_once "./header.php";
 <script src="../js/menu.js"></script>
 
 <script>
-// Función para abrir la ventana modal
-function abrirModal(id) {
-    console.log("ID del estudiante:", id);
-
-  // Aquí puedes realizar acciones adicionales antes de abrir el modal, si es necesario
-  document.getElementById('myModal').style.display = 'block';
-}
-
-// Función para cerrar la ventana modal
-function cerrarModal() {
-  document.getElementById('myModal').style.display = 'none';
-}
-
-function guardarFecha() {
-    var estudianteId = document.getElementById('estudiante_id').value;
-    var nuevaFecha = document.getElementById('fecha').value;
-
-    // Realizar una solicitud AJAX al servidor para actualizar la fecha
-    fetch('actualizar_fecha.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            estudianteId: estudianteId,
-            nuevaFecha: nuevaFecha,
-        }),
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('La solicitud no fue exitosa');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Manejar la respuesta del servidor si es necesario
-        console.log(data);
-        cerrarModal(); // Cerrar el modal después de la actualización
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        cerrarModal(); // Cerrar el modal en caso de error
+    document.addEventListener("DOMContentLoaded", function() {
+        validarFecha(); // Llamar a validarFecha() al cargar la página
     });
-}
+
+    function validarFecha() {
+        var fechaInput = document.getElementById("fecha");
+        var fechaActual = new Date().toISOString().split('T')[0];
+        fechaInput.setAttribute('max', fechaActual);
+
+        if (fechaInput.value > fechaActual) {
+            alert("No puedes seleccionar una fecha mayor a la actual");
+            fechaInput.value = fechaActual; // Establecer la fecha actual
+        }
+    }
+</script>
 
 
+<script>
+    // Función para abrir la ventana modal
+    function abrirModal(id) {
+        console.log("ID del estudiante:", id);
+
+        // Aquí puedes realizar acciones adicionales antes de abrir el modal, si es necesario
+        document.getElementById('myModal').style.display = 'block';
+    }
+
+    // Función para cerrar la ventana modal
+    function cerrarModal() {
+        document.getElementById('myModal').style.display = 'none';
+    }
+
+    function guardarFecha() {
+        var estudianteId = document.getElementById('estudiante_id').value;
+        var nuevaFecha = document.getElementById('fecha').value;
+
+        // Realizar una solicitud AJAX al servidor para actualizar la fecha
+        fetch('actualizar_fecha.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    estudianteId: estudianteId,
+                    nuevaFecha: nuevaFecha,
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('La solicitud no fue exitosa');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Manejar la respuesta del servidor si es necesario
+                console.log(data);
+
+                // Mostrar SweetAlert2 con mensaje de éxito
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Fecha actualizada con éxito!',
+                    showConfirmButton: false,
+                    timer: 1500 // Duración del mensaje en milisegundos
+                });
+
+                cerrarModal(); // Cerrar el modal después de la actualización
+            })
+            .catch(error => {
+                console.error('Error:', error);
+
+                // Mostrar SweetAlert2 con mensaje de error
+                Swal.fire({
+                    icon: 'error',
+                    title: '¡Error al actualizar la fecha!',
+                    text: 'Ha ocurrido un error al intentar actualizar la fecha.',
+                });
+
+                cerrarModal(); // Cerrar el modal en caso de error
+            });
+    }
 </script>
 
 
@@ -460,7 +581,7 @@ function guardarFecha() {
 <script src="../js/calendario.js"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         var table = $('#example').DataTable({
             lengthChange: false,
             buttons: ['excel', 'pdf'],
@@ -474,16 +595,13 @@ function guardarFecha() {
 
         table.buttons().container().insertBefore('#example_filter');
     });
-
-
-
 </script>
 <script>
     // JavaScript to handle button click and submit the form
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const reportButtons = document.querySelectorAll('button[name="generar_reporte"]');
         reportButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
+            button.addEventListener('click', function(event) {
                 event.preventDefault(); // Evita la acción de envío por defecto del botón
 
                 const estudianteId = this.value;
@@ -500,10 +618,10 @@ function guardarFecha() {
 </script>
 <script>
     // JavaScript to handle button click and submit the form
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const reportButtons = document.querySelectorAll('button[name="generar_solicitud"]');
         reportButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
+            button.addEventListener('click', function(event) {
                 event.preventDefault(); // Evita la acción de envío por defecto del botón
 
                 const estudianteId = this.value;
@@ -521,10 +639,10 @@ function guardarFecha() {
 
 <script>
     // JavaScript to handle button click and submit the form
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const reportButtons = document.querySelectorAll('button[name="generar_acuerdo"]');
         reportButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
+            button.addEventListener('click', function(event) {
                 event.preventDefault(); // Evita la acción de envío por defecto del botón
 
                 const estudianteId = this.value;

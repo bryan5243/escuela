@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 use PgSql\Connection\Connection;
 
 ?>
@@ -88,18 +89,19 @@ use PgSql\Connection\Connection;
         <div class="row">
             <div class="mb-3">
                 <label for="cedula" class="form-label">1. Cedula:</label>
-                <input type="text" class="form-control" name="cedula" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
+                <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" name="cedula" id="cedula" oninput="verificarCedula()" required>
+                <div id="mensaje"></div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="apellidos" class="form-label">2. Apellidos:</label>
-                    <input type="text" class="form-control" name="apellidos"  oninput="validarTexto(this)" required>
+                    <input type="text" class="form-control" name="apellidos" oninput="validarTexto(this)" required>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="mb-3">
                     <label for="nombres" class="form-label">3. Nombres:</label>
-                    <input type="text" class="form-control" name="nombres"  oninput="validarTexto(this)" required>
+                    <input type="text" class="form-control" name="nombres" oninput="validarTexto(this)" required>
                 </div>
             </div>
         </div>
@@ -113,8 +115,7 @@ use PgSql\Connection\Connection;
 
         <div class="mb-3">
             <label for="discapacidad" class="form-label">5. Posee algún tipo de discapacidad:</label>
-            <select class="form-select" name="discapacidad" id="discapacidad" required
-                onchange="toggleCamposDiscapacidad()">
+            <select class="form-select" name="discapacidad" id="discapacidad" required onchange="toggleCamposDiscapacidad()">
                 <option value="" selected disabled>¿Tiene alguna discapacidad?</option>
                 <option value="si">Si</option>
                 <option value="no">No</option>
@@ -133,8 +134,7 @@ use PgSql\Connection\Connection;
                 <div class="col-md-6">
                     <div class="mb-3">
                         <label for="porcentajeDiscapacidad" class="form-label">7. Porcentaje:</label>
-                        <input type="text" class="form-control" name="porcentajeDiscapacidad"
-                            id="porcentajeDiscapacidad" disabled>
+                        <input type="text" class="form-control" name="porcentajeDiscapacidad" id="porcentajeDiscapacidad" disabled>
                     </div>
                 </div>
             </div>
@@ -151,8 +151,7 @@ use PgSql\Connection\Connection;
 
                 <div class="mb-3">
                     <label for="apellidosNombres_Padre" class="form-label">9. Apellidos y Nombres:</label>
-                    <input type="text" class="form-control" name="apellidosNombres_Padre" id="apellidosNombres_Padre"  oninput="validarTexto(this)"
-                        required>
+                    <input type="text" class="form-control" name="apellidosNombres_Padre" id="apellidosNombres_Padre" oninput="validarTexto(this)" required>
                 </div>
 
                 <div class="mb-3">
@@ -171,8 +170,7 @@ use PgSql\Connection\Connection;
 
                 <div class=" mb-3">
                     <label for="apellidosNombres_Madre" class="form-label">12. Apellidos y Nombres:</label>
-                    <input type="text" class="form-control" id="apellidosNombres_Madre" name="apellidosNombres_Madre"  oninput="validarTexto(this)"
-                        required>
+                    <input type="text" class="form-control" id="apellidosNombres_Madre" name="apellidosNombres_Madre" oninput="validarTexto(this)" required>
                 </div>
 
                 <div class=" mb-3">
@@ -197,14 +195,12 @@ use PgSql\Connection\Connection;
 
                 <div class="mb-3">
                     <label for="cedula_Representante" class="form-label">14. Cedula:</label>
-                    <input type="text" class="form-control" id="cedula_Representante" name="cedula_Representante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
-                        required>
+                    <input type="text" class="form-control" id="cedula_Representante" name="cedula_Representante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="apellidosNombres_Representante" class="form-label">15. Apellidos y Nombres:</label>
-                    <input type="text" class="form-control" id="apellidosNombres_Representante"
-                        name="apellidosNombres_Representante"   oninput="validarTexto(this)" required>
+                    <input type="text" class="form-control" id="apellidosNombres_Representante" name="apellidosNombres_Representante" oninput="validarTexto(this)" required>
                 </div>
 
                 <div class="mb-3">
@@ -219,10 +215,75 @@ use PgSql\Connection\Connection;
 
 
     </form>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Función para verificar la cédula en tiempo real
+            function verificarCedula() {
+                var cedula = $("#cedula").val();
+
+                // Realizar una solicitud AJAX para verificar la existencia en la base de datos
+                $.ajax({
+                    type: "POST",
+                    url: "verificar_cedula.php",
+                    data: {
+                        cedula: cedula
+                    },
+                    success: function(response) {
+                        if (response.trim() === "existente") {
+                            $("#mensaje").html("<span style='color:red;'>Estudiante ya inscrito</span>");
+                        } else {
+                            // Si la cédula no está registrada, realizar la validación ecuatoriana
+                            validarCedulaEcuatoriana(cedula);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error en la solicitud AJAX:", error);
+                        // Manejar errores según sea necesario
+                    }
+                });
+            }
+
+            // Agregar el evento oninput al campo de cédula
+            $("#cedula").on("input", verificarCedula);
+
+            // Función para validar la cédula ecuatoriana
+            function validarCedulaEcuatoriana(cedula) {
+                var mensajeDiv = $("#mensaje");
+
+                // Verificar si la cédula tiene 10 dígitos
+                if (cedula.length === 10) {
+                    // Coeficientes para el cálculo del dígito verificador
+                    var coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+
+                    // Calcular el dígito verificador
+                    var total = 0;
+                    for (var i = 0; i < 9; i++) {
+                        var digito = parseInt(cedula[i]);
+                        var resultado = digito * coeficientes[i];
+                        total += (resultado > 9) ? resultado - 9 : resultado;
+                    }
+
+                    var verificadorCalculado = (total % 10 === 0) ? 0 : 10 - (total % 10);
+
+                    // Verificar que el dígito verificador coincida
+                    if (verificadorCalculado !== parseInt(cedula[9])) {
+                        mensajeDiv.html("<span style='color:red;'>Numero de cedula no valido.</span>");
+                    } else {
+                        mensajeDiv.html("<span style='color:green;'>Cédula válida</span>");
+                    }
+                } else {
+                    mensajeDiv.html('La cédula debe tener 10 dígitos.');
+                }
+            }
+        });
+    </script>
+
+
+
     <?php
     include_once '../model/conexion.php';
-    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-';
+    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $pdo = conectarBaseDeDatos();
 
@@ -235,7 +296,7 @@ use PgSql\Connection\Connection;
             $nombresEstudiante = $_POST['nombres'];
             $direccionEstudiante = $_POST['direccion'];
             $condicionEstudiante = ($_POST['discapacidad'] == 'si') ? 1 : 0; // Convert 'si' to 1, 'no' to 0
-    
+
             // Insertar datos en la tabla Estudiante
             $stmtEstudiante = $pdo->prepare("INSERT INTO estudiante (cedula, apellidos, nombres, direccion, condicion) VALUES (?, ?, ?, ?, ?)");
             $stmtEstudiante->execute([
@@ -289,7 +350,7 @@ use PgSql\Connection\Connection;
             $pdo->rollback();
 
             // Mostrar SweetAlert2 en caso de error
-    
+
             exit();
         }
     }

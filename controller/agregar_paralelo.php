@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     try {
         // Realiza la inserción en la base de datos
-        $sql = "INSERT INTO paralelo (id_grado, paralelo, created_by) VALUES (:grado_id, :paralelo, :usuario)";
+        $sql = "INSERT INTO paralelo (id_grados, paralelo, created_by) VALUES (:grado_id, :paralelo, :usuario)";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':grado_id', $grado_id);
         $stmt->bindParam(':paralelo', $paralelo);

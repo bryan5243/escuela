@@ -128,7 +128,7 @@ function generateReport($estudianteId)
 
             // Establecer la configuración local para obtener el mes en español
             $pdf->Ln(25);
-            $pdf->SetX(100); // Ajusta la posición horizontal del texto según sea necesario
+            $pdf->SetX(90); // Ajusta la posición horizontal del texto según sea necesario
             $pdf->SetFont('Arial', '', 12);
             $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', ("El Cambio, $dia de $mes del $ano")), 0, 1, 'C');
             $fechaGenerada = true;
@@ -156,7 +156,7 @@ function generateReport($estudianteId)
 
     $pdf->Ln(0);
     $pdf->SetX(35); // Ajusta la posición horizontal del texto según sea necesario
-    $pdf->SetFont('Arial', '', 13);
+    $pdf->SetFont('Arial', '', 10);
     $pdf->Cell(0, 5, iconv('UTF-8', 'ISO-8859-1', ("CIUDAD.")), 0, 1, 'L');
 
 

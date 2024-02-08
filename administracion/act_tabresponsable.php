@@ -51,11 +51,16 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
 
 
-    <?php 
-
-    include_once '../controller/guardar_responsables.php';
+    <?php
+    // Verificar si la solicitud proviene del formulario y tiene un valor de 'id'
+    if (isset($_POST['id'])) {
+        // Obtener el valor del ID del estudiante
+        $idEstudiante = $_POST['id'];
+       
+    }
+    include_once("../controller/actu_responsables.php");
     ?>
-   
+
     <form action="#" method="post" id="myForm" enctype="multipart/form-data">
 
         <div>
@@ -67,17 +72,17 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     <h3>Traslado
                     </h3>
                 </li>
-                
-               
+
+
             </ul>
 
             <div class="tab-content">
                 <div id="tab1" style="display: block;">
-                    <?php include_once("./responsables.php"); ?>
+                    <?php include_once("./act_responsables.php"); ?>
 
                 </div>
                 <div id="tab2" style="display: none;">
-                    <?php include_once("./traslado.php"); ?>
+                    <?php include_once("./act_traslado.php"); ?>
                 </div>
                 <br><br>
 
@@ -99,7 +104,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
 <?php
 include("header.php")
-    ?>
+?>
 <script src="../js/mostrar_fotores.js"></script>
 <script src="../js/menu.js"></script>
 <script src="../js/tabs.js"></script>

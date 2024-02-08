@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 use PgSql\Connection\Connection;
 
 include_once "../layout/plantilla.php";
@@ -12,9 +13,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 }
 
 ?>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    integrity="sha512-ez+oQUa5o2Y6LRpeW4tzZSsck4m4XLqf3qIrxFmUfcHA70SE1k/b1juv+7Sg1lfj+Ps6C2lG5LUdi8FwA2EwCQ=="
-    crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-ez+oQUa5o2Y6LRpeW4tzZSsck4m4XLqf3qIrxFmUfcHA70SE1k/b1juv+7Sg1lfj+Ps6C2lG5LUdi8FwA2EwCQ==" crossorigin="anonymous" />
 <link rel="stylesheet" href="../css/inputs.css">
 
 
@@ -266,15 +265,44 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         align-items: center;
         margin-left: 20px;
     }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+    }
+
+    /* Estilo para el contenedor del modal */
+    .modal-container {
+        background: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        max-width: 600px;
+        width: 100%;
+    }
+
+    /* Estilo para el botón de cerrar */
+    .modal-close {
+        cursor: pointer;
+        float: right;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
 </style>
 
 <link rel="stylesheet" href="../src/datables//Responsive-2.4.1/css/responsive.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css"
-    integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-    integrity="sha384-..." crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-..." crossorigin="anonymous">
 <link rel="stylesheet" href="../css/agregar.css">
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -336,8 +364,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         </thead>
         <tbody>
             <?php
-$conn = conectarBaseDeDatos();
-$sql = "SELECT DISTINCT
+            $conn = conectarBaseDeDatos();
+            $sql = "SELECT DISTINCT
             e.id,
             e.cedula,
             e.apellidos,
@@ -351,14 +379,14 @@ $sql = "SELECT DISTINCT
             JOIN periodo pe on pe.Id=m.id_periodo
             JOIN grado g on g.id=m.id_grado
             JOIN paralelo pa on g.id=pa.id_grados
-            where m.id_paralelo=pa.id;";
-$result = $conn->query($sql);
-if (!$result) {
-    echo "Error al obtener los datos: " . $conn->errorInfo()[2];
-    exit;
-}
-while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-    echo '<tr>
+            where m.id_paralelo=pa.id AND e.estado=1;";
+            $result = $conn->query($sql);
+            if (!$result) {
+                echo "Error al obtener los datos: " . $conn->errorInfo()[2];
+                exit;
+            }
+            while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                echo '<tr>
                 <td>' . $row['id'] . '</td>
                 <td>' . $row['cedula'] . '</td>
                 <td>' . $row['apellidos'] . '</td>
@@ -366,24 +394,57 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 <td>' . $row['grado'] . '</td>
                 <td>' . $row['paralelo'] . '</td>
                 <td>';
-    echo '<div style="display: flex; align-items: center;" >
+                echo '<div style="display: flex; align-items: center;" >
                 <form action="" method="post" id="actForm">
                     <input type="hidden" name="id" value="' . $row['id'] . '">
                     <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
-                    <i class="fas fa-pen-to-square" style="font-size: 28px; color: #ec1d17;"></i>
+                    <i class="far fa-circle-check" style="font-size: 28px; color: #ec1d17;"></i>
                     </button>
                 </form>';
-    echo '<form action="" method="post" id="eliminarForm">
+
+                // Verificar si hay registros en la tabla responsables para este estudiante
+                $id_estudiante = $row['id'];
+                $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                $result_responsables = $conn->query($query_responsables);
+
+                if ($result_responsables) {
+                    $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                    $count_responsables = $fila_responsables['count'];
+                    if ($count_responsables > 0) {
+                        echo '<form  action="../administracion/act_tabresponsable.php" method="post" >
+                <input type="hidden" name="id" value="' . $row['id'] . '">
+                <button class="hand-cursor show-details-btn" type="submit" name="" value="' . $row['id'] . '" style="background-color: var(--c);" >
+                    <i class="fas fa-person" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+                </form>';
+                    } else {
+                        // No hay registros, no mostrar el botón
+                    }
+
+                    // Liberar resultado de la consulta de responsables
+                    $result_responsables->closeCursor();
+                } else {
+                    echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                }
+
+                echo '
+                <form action="" method="post">
+    <input type="hidden" name="id" value="' . $row['id'] . '">
+    <button class="hand-cursor" type="button" style="background-color: var(--c);" onclick="mostrarVentana()">
+        <i class="fas fa-users" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+    </button>
+</form>';
+
+                echo ' <form action="" method="post" id="eliminarForm">
                 <input type="hidden" name="id" value="' . $row['id'] . '">
                 <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
                     <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>';
-    '</div>';
-    '<td> ';
-
-}
-?>
+                '</div>';
+                '<td> ';
+            }
+            ?>
 
         </tbody>
     </table>
@@ -397,7 +458,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     <label for="periodo">
                         <p>Periodos Académicos</p>
                     </label>
-                    <input type="text" class="input" id="periodos" name="periodos" required>
+                    <input type="text" class="input" id="periodos" name="periodos" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
                     <span class="input-border"></span>
                 </div>
                 <div class="form">
@@ -419,7 +480,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     <label for="periodo">
                         <p>Agregar grado</p>
                     </label>
-                    <input type="text" class="input" id="grados" name="grados" required>
+                    <input type="text" class="input" id="grados" pattern="^\S*$" name="grados" required oninput="capitalizeFirstLetter()">
                     <span class="input-border"></span>
                 </div>
                 <div class="form">
@@ -432,66 +493,129 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         </div>
     </div>
 
+
+
+
     <div class="overlay" id="modal3">
-        <div class="modal" style="width: 300px;">
-            <h1>Eliminar paralelo</h1>
+        <div class="modal" style="width: 320px;">
+            <h1>Agregar Paralelo</h1>
             <div class="form-container" style="display: flex; flex-wrap: wrap;">
                 <div class="form">
                     <label for="grado">
                         <p>Seleccionar Grado</p>
                     </label>
                     <div class="input-with-button">
-                        <select type="text" class="input" id="grado" name="grado" required onchange="cargarParalelos()">
+                        <select type="text" class="input" id="grado" name="grado" required ">
                             <option value="" selected disabled>Seleccione un grado</option>
 
                             <?php
-$conn = conectarBaseDeDatos();
-try {
-    // Consulta para obtener los grados desde la base de datos
-    $sql = "SELECT id, grado FROM grado";
-    $result = $conn->query($sql);
+                            $conn = conectarBaseDeDatos();
+                            try {
+                                // Consulta para obtener los grados desde la base de datos
+                                $sql = "SELECT id, grado FROM grado";
+                                $result = $conn->query($sql);
 
-    // Llenar las opciones del select con los datos de la base de datos
-    if ($result->rowCount() > 0) {
-        foreach ($result as $row) {
-            echo "<option style=color:#000000 value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
-        }
-    } else {
-        echo "<option value=''>No hay grados disponibles</option>";
-    }
-} catch (PDOException $e) {
-    echo "Error de conexión: " . $e->getMessage();
-}
-?>
+                                // Llenar las opciones del select con los datos de la base de datos
+                                if ($result->rowCount() > 0) {
+                                    foreach ($result as $row) {
+                                        echo "<option style=color:#000000 value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
+                                    }
+                                } else {
+                                    echo "<option value=''>No hay grados disponibles</option>";
+                                }
+                            } catch (PDOException $e) {
+                                echo "Error de conexión: " . $e->getMessage();
+                            }
+                            ?>
                         </select>
                     </div>
-                    </div>
-                    <div class="form">
-                    <label for="paralelo">
-                        <p>Seleccionar Paralelo</p>
-                    </label>
-                    <div class="input-with-button">
-                    <input type="text" class="input" id="paralelo" name="paralelo" required>
-                    <span class="input-border"></span>
-                    </div>
-                    </div>
-
-                    <button class="btn-modal" style="margin-left: 40px">Agregar paralelo<i
-                            class="fas fa-check" style="margin-left: 10px;"></i></button>
+                    <div class=" form">
+                            <label for="paralelo">
+                                <p>Seleccionar Paralelo</p>
+                            </label>
+                            <div class="input-with-button">
+                                <input type="text" class="input" id="paralelo" name="paralelo" maxlength="1" required oninput="convertToUppercase()">
+                                <span class="input-border"></span>
                             </div>
+                    </div>
+                    <button id="btn-modal-paralelo" class="btn-modal" style="margin-left: 40px">Agregar paralelo<i class="fas fa-check" style="margin-left: 10px;"></i></button>
+
+                </div>
 
                 <button class="modal-button" onclick="closeModal('modal3')">&times;</button>
+            </div>
         </div>
     </div>
-
 
 
 </main>
 <?php
 include_once "./header.php";
 ?>
+<script>
+    function mostrarVentana() {
+        // Obtén el ID del estudiante al hacer clic en el botón
+        var idEstudiante = <?php echo json_encode($_POST['id']); ?>;
 
+        // Usa AJAX para enviar una solicitud al servidor y obtener los datos de los responsables
+        fetch('../controller/obtener_datos_responsables.php?id=' + idEstudiante)
+            .then(response => response.json())
+            .then(data => mostrarDatosResponsables(data))
+            .catch(error => console.error('Error:', error));
+    }
 
+    function mostrarDatosResponsables(data) {
+        // Crea el fondo oscuro del modal
+        var overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+
+        // Crea el contenedor del modal
+        var modalContainer = document.createElement('div');
+        modalContainer.className = 'modal-container';
+
+        // Crea el botón de cerrar
+        var closeButton = document.createElement('span');
+        closeButton.className = 'modal-close';
+        closeButton.innerHTML = '&times;';
+        closeButton.onclick = function() {
+            overlay.style.display = 'none';
+        };
+
+        // Agrega el contenido del modal
+        modalContainer.innerHTML = `
+            <h2>Datos de Responsables</h2>
+            <p>Responsable 1: ${data.nombre1}</p>
+            <p>Responsable 2: ${data.nombre2}</p>
+            <p>Responsable 3: ${data.nombre3}</p>
+            <!-- Agrega aquí más detalles según tus necesidades -->
+        `;
+
+        // Agrega el botón de cerrar
+        modalContainer.appendChild(closeButton);
+
+        // Agrega el contenedor del modal al fondo oscuro
+        overlay.appendChild(modalContainer);
+
+        // Agrega el fondo oscuro al cuerpo del documento y muestra el modal
+        document.body.appendChild(overlay);
+        overlay.style.display = 'flex';
+    }
+</script>
+
+<script>
+    function convertToUppercase() {
+        var paraleloInput = document.getElementById('paralelo');
+        var inputValue = paraleloInput.value.toUpperCase(); // Convierte a mayúscula
+
+        // Limita la longitud del valor a 1
+        if (inputValue.length > 1) {
+            inputValue = inputValue.substring(0, 1);
+        }
+
+        // Actualiza el valor del campo
+        paraleloInput.value = inputValue;
+    }
+</script>
 
 <script>
     function openModal(modalId) {
@@ -504,63 +628,72 @@ include_once "./header.php";
 </script>
 
 <script>
-   function cargarParalelos() {
-    var selectedGrado = document.getElementById('grado').value;
-    console.log('Selected Grado:', selectedGrado);
+    function cargarParalelos() {
+        var selectedGrado = document.getElementById('grado').value;
+        console.log('Selected Grado:', selectedGrado);
 
-    // Realizar una solicitud Fetch para obtener los paralelos
-    fetch("../controller/obtener_paralelos.php?grado=" + encodeURIComponent(selectedGrado))
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('La red no respondió correctamente');
-            }
-            return response.json();
-        })
-        .then(paralelos => {
-            console.log('Paralelos recibidos:', paralelos);
+        // Realizar una solicitud Fetch para obtener los paralelos
+        fetch("../controller/obtener_paralelos.php?grado=" + encodeURIComponent(selectedGrado))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('La red no respondió correctamente');
+                }
+                return response.json();
+            })
+            .then(paralelos => {
+                console.log('Paralelos recibidos:', paralelos);
 
-            // Obtener el select de paralelos
-            var paraleloSelect = document.getElementById('id_paralelo_estudiante');
+                // Obtener el select de paralelos
+                var paraleloSelect = document.getElementById('id_paralelo_estudiante');
 
-            // Limpiar las opciones actuales
-            paraleloSelect.innerHTML = "";
+                // Limpiar las opciones actuales
+                paraleloSelect.innerHTML = "";
 
-            // Llenar el select con las opciones recibidas del servidor
-            paralelos.forEach(paralelo => {
-                var option = document.createElement('option');
-                option.value = paralelo.id;
-                option.text = paralelo.paralelo;
-                paraleloSelect.add(option);
+                // Llenar el select con las opciones recibidas del servidor
+                paralelos.forEach(paralelo => {
+                    var option = document.createElement('option');
+                    option.value = paralelo.id;
+                    option.text = paralelo.paralelo;
+                    paraleloSelect.add(option);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error.message);
+                // Manejar el error de manera adecuada, por ejemplo, mostrando un mensaje al usuario.
             });
-        })
-        .catch(error => {
-            console.error('Error:', error.message);
-            // Manejar el error de manera adecuada, por ejemplo, mostrando un mensaje al usuario.
-        });
-}
-
+    }
 </script>
 
 
 <script>
-    $(document).ready(function () {
-        $("#btn-modal-periodo").click(function () {
+    $(document).ready(function() {
+        $("#btn-modal-periodo").click(function() {
             // Obtener el valor del campo de texto
             var periodos = $("#periodos").val();
 
             // Obtener el nombre de usuario de la sesión
             var usuario = "<?php echo $_SESSION['nombre']; ?>";
 
+
             if (periodos.trim() === "") {
-                alert("Por favor, ingresa un valor en el campo de periodos.");
-                return; // Detener la ejecución si el campo está vacío
+                Swal.fire({
+                    title: "Error",
+                    text: "Por favor, Ingrese un valor en el campo periodo.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                    showCancelButton: false
+                });
+                return; // Detener la ejecución 
             }
             // Realizar la solicitud AJAX
             $.ajax({
                 type: "POST",
                 url: "../controller/agregar_periodo.php",
-                data: { periodos: periodos, usuario: usuario },
-                success: function (response) {
+                data: {
+                    periodos: periodos,
+                    usuario: usuario
+                },
+                success: function(response) {
                     Swal.fire({
                         title: "Éxito",
                         text: "Los datos se han guardado correctamente.",
@@ -576,7 +709,7 @@ include_once "./header.php";
 
                     closeModal('modal1');
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     alert("Error al realizar la solicitud AJAX: " + error);
                 }
             });
@@ -586,8 +719,8 @@ include_once "./header.php";
 
 
 <script>
-    $(document).ready(function () {
-        $("#btn-modal-grado").click(function () {
+    $(document).ready(function() {
+        $("#btn-modal-grado").click(function() {
             // Obtener el valor del campo de texto
             var grado = $("#grados").val();
 
@@ -595,16 +728,25 @@ include_once "./header.php";
             var usuario = "<?php echo $_SESSION['nombre']; ?>";
 
             if (grado.trim() === "") {
-                alert("Por favor, ingresa un valor en el campo de grado.");
-                return; // Detener la ejecución si el campo está vacío
+                Swal.fire({
+                    title: "Error",
+                    text: "Por favor, Ingrese un valor en el campo grado.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                    showCancelButton: false
+                });
+                return; // Detener la ejecución 
             }
 
             // Realizar la solicitud AJAX
             $.ajax({
                 type: "POST",
                 url: "../controller/agregar_grado.php",
-                data: { grados: grado, usuario: usuario },
-                success: function (response) {
+                data: {
+                    grados: grado,
+                    usuario: usuario
+                },
+                success: function(response) {
                     Swal.fire({
                         title: "Éxito",
                         text: response,
@@ -620,7 +762,7 @@ include_once "./header.php";
 
                     closeModal('modal2');
                 },
-                error: function (xhr, status, error) {
+                error: function(xhr, status, error) {
                     alert("Error al realizar la solicitud AJAX: " + error);
                 }
             });
@@ -630,7 +772,7 @@ include_once "./header.php";
 
 
 <script>
-    document.getElementById('btn-modal-paralelo').addEventListener('click', function () {
+    document.getElementById('btn-modal-paralelo').addEventListener('click', function() {
         var gradoSeleccionado = document.getElementById('grado').value;
         var paraleloIngresado = document.getElementById('paralelo').value;
 
@@ -639,19 +781,31 @@ include_once "./header.php";
         var params = 'action=agregar_paralelo&grado=' + encodeURIComponent(gradoSeleccionado) + '&paralelo=' + encodeURIComponent(paraleloIngresado);
 
         if (gradoSeleccionado === "") {
-            alert("Por favor, seleccione un grado.");
-            return; // Detener la ejecución si el grado no está seleccionado
+            Swal.fire({
+                title: "Error",
+                text: "Por favor,Seleccione un grado",
+                icon: "error",
+                confirmButtonText: "Aceptar",
+                showCancelButton: false
+            });
+            return; // Detener la ejecución 
         }
 
         if (paraleloIngresado.trim() === "") {
-            alert("Por favor, ingresa un valor en el campo de paralelo.");
-            return; // Detener la ejecución si el campo está vacío
+            Swal.fire({
+                title: "Error",
+                text: "Por favor, Ingrese un valor en el campo paralelo.",
+                icon: "error",
+                confirmButtonText: "Aceptar",
+                showCancelButton: false
+            });
+            return; // Detener la ejecución 
         }
 
         xhr.open('POST', url, true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-        xhr.onreadystatechange = function () {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
                 console.log('Respuesta del servidor:', xhr.responseText);
 
@@ -695,7 +849,18 @@ include_once "./header.php";
     });
 </script>
 
+<script>
+    function capitalizeFirstLetter() {
+        var inputElement = document.getElementById('grados');
+        var inputValue = inputElement.value.trim(); // Elimina espacios iniciales y finales
 
+        // Verifica si hay al menos una letra en el valor ingresado
+        if (inputValue.length > 0) {
+            // Convierte la primera letra a mayúscula y concatena el resto del texto
+            inputElement.value = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
+        }
+    }
+</script>
 
 
 
@@ -706,6 +871,8 @@ include_once "./header.php";
 <script src="../js/tema.js"></script>
 <script src="../js/activo.js"></script>
 <script src="../js/menu.js"></script>
+<script src="../js/eliminar_estudiante.js"></script>
+
 
 
 <!-- DataTables -->
@@ -727,7 +894,7 @@ include_once "./header.php";
 <script src="../src/datables/Responsive-2.4.1/js/dataTables.responsive.min.js"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         var table = $('#example').DataTable({
             lengthChange: false,
             buttons: ['excel', 'pdf'],
@@ -741,6 +908,4 @@ include_once "./header.php";
 
         table.buttons().container().insertBefore('#example_filter');
     });
-
-
 </script>
