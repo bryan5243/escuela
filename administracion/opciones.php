@@ -8,7 +8,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     header("Location: login.php");
     exit();
 }
-$usuario = $_SESSION['nombre'];
+include_once '../controller/registrar_usuario.php';
+
 
 
 ?>
@@ -90,7 +91,7 @@ $usuario = $_SESSION['nombre'];
             </div>
         </div>
         <div class="form-container" style="display: flex; flex-wrap: wrap; margin-top: 30px;">
-            <button style="cursor: pointer; font-size: 20px; color:white; border-radius: 10px; background: #FF0000;" class="input" type="submit" name="btnregistrarestudiante">
+            <button style="cursor: pointer; font-size: 20px; color:white; border-radius: 10px; background: #FF0000;" class="input" type="submit" name="btnusuario">
                 Registrar Usuario
             </button>
         </div>
@@ -102,6 +103,7 @@ $usuario = $_SESSION['nombre'];
 include("header.php")
 ?>
 
+<script src="../js/calendario.js"></script>
 
 <script src="../js/menu.js"></script>
 <script src="../js/tabs.js"></script>

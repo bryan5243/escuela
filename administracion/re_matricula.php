@@ -32,7 +32,7 @@ include_once '../model/conexion.php';
         <label for="cedula_estudiante">
             <p>1. Cédula del Estudiante</p>
         </label>
-        <input class="input" type="text" id="cedula_estudiante" name="cedula_estudiante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" id="cedula" oninput="verificarCedula()" required>
+        <input class="input" type="text" id="cedula" name="cedula_estudiante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" id="cedula" oninput="verificarCedula()" required>
         <span class="input-border"></span>
         <div id="mensaje"></div>
 
@@ -225,6 +225,70 @@ include_once '../model/conexion.php';
     </div>
 
 </div>
+
+<script>
+    $(document).ready(function() {
+        // Función para verificar la cédula en tiempo real
+        function verificarCedula() {
+            var cedula = $("#cedula").val();
+
+            // Realizar una solicitud AJAX para verificar la existencia en la base de datos
+            $.ajax({
+                type: "POST",
+                url: "../admin/verificar_cedula.php",
+                data: {
+                    cedula: cedula
+                },
+                success: function(response) {
+                    if (response.trim() === "existente") {
+                        $("#mensaje").html("<span style='color:red;'>Estudiante ya inscrito</span>");
+                    } else {
+                        // Si la cédula no está registrada, realizar la validación ecuatoriana
+                        validarCedulaEcuatoriana(cedula);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error en la solicitud AJAX:", error);
+                    // Manejar errores según sea necesario
+                }
+            });
+        }
+
+        // Agregar el evento oninput al campo de cédula
+        $("#cedula").on("input", verificarCedula);
+
+        // Función para validar la cédula ecuatoriana
+        function validarCedulaEcuatoriana(cedula) {
+            var mensajeDiv = $("#mensaje");
+
+            // Verificar si la cédula tiene 10 dígitos
+            if (cedula.length === 10) {
+                // Coeficientes para el cálculo del dígito verificador
+                var coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+
+                // Calcular el dígito verificador
+                var total = 0;
+                for (var i = 0; i < 9; i++) {
+                    var digito = parseInt(cedula[i]);
+                    var resultado = digito * coeficientes[i];
+                    total += (resultado > 9) ? resultado - 9 : resultado;
+                }
+
+                var verificadorCalculado = (total % 10 === 0) ? 0 : 10 - (total % 10);
+
+                // Verificar que el dígito verificador coincida
+                if (verificadorCalculado !== parseInt(cedula[9])) {
+                    mensajeDiv.html("<span style='color:red;'>Numero de cedula no valido.</span>");
+                } else {
+                    mensajeDiv.html("<span style='color:green;'>Cédula válida</span>");
+                }
+            } else {
+                mensajeDiv.html('La cédula debe tener 10 dígitos.');
+            }
+        }
+    });
+</script>
+
 
 <script>
     function habilitarCampos() {

@@ -15,40 +15,34 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         <input type="date" id="datePicker" readonly>
     </div>
     <style>
-
-<?php
-    $conn = conectarBaseDeDatos();
-    $sqlInactive = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
+        <?php
+        $conn = conectarBaseDeDatos();
+        $sqlInactive = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
     FROM estudiante e
     JOIN matricula m ON e.Id=m.id_estudiante
     JOIN periodo p on p.Id=m.id_periodo
     WHERE e.estado = 0 AND p.estado = 1 AND e.foto IS NOT NULL;";
-    $resultInactive = $conn->query($sqlInactive);
-    $totalInactive = $resultInactive->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
+        $resultInactive = $conn->query($sqlInactive);
+        $totalInactive = $resultInactive->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
 
-    // Obtener datos de pacientes activos
-    $sqlActive = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
+        // Obtener datos de pacientes activos
+        $sqlActive = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
     FROM estudiante e
    JOIN matricula m ON e.Id=m.id_estudiante
    JOIN periodo p on p.Id=m.id_periodo
     WHERE e.estado = 1 AND p.estado = 1 AND e.foto IS NOT NULL;;";
-    $resultActive = $conn->query($sqlActive);
-    $totalActive = $resultActive->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
+        $resultActive = $conn->query($sqlActive);
+        $totalActive = $resultActive->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
 
-    // Obtener datos de  todos los pacientes 
-    $sqlTotal = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
+        // Obtener datos de  todos los pacientes 
+        $sqlTotal = "SELECT COUNT(DISTINCT e.Id) AS total_estudiantes
     FROM estudiante e
     JOIN matricula m ON e.Id=m.id_estudiante
     JOIN periodo p on p.Id=m.id_periodo
     WHERE  p.estado = 1 AND e.foto IS NOT NULL;";
-    $resultTotal = $conn->query($sqlTotal);
-    $totalPatients = $resultTotal->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
-    ?>
-
-
-
-
-        :root {
+        $resultTotal = $conn->query($sqlTotal);
+        $totalPatients = $resultTotal->fetch(PDO::FETCH_ASSOC)['total_estudiantes'];
+        ?> :root {
             --color-dark-variant: #222425;
 
         }
@@ -110,13 +104,10 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="stylesheet" href="../src/datables/DataTables-1.13.4/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="../src/datables//Responsive-2.4.1/css/responsive.dataTables.min.css">
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css"
-        integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-        integrity="sha384-..." crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-..." crossorigin="anonymous">
 
 
 
@@ -130,7 +121,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             <div class="middle">
                 <div class="left">
                     <h3>Inactivos</h3>
-                     <h2>
+                    <h2>
                         <?php echo $totalInactive; ?>
                     </h2>
                 </div>
@@ -227,22 +218,52 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
                 <td>' . $row['telefono'] . '</td>
                 <td>';
-                echo '<div style="display: flex; align-items: center;" >
+                if ($_SESSION['rol'] == "admin") {
+
+                    echo '<div style="display: flex; align-items: center;" >
                 <form action="matriculacion.php" method="post" id="actForm">
                     <input type="hidden" name="id" value="' . $row['id'] . '">
                     <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
                     <i class="fas fa-user-check" style="font-size: 28px; color: #ec1d17;"></i>
                     </button>
                 </form>';
-                
-                echo ' <form action="../controller/eliminar_prematricula.php" method="post" id="eliminarForm">
+
+                    echo ' <form action="../controller/eliminar_prematricula.php" method="post" id="eliminarForm">
                 <input type="hidden" name="id" value="' . $row['id'] . '">
                 <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
                     <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>
-        </div>
-                </td>';
+        </div>';
+                } elseif ($_SESSION['rol'] == "rectorado") {
+                    echo '<div style="display: flex; align-items: center;" >
+        <form action="matriculacion.php" method="post" id="actForm">
+            <input type="hidden" name="id" value="' . $row['id'] . '">
+            <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
+            <i class="fas fa-user-check" style="font-size: 28px; color: #ec1d17;"></i>
+            </button>
+        </form>
+        </div>';
+                } elseif ($_SESSION['rol'] == "secretariado") {
+
+                    echo '<div style="display: flex; align-items: center;" >
+        <form action="matriculacion.php" method="post" id="actForm">
+            <input type="hidden" name="id" value="' . $row['id'] . '">
+            <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
+            <i class="fas fa-user-check" style="font-size: 28px; color: #ec1d17;"></i>
+            </button>
+        </form>';
+
+                    echo ' <form action="../controller/eliminar_prematricula.php" method="post" id="eliminarForm">
+        <input type="hidden" name="id" value="' . $row['id'] . '">
+        <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
+            <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+        </button>
+    </form>
+</div>';
+                }
+
+                echo '</td>';
             }
             ?>
 
@@ -273,7 +294,7 @@ include_once "./header.php";
 <script src="../src/datables/Responsive-2.4.1/js/dataTables.responsive.min.js"></script>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
         var table = $('#example').DataTable({
             responsive: true,
             autoWidth: true,
@@ -286,10 +307,10 @@ include_once "./header.php";
 
 <script>
     // JavaScript to handle button click and submit the form
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         const reportButtons = document.querySelectorAll('button[name="generar_reporte"]');
         reportButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
+            button.addEventListener('click', function(event) {
                 event.preventDefault(); // Evita la acción de envío por defecto del botón
 
                 const estudianteId = this.value;

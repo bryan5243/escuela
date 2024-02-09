@@ -5,7 +5,7 @@ $allowedOptions = array(
     'admin' => array('dashboard', 'matricula', 'responsables', 'matriculados', 'listado','culminados','inactivos', 'opciones', 'logout'),
     'rectorado' => array('dashboard',  'matriculados', 'listado','culminados',  'logout'),
     'docente' => array('dashboard','listado' , 'logout'),
-    'secretariado' => array('dashboard','matricula', 'responsables', 'matriculados', 'culminados', 'logout')
+    'secretariado' => array('dashboard','matricula', 'responsables', 'matriculados', 'listado','culminados', 'logout')
 
 );
 

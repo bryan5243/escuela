@@ -290,6 +290,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
 </head>
 <main>
+<?php if ($_SESSION['rol'] == "admin") { ?>
 
     <div class="button-container">
         <button class="button-model" onclick="openModal('modal1')">
@@ -315,8 +316,45 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             </button>
         </button>
 
-
     </div>
+    <?php }?>
+
+    <?php if ($_SESSION['rol'] == "rectorado") { ?>
+
+<div class="button-container">
+    <button class="button-model" onclick="openModal('modal1')">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+            <path fill="none" d="M0 0h24v24H0z"></path>
+            <path fill="currentColor" d="M5 12h14v2H5z"></path>
+        </svg>
+        <span>Culminar Período</span>
+        <button class="button-model" onclick="openModal('modal2')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path fill="currentColor" d="M5 12h14v2H5z"></path>
+            </svg>
+            <span>Eliminar Grado</span>
+        </button>
+
+        <button class="button-model" onclick="openModal('modal3')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path fill="currentColor" d="M5 12h14v2H5z"></path>
+            </svg>
+            <span>Eliminar Paralelo</span>
+        </button>
+    </button>
+
+</div>
+<?php }?>
+<?php if ($_SESSION['rol'] == "secretariado") { ?>
+
+<br><br>
+<?php }?>
+<?php if ($_SESSION['rol'] == "docente") { ?>
+
+<br><br>
+<?php }?>
 
     <table id="example" class="display compact nowrap" style="width:100%;min-width: 480px">
         <thead>
@@ -542,41 +580,7 @@ include_once "./header.php";
 </script>
 
 
-
-<script>
-    function cargarParalelos() {
-        var selectedGrado = document.getElementById('grado').value;
-
-        // Realizar una solicitud Fetch para obtener los paralelos
-        fetch("../controller/obtener_paralelos.php?grado=" + encodeURIComponent(selectedGrado))
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('La red no respondió correctamente');
-                }
-                return response.json();
-            })
-            .then(paralelos => {
-
-                // Obtener el select de paralelos
-                var paraleloSelect = document.getElementById('id_paralelo_estudiante');
-
-                // Limpiar las opciones actuales
-                paraleloSelect.innerHTML = "";
-
-                // Llenar el select con las opciones recibidas del servidor
-                paralelos.forEach(paralelo => {
-                    var option = document.createElement('option');
-                    option.value = paralelo.id;
-                    option.text = paralelo.paralelo;
-                    paraleloSelect.add(option);
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error.message);
-                // Manejar el error de manera adecuada, por ejemplo, mostrando un mensaje al usuario.
-            });
-    }
-</script>
+<script src="../js/cargar_paralelos.js"></script>
 
 
 

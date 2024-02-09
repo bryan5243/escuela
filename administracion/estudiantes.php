@@ -365,6 +365,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <td>' . $row['direccion'] . '</td>
                 <td>' . $row['telefono'] . '</td>
                 <td>';
+                if ($_SESSION['rol'] == "admin") {
+
                 echo '<div style="display: flex; align-items: center;" >
 
                 <form action="./actuali_matriculacion.php" method="post" id="actForm">
@@ -374,7 +376,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     </button>
                 </form>';
 
-                echo '<form id="form_modal' . $row['id'] . '" action="javascript:abrirModal(' . $row['id'] . ')" method="post" data-id="' . $row['id'] . '">
+                    echo '<form id="form_modal' . $row['id'] . '" action="javascript:abrirModal(' . $row['id'] . ')" method="post" data-id="' . $row['id'] . '">
                 <input type="hidden" id="estudiante_id" name="estudiante_id" value="' . $row['id'] . '">
                 <button class="hand-cursor" name="fecha" style="background-color: var(--c);">
                     <i class="fas fa-calendar-days" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
@@ -382,7 +384,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             </form>';
 
 
-                echo '<form id="form_solicitud' . $row['id'] . '"  action="../controller/solicitud_ingreso.php" method="post" target="_blank">
+                    echo '<form id="form_solicitud' . $row['id'] . '"  action="../controller/solicitud_ingreso.php" method="post" target="_blank">
                 <button class="hand-cursor" type="submit" name="generar_solicitud" value="' . $row['id'] . '" style="background-color: var(--c);">
                     <i class="fas fa-file-pdf" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
@@ -393,60 +395,178 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     <i class="fas fa-print" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>';
-                // Verificar si hay registros en la tabla responsables para este estudiante
-                $id_estudiante = $row['id'];
-                $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
-                $result_responsables = $conn->query($query_responsables);
+            
+                    // Verificar si hay registros en la tabla responsables para este estudiante
+                    $id_estudiante = $row['id'];
+                    $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                    $result_responsables = $conn->query($query_responsables);
 
-                if ($result_responsables) {
-                    $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
-                    $count_responsables = $fila_responsables['count'];
-                    if ($count_responsables == 0) {
+                    if ($result_responsables) {
+                        $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                        $count_responsables = $fila_responsables['count'];
+                        if ($count_responsables == 0) {
 
-                        echo '<form id="form_' . $row['id'] . '" action="../administracion/tabresponsable.php" method="get">
+                            echo '<form id="form_' . $row['id'] . '" action="../administracion/tabresponsable.php" method="get">
                         <input type="hidden" name="cedula" value="' . $row['cedula'] . '">
                         <button class="hand-cursor show-details-btn" type="submit" name="" value="' . $row['id'] . '" style="background-color: var(--c);">
                             <i class="fas fa-person" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                         </button>
                       </form>';
+                        } else {
+                            // No hay registros, no mostrar el botón
+                        }
+
+                        // Liberar resultado de la consulta de responsables
+                        $result_responsables->closeCursor();
                     } else {
-                        // No hay registros, no mostrar el botón
+                        echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
                     }
 
-                    // Liberar resultado de la consulta de responsables
-                    $result_responsables->closeCursor();
-                } else {
-                    echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
-                }
+                    // Verificar si hay registros en la tabla responsables para este estudiante
+                    $id_estudiante = $row['id'];
+                    $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                    $result_responsables = $conn->query($query_responsables);
 
-                // Verificar si hay registros en la tabla responsables para este estudiante
-                $id_estudiante = $row['id'];
-                $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
-                $result_responsables = $conn->query($query_responsables);
-
-                if ($result_responsables) {
-                    $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
-                    $count_responsables = $fila_responsables['count'];
-                    if ($count_responsables > 0) {
-                        echo '<form id="form_acuerdo' . $row['id'] . '"  action="../controller/acuerdo_ministerial.php" method="post" target="_blank">
+                    if ($result_responsables) {
+                        $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                        $count_responsables = $fila_responsables['count'];
+                        if ($count_responsables > 0) {
+                            echo '<form id="form_acuerdo' . $row['id'] . '"  action="../controller/acuerdo_ministerial.php" method="post" target="_blank">
                 <button class="hand-cursor" type="submit" name="generar_acuerdo" value="' . $row['id'] . '" style="background-color: var(--c);">
                     <i class="fas fa-book" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
                 </button>
             </form>';
+                        } else {
+                            // No hay registros, no mostrar el botón
+                        }
+
+                        // Liberar resultado de la consulta de responsables
+                        $result_responsables->closeCursor();
                     } else {
-                        // No hay registros, no mostrar el botón
+                        echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
                     }
 
-                    // Liberar resultado de la consulta de responsables
-                    $result_responsables->closeCursor();
-                } else {
-                    echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                } elseif ($_SESSION['rol'] == "secretariado") {
+                    echo '<div style="display: flex; align-items: center;" >
+
+                <form action="./actuali_matriculacion.php" method="post" id="actForm">
+                    <input type="hidden" name="id" value="' . $row['id'] . '">
+                    <button id="actualizar" class="hand-cursor" type="submit" value="' . $row['id'] . '" style="background-color: var(--c);">
+                    <i class="fas fa-pen-to-square" style="font-size: 28px; color: #ec1d17;"></i>
+                    </button>
+                </form>';
+
+                    echo '<form id="form_modal' . $row['id'] . '" action="javascript:abrirModal(' . $row['id'] . ')" method="post" data-id="' . $row['id'] . '">
+                <input type="hidden" id="estudiante_id" name="estudiante_id" value="' . $row['id'] . '">
+                <button class="hand-cursor" name="fecha" style="background-color: var(--c);">
+                    <i class="fas fa-calendar-days" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>';
+
+
+                    echo '<form id="form_solicitud' . $row['id'] . '"  action="../controller/solicitud_ingreso.php" method="post" target="_blank">
+                <button class="hand-cursor" type="submit" name="generar_solicitud" value="' . $row['id'] . '" style="background-color: var(--c);">
+                    <i class="fas fa-file-pdf" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>
+
+            <form id="form_' . $row['id'] . '" action="../controller/reporte_estudiantes.php" method="post" target="_blank">
+                <button class="hand-cursor" type="submit" name="generar_reporte" value="' . $row['id'] . '" style="background-color: var(--c);">
+                    <i class="fas fa-print" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>';
+                    // Verificar si hay registros en la tabla responsables para este estudiante
+                    $id_estudiante = $row['id'];
+                    $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                    $result_responsables = $conn->query($query_responsables);
+
+                    if ($result_responsables) {
+                        $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                        $count_responsables = $fila_responsables['count'];
+                        if ($count_responsables == 0) {
+
+                            echo '<form id="form_' . $row['id'] . '" action="../administracion/tabresponsable.php" method="get">
+                        <input type="hidden" name="cedula" value="' . $row['cedula'] . '">
+                        <button class="hand-cursor show-details-btn" type="submit" name="" value="' . $row['id'] . '" style="background-color: var(--c);">
+                            <i class="fas fa-person" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                        </button>
+                      </form>';
+                        } else {
+                            // No hay registros, no mostrar el botón
+                        }
+
+                        // Liberar resultado de la consulta de responsables
+                        $result_responsables->closeCursor();
+                    } else {
+                        echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                    }
+
+                    // Verificar si hay registros en la tabla responsables para este estudiante
+                    $id_estudiante = $row['id'];
+                    $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                    $result_responsables = $conn->query($query_responsables);
+
+                    if ($result_responsables) {
+                        $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                        $count_responsables = $fila_responsables['count'];
+                        if ($count_responsables > 0) {
+                            echo '<form id="form_acuerdo' . $row['id'] . '"  action="../controller/acuerdo_ministerial.php" method="post" target="_blank">
+                <button class="hand-cursor" type="submit" name="generar_acuerdo" value="' . $row['id'] . '" style="background-color: var(--c);">
+                    <i class="fas fa-book" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>';
+                        } else {
+                            // No hay registros, no mostrar el botón
+                        }
+
+                        // Liberar resultado de la consulta de responsables
+                        $result_responsables->closeCursor();
+                    } else {
+                        echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                    }
+                } elseif ($_SESSION['rol'] == "rectorado") {
+                    echo '<div style="display: flex; align-items: center;" >
+
+
+                    <form id="form_solicitud' . $row['id'] . '"  action="../controller/solicitud_ingreso.php" method="post" target="_blank">
+                <button class="hand-cursor" type="submit" name="generar_solicitud" value="' . $row['id'] . '" style="background-color: var(--c);">
+                    <i class="fas fa-file-pdf" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>
+
+            <form id="form_' . $row['id'] . '" action="../controller/reporte_estudiantes.php" method="post" target="_blank">
+                <button class="hand-cursor" type="submit" name="generar_reporte" value="' . $row['id'] . '" style="background-color: var(--c);">
+                    <i class="fas fa-print" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>';
+
+                    // Verificar si hay registros en la tabla responsables para este estudiante
+                    $id_estudiante = $row['id'];
+                    $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                    $result_responsables = $conn->query($query_responsables);
+
+                    if ($result_responsables) {
+                        $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                        $count_responsables = $fila_responsables['count'];
+                        if ($count_responsables > 0) {
+                            echo '<form id="form_acuerdo' . $row['id'] . '"  action="../controller/acuerdo_ministerial.php" method="post" target="_blank">
+             <button class="hand-cursor" type="submit" name="generar_acuerdo" value="' . $row['id'] . '" style="background-color: var(--c);">
+                 <i class="fas fa-book" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+             </button>
+         </form>';
+                        } else {
+                            // No hay registros, no mostrar el botón
+                        }
+
+                        // Liberar resultado de la consulta de responsables
+                        $result_responsables->closeCursor();
+                    } else {
+                        echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                    }
                 }
-
-
-                echo ' </div>
-                </td>';
+                echo '</td>';
             }
+
             ?>
 
         </tbody>
