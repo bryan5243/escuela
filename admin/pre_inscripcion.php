@@ -86,24 +86,36 @@ use PgSql\Connection\Connection;
         </div>
 
         <h2>Estudiante</h2>
+
         <div class="row">
+            <div class="mb-3">
+                <label for="nacionalidad" class="form-label">Nacionalidad:</label>
+                <select class="form-select" name="nacionalidad" id="nacionalidad" onchange="verificarNacionalidad()" required>
+                    <option value="ecuatoriano">Ecuatoriano</option>
+                    <option value="extranjero">Extranjero</option>
+                </select>
+            </div>
+
             <div class="mb-3">
                 <label for="cedula" class="form-label">1. Cedula:</label>
                 <input type="text" class="form-control" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" name="cedula" id="cedula" oninput="verificarCedula()" required>
                 <div id="mensaje"></div>
             </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="apellidos" class="form-label">2. Apellidos:</label>
-                    <input type="text" class="form-control" name="apellidos" oninput="validarTexto(this)" required>
-                </div>
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="apellidos" class="form-label">2. Apellidos:</label>
+                <input type="text" class="form-control" name="apellidos" oninput="validarTexto(this)" required>
             </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="nombres" class="form-label">3. Nombres:</label>
-                    <input type="text" class="form-control" name="nombres" oninput="validarTexto(this)" required>
-                </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="nombres" class="form-label">3. Nombres:</label>
+                <input type="text" class="form-control" name="nombres" oninput="validarTexto(this)" required>
             </div>
+        </div>
         </div>
         <div class="row">
             <div class="mb-3">
@@ -143,10 +155,19 @@ use PgSql\Connection\Connection;
         <div class="row">
             <div class="col-md-6">
                 <h2>Padre:</h2>
+                <div class="mb-3">
+                    <label for="nacionalidad_padre" class="form-label">Nacionalidad del Padre:</label>
+                    <select class="form-select" name="nacionalidad_padre" id="nacionalidad_padre" oninput="verificarNacionalidadPadre()" required>
+                        <option value="ecuatoriano">Ecuatoriano</option>
+                        <option value="extranjero">Extranjero</option>
+                    </select>
+                </div>
 
                 <div class="mb-3">
-                    <label for="cedula_Padre" class="form-label">6. Cedula:</label>
-                    <input type="text" class="form-control" name="cedula_Padre" id="cedula_Padre" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
+                    <label for="cedula_Padre" class="form-label">Cédula del Padre:</label>
+                    <input type="text" class="form-control" name="cedula_Padre" id="cedula_Padre" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10); verificarNacionalidadPadre()" required>
+                    <div id="mensaje_padre"></div>
+
                 </div>
 
                 <div class="mb-3">
@@ -162,15 +183,18 @@ use PgSql\Connection\Connection;
 
             <div class="col-md-6">
                 <h2>Madre:</h2>
+                <div class="mb-3">
+                    <label for="nacionalidad_Madre" class="form-label">Nacionalidad de la Madre:</label>
+                    <select class="form-select" name="nacionalidad_Madre" id="nacionalidad_Madre" onchange="verificarNacionalidadMadre()" required>
+                        <option value="ecuatoriana">Ecuatoriana</option>
+                        <option value="extranjera">Extranjera</option>
+                    </select>
+                </div>
 
                 <div class="mb-3">
                     <label for="cedula_Madre" class="form-label">11. Cedula:</label>
-                    <input type="text" class="form-control" id="cedula_Madre" name="cedula_Madre" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
-                </div>
-
-                <div class=" mb-3">
-                    <label for="apellidosNombres_Madre" class="form-label">12. Apellidos y Nombres:</label>
-                    <input type="text" class="form-control" id="apellidosNombres_Madre" name="apellidosNombres_Madre" oninput="validarTexto(this)" required>
+                    <input type="text" class="form-control" id="cedula_Madre" name="cedula_Madre" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10); verificarNacionalidadMadre()" required>
+                    <div id="mensaje_madre"></div>
                 </div>
 
                 <div class=" mb-3">
@@ -194,9 +218,19 @@ use PgSql\Connection\Connection;
                 </div>
 
                 <div class="mb-3">
-                    <label for="cedula_Representante" class="form-label">14. Cedula:</label>
-                    <input type="text" class="form-control" id="cedula_Representante" name="cedula_Representante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
+                    <label for="nacionalidad_Representante" class="form-label">Nacionalidad del Representante:</label>
+                    <select class="form-select" name="nacionalidad_Representante" id="nacionalidad_Representante" onchange="verificarNacionalidadRepresentante()" required>
+                        <option value="ecuatoriano">Ecuatoriano</option>
+                        <option value="extranjero">Extranjero</option>
+                    </select>
                 </div>
+
+                <div class="mb-3">
+                    <label for="cedula_Representante" class="form-label">14. Cedula:</label>
+                    <input type="text" class="form-control" id="cedula_Representante" name="cedula_Representante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10); verificarNacionalidadRepresentante()" required>
+                    <div id="mensaje_representante"></div>
+                </div>
+
 
                 <div class="mb-3">
                     <label for="apellidosNombres_Representante" class="form-label">15. Apellidos y Nombres:</label>
@@ -276,10 +310,157 @@ use PgSql\Connection\Connection;
                     mensajeDiv.html('La cédula debe tener 10 dígitos.');
                 }
             }
+
+            function verificarNacionalidad() {
+                var nacionalidadSelect = $("#nacionalidad");
+
+                // Limpiar el mensaje al cambiar la nacionalidad
+                $("#mensaje").html("");
+
+                if (nacionalidadSelect.val() === "extranjero") {
+                    // Si la nacionalidad es extranjera, no realizar más validaciones
+                    return;
+                }
+
+                // Si la nacionalidad es ecuatoriana, realizar la validación de cédula
+                verificarCedula();
+            }
+
+            // Agregar el evento onchange al campo de nacionalidad
+            $("#nacionalidad").on("change", verificarNacionalidad);
         });
     </script>
 
+    <script>
+        // Agregar el evento onchange al campo de nacionalidad del padre
+        function verificarNacionalidadPadre() {
+            var nacionalidadPadre = $("#nacionalidad_padre").val();
 
+            // Limpiar el mensaje cuando cambia la nacionalidad
+            $("#mensaje_padre").html("");
+
+            if (nacionalidadPadre === "ecuatoriano") {
+                // Si la nacionalidad es ecuatoriana, realizar la validación de cédula
+                validarCedulaEcuatoriana($("#cedula_Padre").val());
+            }
+        }
+
+        // Función para validar la cédula ecuatoriana
+        function validarCedulaEcuatoriana(cedula) {
+            var mensajeDiv = $("#mensaje_padre");
+
+            // Verificar si la cédula tiene 10 dígitos
+            if (cedula.length === 10) {
+                // Coeficientes para el cálculo del dígito verificador
+                var coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+
+                // Calcular el dígito verificador
+                var total = 0;
+                for (var i = 0; i < 9; i++) {
+                    var digito = parseInt(cedula[i]);
+                    var resultado = digito * coeficientes[i];
+                    total += (resultado > 9) ? resultado - 9 : resultado;
+                }
+
+                var verificadorCalculado = (total % 10 === 0) ? 0 : 10 - (total % 10);
+
+                // Verificar que el dígito verificador coincida
+                if (verificadorCalculado !== parseInt(cedula[9])) {
+                    mensajeDiv.html("<span style='color:red;'>Numero de cedula no valido.</span>");
+                } else {
+                    mensajeDiv.html("<span style='color:green;'>Cédula válida</span>");
+                }
+            } else {
+                mensajeDiv.html('La cédula debe tener 10 dígitos.');
+            }
+        }
+    </script>
+
+    <script>
+        function verificarNacionalidadMadre() {
+            var nacionalidadMadre = $("#nacionalidad_Madre").val();
+            var cedulaMadre = $("#cedula_Madre").val();
+            var mensajeDiv = $("#mensaje_madre");
+
+            // Limpiar el mensaje
+            mensajeDiv.html("");
+
+            // Verificar nacionalidad
+            if (nacionalidadMadre === "ecuatoriana") {
+                validarCedulaEcuatoriana(cedulaMadre, mensajeDiv);
+            }
+        }
+
+        function validarCedulaEcuatoriana(cedula, mensajeDiv) {
+            // Verificar si la cédula tiene 10 dígitos
+            if (cedula.length === 10) {
+                // Coeficientes para el cálculo del dígito verificador
+                var coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+
+                // Calcular el dígito verificador
+                var total = 0;
+                for (var i = 0; i < 9; i++) {
+                    var digito = parseInt(cedula[i]);
+                    var resultado = digito * coeficientes[i];
+                    total += (resultado > 9) ? resultado - 9 : resultado;
+                }
+
+                var verificadorCalculado = (total % 10 === 0) ? 0 : 10 - (total % 10);
+
+                // Verificar que el dígito verificador coincida
+                if (verificadorCalculado !== parseInt(cedula[9])) {
+                    mensajeDiv.html("<span style='color:red;'>Número de cédula no válido.</span>");
+                } else {
+                    mensajeDiv.html("<span style='color:green;'>Cédula válida</span>");
+                }
+            } else {
+                mensajeDiv.html('La cédula debe tener 10 dígitos.');
+            }
+        }
+    </script>
+
+    <script>
+        function verificarNacionalidadRepresentante() {
+            var nacionalidadRepresentante = $("#nacionalidad_Representante").val();
+            var cedulaRepresentante = $("#cedula_Representante").val();
+            var mensajeDiv = $("#mensaje_representante");
+
+            // Limpiar el mensaje
+            mensajeDiv.html("");
+
+            // Verificar nacionalidad
+            if (nacionalidadRepresentante === "ecuatoriano") {
+                validarCedulaEcuatoriana(cedulaRepresentante, mensajeDiv);
+            }
+        }
+
+        function validarCedulaEcuatoriana(cedula, mensajeDiv) {
+            // Verificar si la cédula tiene 10 dígitos
+            if (cedula.length === 10) {
+                // Coeficientes para el cálculo del dígito verificador
+                var coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+
+                // Calcular el dígito verificador
+                var total = 0;
+                for (var i = 0; i < 9; i++) {
+                    var digito = parseInt(cedula[i]);
+                    var resultado = digito * coeficientes[i];
+                    total += (resultado > 9) ? resultado - 9 : resultado;
+                }
+
+                var verificadorCalculado = (total % 10 === 0) ? 0 : 10 - (total % 10);
+
+                // Verificar que el dígito verificador coincida
+                if (verificadorCalculado !== parseInt(cedula[9])) {
+                    mensajeDiv.html("<span style='color:red;'>Número de cédula no válido.</span>");
+                } else {
+                    mensajeDiv.html("<span style='color:green;'>Cédula válida</span>");
+                }
+            } else {
+                mensajeDiv.html('La cédula debe tener 10 dígitos.');
+            }
+        }
+    </script>
 
     <?php
     include_once '../model/conexion.php';

@@ -104,7 +104,7 @@ include_once '../Model/roles_menu.php';
 
 
             <?php if (isOptionAllowed('opciones', $_SESSION['rol'])) { ?>
-                <a href="opciones.php">
+                <a href="tab_opciones.php">
                     <span class="material-symbols-outlined">
                         settings
                     </span>

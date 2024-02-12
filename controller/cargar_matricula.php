@@ -296,23 +296,21 @@ try {
         $id_paralelo_estudiante = $_POST['id_paralelo_estudiante'];
 
 
-        // Obtener el ID del periodo cuyo estado sea 1
-        $idPeriodo = $conn->query("SELECT id FROM periodo WHERE estado = 1")->fetch(PDO::FETCH_ASSOC)['id'];
+       
 
-        // Obtener el último número de matrícula
-        $ultimoNumeroMatricula = $conn->query("SELECT MAX(numero) as ultimo_numero FROM matricula")->fetch(PDO::FETCH_ASSOC)['ultimo_numero'];
+        $matricula = "UPDATE matricula SET
+        id_grado =:id_grado_estudiante,
+        id_paralelo = :id_paralelo_estudiante
+        where id_estudiante = :id ";
 
-        // Incrementar el número de matrícula
-        $nuevoNumeroMatricula = $ultimoNumeroMatricula + 1;
 
+
+        
         // Preparar la consulta de inserción
-        $matricula = "INSERT INTO matricula (numero, id_estudiante, id_periodo,id_grado,id_paralelo) VALUES (:numeroMatricula, :id, :idPeriodo,:id_grado_estudiante,:id_paralelo_estudiante)";
         $statement_matricula = $conn->prepare($matricula);
 
         // Asignar valores a los parámetros
-        $statement_matricula->bindParam(':numeroMatricula', $nuevoNumeroMatricula);
         $statement_matricula->bindParam(':id', $idEstudiante);
-        $statement_matricula->bindParam(':idPeriodo', $idPeriodo);
         $statement_matricula->bindParam(':id_grado_estudiante', $id_grado_estudiante);
         $statement_matricula->bindParam(':id_paralelo_estudiante', $id_paralelo_estudiante);
 

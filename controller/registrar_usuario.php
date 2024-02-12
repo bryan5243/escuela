@@ -29,7 +29,7 @@ if (isset($_POST["btnusuario"])) {
                 timer: 1500
             }).then(() => {
                 // Redireccionar después de cerrar el diálogo de Swal.fire
-                window.location.href = '../administracion/opciones.php';
+                window.location.href = '../administracion/tab_opciones.php';
             });
         }
     </script>";

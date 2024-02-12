@@ -13,7 +13,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 }
 
 ?>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-ez+oQUa5o2Y6LRpeW4tzZSsck4m4XLqf3qIrxFmUfcHA70SE1k/b1juv+7Sg1lfj+Ps6C2lG5LUdi8FwA2EwCQ==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" crossorigin="anonymous" />
 <link rel="stylesheet" href="../css/inputs.css">
 
 
@@ -215,10 +215,11 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
     .modal {
         background-color: var(--color-modal);
+        color: var(--color-text);
+
         padding: 20px;
         border-radius: 5px;
         text-align: center;
-        color: var(--color-text);
         position: relative;
         border-radius: 5%;
         /* Añade posición relativa para posicionar el botón */
@@ -244,6 +245,15 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         /* Cambia el cursor al pasar sobre el botón */
         border-radius: 50%;
         /* Para que el botón sea circular */
+        z-index: 1;
+
+    }
+
+    .modal-button:hover {
+        background-color: darkred;
+        /* Cambia el color al pasar sobre el botón */
+        transform: scale(1.1);
+        /* Hace el botón ligeramente más grande al pasar sobre él */
     }
 
     .btn-modal {
@@ -265,6 +275,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         display: flex;
         align-items: center;
         margin-left: 20px;
+
     }
 
     /* Estilos generales del modal */
@@ -362,11 +373,114 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         cursor: pointer;
         font-size: 20px;
         color: #167bae;
+        z-index: 1000;
+
+    }
+
+    #overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Fondo semitransparente */
+        z-index: 10;
+        /* Asegura que esté encima de otros elementos */
+    }
+
+    #ventanaFlotante {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 900px;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        /* Asegura que esté encima del overlay */
+        background-color: var(--color-modal);
+        padding: 20px;
+        border-radius: 8px;
+        z-index: 15;
+
+    }
+
+    .modal-button2 {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 30px;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+        background-color: red;
+        color: white;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        /* Cambia el cursor al pasar sobre el botón */
+        border-radius: 50%;
+        /* Para que el botón sea circular */
+        z-index: 18;
+        margin-left: 20px;
+    }
+
+    .modal-button2:hover {
+        background-color: darkred;
+        /* Cambia el color al pasar sobre el botón */
+        transform: scale(1.1);
+        /* Hace el botón ligeramente más grande al pasar sobre él */
+    }
+
+    .responsable-container {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        padding-left: 25px;
+        vertical-align: top;
+
+    }
+
+    .responsable-info {
+        text-align: center;
+        padding-top: 8px;
+    }
+
+    .responsable-image {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px;
+        margin: auto;
+    }
+
+    @media only screen and (max-width: 600px) {
+        #ventanaFlotante {
+            width: 60%;
+            max-width: none;
+        }
+
+        .modal-button2 {
+
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            padding: 0;
+
+            margin-left: 20px;
+        }
+
+        /* Puedes agregar estilos adicionales para dispositivos móviles si es necesario */
     }
 </style>
 
 <link rel="stylesheet" href="../src/datables//Responsive-2.4.1/css/responsive.dataTables.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-..." crossorigin="anonymous">
@@ -513,8 +627,8 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
         </form>';
 
-                 
-    
+
+
                     $conn = conectarBaseDeDatos();
 
                     // Verificar si hay registros en la tabla responsables para este estudiante
@@ -542,13 +656,31 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                         echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
                     }
 
-                    echo '
-                <form action="" method="post">
-                <input type="hidden" name="id" value="' . $row['id'] . '">
-                <button class="hand-cursor" type="button" style="background-color: var(--c);" onclick="mostrarVentana(' . $row['id'] . ')">
-                    <i class="fas fa-users" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
-                </button>
-                </form>';
+                    $id_estudiante = $row['id'];
+                    $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                    $result_responsables = $conn->query($query_responsables);
+
+                    if ($result_responsables) {
+                        $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                        $count_responsables = $fila_responsables['count'];
+                        if ($count_responsables > 0) {
+
+                            echo '
+                    <form action="" method="post">
+                        <input type="hidden" name="id" value="' . $row['id'] . '">
+                        <button class="hand-cursor" type="button" style="background-color: var(--c);" onclick="mostrarInformacion(' . $row['id'] . ')">
+                            <i class="fas fa-users" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                        </button>
+                    </form>';
+                        } else {
+                            // No hay registros, no mostrar el botón
+                        }
+
+                        // Liberar resultado de la consulta de responsables
+                        $result_responsables->closeCursor();
+                    } else {
+                        echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                    }
 
 
                     echo ' <form action="" method="post" id="eliminarForm">
@@ -638,6 +770,9 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
         </tbody>
     </table>
+
+
+
 
 
 
@@ -740,6 +875,18 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         </div>
     </div>
 
+    <div id="overlay" onclick="cerrarModal()">
+        <div id="ventanaFlotante" onclick="event.stopPropagation();">
+            <button class="modal-button2" style="font-size: 50;" onclick="cerrarModal()">X</button>
+            <h2 class="modal-heading">Responsables del estudiante</h2>
+            <!-- Contenido de la ventana flotante -->
+            <div class="responsable-container"></div>
+            <div class="responsable-container"></div>
+            <div class="responsable-container"></div>
+        </div>
+    </div>
+
+
 
 </main>
 <?php
@@ -750,42 +897,7 @@ include_once "./header.php";
 
 
 
-<script>
-    // Cuando se hace clic en cualquier botón "medicina actual"
-    const abrirVentanaBotones = document.querySelectorAll('.abrir-ventana');
-    abrirVentanaBotones.forEach(function(button) {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const estudianteId = this.getAttribute('data-estudiante-id');
-            const ventanaId = 'ventanaPasar' + estudianteId;
 
-            const ventana = document.getElementById(ventanaId);
-            ventana.style.display = 'block';
-
-            // Realizar una solicitud AJAX para obtener los datos de la medicina
-            const datosMedicina = document.getElementById('datosMedicina_' + pacienteId);
-
-            // Realizar una solicitud AJAX
-            const xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    datosMedicina.innerHTML = xhr.responseText; // Colocar los datos dentro del elemento
-                }
-            };
-            xhr.open('GET', '../controller/obtener_datos_matricula.php?id=' + pacienteId, true);
-            xhr.send();
-        });
-    });
-
-    // Cuando se hace clic en el botón de cerrar
-    const cerrarVentanaBotones = document.querySelectorAll('.cerrar-ventana');
-    cerrarVentanaBotones.forEach(function(button) {
-        button.addEventListener('click', function() {
-            const ventana = this.closest('.ventana-flotante');
-            ventana.style.display = 'none';
-        });
-    });
-</script>
 
 
 
@@ -827,6 +939,53 @@ include_once "./header.php";
 
 
 <script src="../js/cargar_paralelos.js"></script>
+
+<script>
+    function mostrarInformacion(id) {
+        var overlay = document.getElementById("overlay");
+        var ventanaFlotante = document.getElementById("ventanaFlotante");
+
+        // Realizar petición AJAX para obtener la información del servidor
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    // Manipular la respuesta y mostrar la información en la ventana flotante
+                    var respuesta = xhr.responseText;
+
+                    // Verificar si la respuesta contiene datos antes de mostrar la ventana
+                    if (respuesta.trim() !== "") {
+                        // Insertar el contenido en la ventana flotante
+                        ventanaFlotante.innerHTML = '<button class="modal-button2" onclick="cerrarModal()">X</button>' +
+                            respuesta;
+
+                        // Mostrar el overlay y la ventana flotante
+                        overlay.style.display = "block";
+                        ventanaFlotante.style.display = "block";
+                    } else {
+                        console.log("La respuesta del servidor está vacía.");
+                    }
+                } else {
+                    console.log("Error en la petición AJAX. Estado: " + xhr.status);
+                }
+            }
+        };
+        xhr.open("GET", "../controller/responsables.php?id=" + id, true);
+        xhr.send();
+    }
+
+
+    function cerrarModal() {
+        var overlay = document.getElementById("overlay");
+        var ventanaFlotante = document.getElementById("ventanaFlotante");
+
+        // Ocultar el overlay y la ventana flotante al cerrar
+        overlay.style.display = "none";
+        ventanaFlotante.style.display = "none";
+    }
+</script>
+
+
 
 
 

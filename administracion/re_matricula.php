@@ -174,14 +174,12 @@ include_once '../model/conexion.php';
         <span class="input-border"></span>
     </div>
     <div class="form">
-        <label for="id_paralelo_estudiante">
-            <p>10. Paralelo</p>
+        <label for="codigo_unico_estudiante">
+            <p>11. Código de Servico básico (Código U Planilla de Luz)</p>
         </label>
-        <select class="input" id="id_paralelo_estudiante" name="id_paralelo_estudiante" required>
-            <option value="" selected disabled>Seleccione un paralelo</option>
-        </select>
+        <input type="text" class="input" id="codigo_unico_estudiante" name="codigo_unico_estudiante" required>
+        <span class="input-border"></span>
     </div>
-
 </div>
 
 <br><br>

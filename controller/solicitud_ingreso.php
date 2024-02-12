@@ -52,14 +52,22 @@ class MiPDF extends FPDF
         $this->SetFont('Arial', 'B', 16);
         $this->SetX(50); // Ajusta la posición horizontal del texto según sea necesario
         $this->Cell(137, 20, iconv('UTF-8', 'ISO-8859-1', 'SOLICITUD DE INGRESO '), 0, 0, 'C');
-
-
-
-
-
     }
     function Footer()
     {
+        $conn = conectarBaseDeDatos();
+
+        $sql = "SELECT
+    titulo,
+    rector,
+    genero,
+    correo,
+    celular
+    FROM
+    reportes;";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $reporte = $stmt->fetch(PDO::FETCH_ASSOC);
 
         $this->SetFont('Arial', 'B', 10);
         $this->SetY(265);
@@ -71,16 +79,15 @@ class MiPDF extends FPDF
         $this->SetX(100);
         $this->SetTextColor(236, 29, 23);
         $this->SetX(123); // Establecer el color del texto en blanco para que sea legible en fondo rojo
-        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '07h1462@gmail.com'), 0, 0, 'C');
+        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', ($reporte['correo'])), 0, 0, 'C');
+
         $this->SetY(275);
         $this->SetX(100);
         $this->SetTextColor(236, 29, 23);
         $this->SetX(132);
         // Establecer el color del texto en blanco para que sea legible en fondo rojo
-        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '+593 969998542 '), 0, 0, 'C');
-
+        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', ($reporte['celular'])), 0, 0, 'C');
     }
-
 }
 function generateReport($estudianteId)
 {
@@ -137,21 +144,36 @@ function generateReport($estudianteId)
         }
     }
 
+
+    $sql = "SELECT
+    titulo,
+    rector,
+    genero,
+    correo,
+    celular
+    FROM
+    reportes;";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $reporte = $stmt->fetch(PDO::FETCH_ASSOC);
+
     $pdf->Ln(0);
-    $pdf->SetX(35); // Ajusta la posición horizontal del texto según sea necesario
+    $pdf->SetX(35);
     $pdf->SetFont('Arial', '', 12);
-    $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', ("Lcda.")), 0, 1, 'L');
+    $pdf->Cell(0, 8, iconv('UTF-8', 'ISO-8859-1', ($reporte['titulo'] . ".")), 0, 1, 'L');
+
+
 
     $pdf->Ln(0);
     $pdf->SetX(35); // Ajusta la posición horizontal del texto según sea necesario
     $pdf->SetFont('Arial', 'B', 12);
-    $pdf->Cell(0, 7, iconv('UTF-8', 'ISO-8859-1', ("JANINA SALINAS SALINAS Mgs.")), 0, 1, 'L');
+    $pdf->Cell(0, 5, iconv('UTF-8', 'ISO-8859-1', '' . mb_strtoupper($reporte['rector'])), 0, 1, 'L');
 
 
     $pdf->Ln(0);
     $pdf->SetX(35); // Ajusta la posición horizontal del texto según sea necesario
     $pdf->SetFont('Arial', '', 10);
-    $pdf->Cell(0, 5, iconv('UTF-8', 'ISO-8859-1', ("DIRECTORA DE LA ESCUELA.")), 0, 1, 'L');
+    $pdf->Cell(0, 8, iconv('UTF-8', 'ISO-8859-1', '' . mb_strtoupper($reporte['genero']) . ' DE LA ESCUELA.'), 0, 1, 'L');
 
 
     $pdf->Ln(0);
@@ -214,7 +236,7 @@ function generateReport($estudianteId)
     $pdf->Ln(30);
     $pdf->SetX(35);
     $pdf->SetFont('Arial', '', 12); // Configura la fuente en negrita
-// Obtén el año actual
+    // Obtén el año actual
     $ano_actual = date('Y');
 
     // Calcula el siguiente año sumando 1 al año actual
@@ -288,7 +310,6 @@ function generateReport($estudianteId)
     $pdf->Cell(130, 20, iconv('UTF-8', 'ISO-8859-1', 'CI:................................'), 0, 0, 'C');
 
     $pdf->Output();
-
 }
 
 
