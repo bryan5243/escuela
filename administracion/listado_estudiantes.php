@@ -477,6 +477,29 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
         /* Puedes agregar estilos adicionales para dispositivos móviles si es necesario */
     }
+
+    .overlaypasar {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 1;
+    }
+
+    .modalpasar {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 550px;
+        transform: translate(-50%, -50%);
+        background-color: var(--color-modal);
+        padding: 20px;
+        z-index: 2;
+    }
 </style>
 
 <link rel="stylesheet" href="../src/datables//Responsive-2.4.1/css/responsive.dataTables.min.css">
@@ -586,21 +609,37 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         <tbody>
             <?php
             $conn = conectarBaseDeDatos();
-            $sql = "SELECT DISTINCT
-            e.id,
-            e.cedula,
-            e.apellidos,
-            e.nombres,
-            g.grado,
-            pa.paralelo
+            $sql = "WITH EstudiantesConNumero AS (
+                SELECT
+                    e.id,
+                    e.cedula,
+                    e.apellidos,
+                    e.nombres,
+                    g.grado,
+                    pa.paralelo,
+                    ROW_NUMBER() OVER (PARTITION BY e.id ORDER BY m.created_at DESC) as NumeroFila
+                FROM
+                    estudiante e
+                    JOIN matricula m ON e.Id = m.id_estudiante
+                    JOIN periodo pe ON pe.Id = m.id_periodo
+                    JOIN grado g ON g.id = m.id_grado
+                    JOIN paralelo pa ON g.id = pa.id_grados
+                WHERE
+                    m.id_paralelo = pa.id AND
+                    e.estado = 1
+            )
+            SELECT
+                id,
+                cedula,
+                apellidos,
+                nombres,
+                grado,
+                paralelo
             FROM
-            estudiante e
-            JOIN
-            matricula m ON e.Id=m.id_estudiante
-            JOIN periodo pe on pe.Id=m.id_periodo
-            JOIN grado g on g.id=m.id_grado
-            JOIN paralelo pa on g.id=pa.id_grados
-            where m.id_paralelo=pa.id AND e.estado=1 AND pe.estado=1;";
+                EstudiantesConNumero
+            WHERE
+                NumeroFila = 1;
+             ";
             $result = $conn->query($sql);
             if (!$result) {
                 echo "Error al obtener los datos: " . $conn->errorInfo()[2];
@@ -694,30 +733,61 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
                     echo '<div style="display: flex; align-items: center;" >
 
-                <form action="" method="post" id="actForm">
-            <input type="hidden" name="id" value="' . $row['id'] . '">
-            <button class="hand-cursor" type="button" value="' . $row['id'] . '" style="background-color: var(--c);">
-                <i class="far fa-circle-check" style="font-size: 28px; color: #ec1d17;"></i>
-            </button>
-        </form>';
-                    echo '
-        <form action="" method="post">
-        <input type="hidden" name="id" value="' . $row['id'] . '">
-        <button class="hand-cursor" type="button" style="background-color: var(--c);" onclick="mostrarVentana(' . $row['id'] . ')">
-            <i class="fas fa-users" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
-        </button>
-        </form>
-        </div>';
+                    <form action="" method="post" id="actForm">
+                <input type="hidden" name="id" value="' . $row['id'] . '">
+                <button class="hand-cursor abrir-ventana" type="button"  data-estudiante-id="' . $row['id'] . '" style="background-color: var(--c);">
+        <i class="far fa-circle-check" style="font-size: 28px; color: #ec1d17;"></i>
+    </button>
+    
+            </form>';
+
+                    $id_estudiante = $row['id'];
+                    $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                    $result_responsables = $conn->query($query_responsables);
+
+                    if ($result_responsables) {
+                        $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                        $count_responsables = $fila_responsables['count'];
+                        if ($count_responsables > 0) {
+
+                            echo '
+            <form action="" method="post">
+                <input type="hidden" name="id" value="' . $row['id'] . '">
+                <button class="hand-cursor" type="button" style="background-color: var(--c);" onclick="mostrarInformacion(' . $row['id'] . ')">
+                    <i class="fas fa-users" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>';
+                        } else {
+                            // No hay registros, no mostrar el botón
+                        }
+
+                        // Liberar resultado de la consulta de responsables
+                        $result_responsables->closeCursor();
+                    } else {
+                        echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                    }
+
+                    echo ' <form action="" method="post" id="eliminarForm">
+                <input type="hidden" name="id" value="' . $row['id'] . '">
+                <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
+                    <i class="fas fa-trash-alt" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                </button>
+            </form>';
+                    '<td> ';
+
+                    '</div>';
                 } elseif ($_SESSION['rol'] == "secretariado") {
                     echo '<div style="display: flex; align-items: center;" >
 
                     <form action="" method="post" id="actForm">
                 <input type="hidden" name="id" value="' . $row['id'] . '">
-                <button class="hand-cursor" type="button" value="' . $row['id'] . '" style="background-color: var(--c);">
-                    <i class="far fa-circle-check" style="font-size: 28px; color: #ec1d17;"></i>
-                </button>
-            </form>
-    ';
+                <button class="hand-cursor abrir-ventana" type="button"  data-estudiante-id="' . $row['id'] . '" style="background-color: var(--c);">
+        <i class="far fa-circle-check" style="font-size: 28px; color: #ec1d17;"></i>
+    </button>
+    
+            </form>';
+
+
 
                     // Verificar si hay registros en la tabla responsables para este estudiante
                     $id_estudiante = $row['id'];
@@ -744,26 +814,64 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                         echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
                     }
 
-                    echo '
+                    $id_estudiante = $row['id'];
+                    $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                    $result_responsables = $conn->query($query_responsables);
+
+                    if ($result_responsables) {
+                        $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                        $count_responsables = $fila_responsables['count'];
+                        if ($count_responsables > 0) {
+
+                            echo '
                     <form action="" method="post">
-                    <input type="hidden" name="id" value="' . $row['id'] . '">
-                    <button class="hand-cursor" type="button" style="background-color: var(--c);" onclick="mostrarVentana(' . $row['id'] . ')">
-                        <i class="fas fa-users" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
-                    </button>
+                        <input type="hidden" name="id" value="' . $row['id'] . '">
+                        <button class="hand-cursor" type="button" style="background-color: var(--c);" onclick="mostrarInformacion(' . $row['id'] . ')">
+                            <i class="fas fa-users" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                        </button>
                     </form>';
+                        } else {
+                            // No hay registros, no mostrar el botón
+                        }
+
+                        // Liberar resultado de la consulta de responsables
+                        $result_responsables->closeCursor();
+                    } else {
+                        echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                    }
+                    '<td> ';
+
                     '</div>';
                 } elseif ($_SESSION['rol'] == "docente") {
-                    echo '<div style="display: flex; align-items: center;" >
+                    echo '<div style="display: flex; align-items: center;" >';
 
-                <form action="" method="post">
-                <input type="hidden" name="id" value="' . $row['id'] . '">
-                <button class="hand-cursor" type="button" style="background-color: var(--c);" onclick="mostrarVentana(' . $row['id'] . ')">
-                    <i class="fas fa-users" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
-                </button>
-                </form>
-                </div>';
+                    $id_estudiante = $row['id'];
+                    $query_responsables = "SELECT COUNT(*) as count FROM responsables WHERE id_estudiante = $id_estudiante";
+                    $result_responsables = $conn->query($query_responsables);
+
+                    if ($result_responsables) {
+                        $fila_responsables = $result_responsables->fetch(PDO::FETCH_ASSOC);
+                        $count_responsables = $fila_responsables['count'];
+                        if ($count_responsables > 0) {
+
+                            echo '
+                    <form action="" method="post">
+                        <input type="hidden" name="id" value="' . $row['id'] . '">
+                        <button class="hand-cursor" type="button" style="background-color: var(--c);" onclick="mostrarInformacion(' . $row['id'] . ')">
+                            <i class="fas fa-users" style="font-size: 28px; color: #ec1d17; margin-left:10px;"></i>
+                        </button>
+                    </form>';
+                        } else {
+                            // No hay registros, no mostrar el botón
+                        }
+
+                        // Liberar resultado de la consulta de responsables
+                        $result_responsables->closeCursor();
+                    } else {
+                        echo '<td>Error al verificar los responsables: ' . $conn->errorInfo()[2] . '</td>';
+                    }
+                    '<td> ';
                 }
-                '<td> ';
             }
 
             ?>
@@ -886,11 +994,78 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         </div>
     </div>
 
+    <fieldset>
+        <form method="post" action="#">
+            <div class="overlaypasar">
+                <div class="modalpasar">
+                    <center>
+                        <h1>Asignar nuevo grado y paralelo</h1>
+                    </center>
+                    <button class="modal-button2" onclick="closeModal2()">X</button>
+
+                    <div class="form-container" style="display: flex; flex-wrap: wrap;">
+
+                        <div class="form">
+                            <label for="id_grado_estudiante">
+                                <p>Grado del Estudiante</p>
+                            </label>
+                            <input type="hidden" id="idGradoHidden" name="idGrado" value="">
+
+                            <select type="text" class="input" id="grado2" name="grado" required onchange="cargarParalelosModalPasar()">
+                                <?php
+                                $conn = conectarBaseDeDatos();
+                                try {
+                                    // Consulta para obtener los grados desde la base de datos
+                                    $sql = "SELECT id, grado FROM grado";
+                                    $result = $conn->query($sql);
+
+                                    // Llenar las opciones del select con los datos de la base de datos
+                                    if ($result->rowCount() > 0) {
+                                        foreach ($result as $row) {
+                                            echo "<option style='color:#000000' value='" . $row["id"] . "'>" . $row["grado"] . "</option>";
+                                        }
+                                    } else {
+                                        echo "<option value=''>No hay grados disponibles</option>";
+                                    }
+                                } catch (PDOException $e) {
+                                    echo "Error de conexión: " . $e->getMessage();
+                                }
+                                $conn = null;
+                                ?>
+                            </select>
+                            <span class="input-border"></span>
+                        </div>
+                        <div class="form">
+                            <label for="id_paralelo_estudiante">
+                                <p>Paralelo</p>
+                            </label>
+                            <input type="hidden" id="idParaleloHidden" name="idParalelo" value="">
+
+                            <select class="input" id="id_paralelo_estudiante" name="id_paralelo_estudiante" required>
+                            </select>
+                        </div>
+                        <input type="hidden" id="idEstudianteHidden" name="idEstudiante" value="">
+
+                        <button style="cursor: pointer; font-size: 20px; color:white; border-radius: 20px; background: #FF0000; margin-top: 10px;" class="input" type="button" name="btnpasar" onclick="validarPeriodo()" value="">
+                            Actualizar
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+    </fieldset>
+
 
 
 </main>
 <?php
 include_once "./header.php";
+
+
+
 ?>
 
 
@@ -898,7 +1073,169 @@ include_once "./header.php";
 
 
 
+<!-- Incluye jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+
+
+<script>
+    function validarPeriodo() {
+        // Realiza una petición para verificar si hay algún registro con valor 1 en la tabla periodos
+        // Puedes utilizar fetch o cualquier otra técnica para hacer la petición AJAX
+
+        // Ejemplo de código de solicitud AJAX utilizando fetch:
+        fetch('../controller/verificar_periodos.php')
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data from verificar_periodos.php:', data);
+                if (data.some(periodo => periodo.estado === 1)) {
+                    enviarId();
+                } else {
+                    // Si no hay registros con valor 1, muestra la alerta
+                    Swal.fire({
+                        title: 'Cree un nuevo periodo',
+                        icon: 'warning',
+                        confirmButtonText: 'Aceptar'
+                    });
+                }
+            })
+            .catch(error => console.error('Error al obtener los datos:', error));
+    }
+
+    function enviarId() {
+        // Obtener los valores del ID, grado y paralelo
+        var idEstudiante = $("#idEstudianteHidden").val();
+        var idGrado = $("#grado2").val();
+        var idParalelo = $("#id_paralelo_estudiante").val();
+
+        console.log(idEstudiante, idGrado, idParalelo);
+
+        // Hacer la solicitud Ajax
+        $.ajax({
+            type: "POST",
+            url: "../controller/nuevo_grado.php",
+            data: {
+                idEstudiante: idEstudiante,
+                idGrado: idGrado,
+                idParalelo: idParalelo
+            },
+            success: function(response) {
+                // Manejar la respuesta del servidor
+                console.log(response);
+                if (response.success) {
+                    Swal.fire({
+                        title: "Éxito",
+                        text: response.message,
+                        icon: "success",
+                        confirmButtonText: "Aceptar",
+                        showCancelButton: false
+                    }).then((result) => {
+                        // Redirige a la página después de hacer clic en "Aceptar"
+                        if (result.isConfirmed) {
+                            window.location.href = "../administracion/listado_estudiantes.php"; // Reemplaza con la URL de tu página destino
+                        }
+                    });
+                } else {
+                    // Manejar el caso de respuesta no exitosa si es necesario
+                    console.error(response.message);
+                }
+            },
+            error: function(error) {
+                console.error("Error en la solicitud Ajax: ", error);
+            }
+        });
+    }
+</script>
+
+
+
+
+
+<script>
+    $(".abrir-ventana").on("click", function() {
+        var estudianteId = $(this).data("estudiante-id");
+        // Asignar el ID del estudiante al input hidden
+        $("#idEstudianteHidden").val(estudianteId);
+        showModal(estudianteId);
+    });
+
+    function showModal(id) {
+        $("#idEstudiante").val(id);
+
+        $(".overlaypasar").show();
+        $(".modalpasar").show();
+
+        // Llamada AJAX para obtener los datos del estudiante
+        $.ajax({
+            type: "POST",
+            url: "../controller/pasar_grado.php",
+            data: {
+                id: id
+            },
+            dataType: "json",
+            success: function(response) {
+                // Verificar si el ID del estudiante es el correcto antes de continuar
+                if ($("#idEstudianteHidden").val() == id) {
+                    $("#grado2").val(response.id_grado);
+                    $("#id_paralelo_estudiante").val(response.paralelo);
+                    cargarParalelosModalPasar();
+                } else {
+                    // Manejar el caso de ID incorrecto
+                    alert("ID de estudiante incorrecto");
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Manejar errores de la llamada AJAX
+                alert("Error en la llamada AJAX");
+            },
+        });
+    }
+
+    // Función para cerrar la ventana emergente
+    function closeModal2() {
+        $(".overlaypasar").hide();
+        $(".modalpasar").hide();
+    }
+</script>
+
+
+
+
+
+
+<script>
+    function cargarParalelosModalPasar() {
+        var selectedGrado = document.getElementById('grado2').value;
+
+        // Realizar una solicitud Fetch para obtener los paralelos
+        fetch("../controller/obtener_paralelos.php?grado=" + encodeURIComponent(selectedGrado))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('La red no respondió correctamente');
+                }
+                return response.json();
+            })
+            .then(paralelos => {
+
+                // Obtener el select de paralelos
+                var paraleloSelect = document.getElementById('id_paralelo_estudiante');
+
+                // Limpiar las opciones actuales
+                paraleloSelect.innerHTML = "";
+
+                // Llenar el select con las opciones recibidas del servidor
+                paralelos.forEach(paralelo => {
+                    var option = document.createElement('option');
+                    option.value = paralelo.id;
+                    option.text = paralelo.paralelo;
+                    paraleloSelect.add(option);
+                });
+            })
+            .catch(error => {
+                // Manejar el error de manera adecuada, por ejemplo, mostrando un mensaje al usuario.
+            });
+    }
+</script>
 
 
 
@@ -957,6 +1294,7 @@ include_once "./header.php";
                     if (respuesta.trim() !== "") {
                         // Insertar el contenido en la ventana flotante
                         ventanaFlotante.innerHTML = '<button class="modal-button2" onclick="cerrarModal()">X</button>' +
+                            '<h2 style="text-align: center;">Responsables del estudiante</h2>' + // Agregado el encabezado centrado
                             respuesta;
 
                         // Mostrar el overlay y la ventana flotante
@@ -974,7 +1312,6 @@ include_once "./header.php";
         xhr.send();
     }
 
-
     function cerrarModal() {
         var overlay = document.getElementById("overlay");
         var ventanaFlotante = document.getElementById("ventanaFlotante");
@@ -984,6 +1321,7 @@ include_once "./header.php";
         ventanaFlotante.style.display = "none";
     }
 </script>
+
 
 
 

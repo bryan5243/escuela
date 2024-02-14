@@ -1,4 +1,13 @@
 <?php
+if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['rol'])) {
+    header("Location: login.php");
+    exit();
+}
+include_once '../model/conexion.php';
+?>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<?php
 include_once '../controller/registrar_usuario.php'
 ?>
 <form action="#" method="post">
@@ -12,7 +21,7 @@ include_once '../controller/registrar_usuario.php'
             <label for="usuario">
                 <p>Usuario:</p>
             </label>
-            <input class="input" type="Text" id="Usuario" oninput="validarTexto(this)" name="usuario" required>
+            <input class="input" type="Text" id="Usuario" oninput="validarTexto(this)" name="usuario" oninput="validarTexto(this)" required>
             <span class="input-border"></span>
         </div>
         <div class="form">

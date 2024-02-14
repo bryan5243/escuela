@@ -68,11 +68,14 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
         <div class="tab-content">
             <div id="tab1" style="display: block;">
+
                 <?php include_once("./usuarios.php"); ?>
 
             </div>
             <div id="tab2" style="display: none;">
                 <?php include_once("./reportes.php"); ?>
+
+
             </div>
             <br><br>
 

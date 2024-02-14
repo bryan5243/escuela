@@ -61,6 +61,21 @@ class MiPDF extends FPDF
 
     function Footer()
     {
+
+        $conn = conectarBaseDeDatos();
+
+        $sql = "SELECT
+    titulo,
+    rector,
+    genero,
+    correo,
+    celular
+    FROM
+    reportes;";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $reporte = $stmt->fetch(PDO::FETCH_ASSOC);
+
         $this->SetFont('Arial', 'B', 10);
         $this->SetY(270);
         $this->SetTextColor(236, 29, 23); // Establecer el color del texto en blanco para que sea legible en fondo rojo
@@ -68,10 +83,10 @@ class MiPDF extends FPDF
         $this->SetFont('Arial', 'B', 10);
         $this->SetY(275);
         $this->SetTextColor(236, 29, 23); // Establecer el color del texto en blanco para que sea legible en fondo rojo
-        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '07h1462@gmail.com'), 0, 0, 'R');
+        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', ($reporte['correo'])), 0, 0, 'R');
         $this->SetY(280);
         $this->SetTextColor(236, 29, 23); // Establecer el color del texto en blanco para que sea legible en fondo rojo
-        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', '+593 969998542 '), 0, 0, 'R');
+        $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', ($reporte['celular'])), 0, 0, 'R');
 
     }
 }
