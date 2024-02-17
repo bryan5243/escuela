@@ -1001,6 +1001,31 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     <center>
                         <h1>Asignar nuevo grado y paralelo</h1>
                     </center>
+                    <?php
+
+                    // Consulta SQL para obtener el periodo académico actual
+                    $sql = "SELECT periodo FROM periodo WHERE estado = 1";
+
+                    // Preparar y ejecutar la consulta
+                    $stmt = $conn->prepare($sql);
+                    $stmt->execute();
+
+                    // Obtener el resultado
+                    $periodo_actual = $stmt->fetchColumn();
+
+                    // Verificar si se encontró un periodo académico activo
+                    if ($periodo_actual) {
+                        // Mostrar el periodo académico actual
+                        echo "<p style='padding-top:10px;text-align: center'>Periodo académico actual: $periodo_actual</p>";
+                    } else {
+                        // Mostrar mensaje si no hay periodo académico activo
+                        echo "<p style='padding-top:20px;text-align: center'>No hay periodo académico activo.</p>";
+                    }
+
+                    // Cerrar la conexión
+                    $conn = null;
+                    ?>
+
                     <button class="modal-button2" onclick="closeModal2()">X</button>
 
                     <div class="form-container" style="display: flex; flex-wrap: wrap;">

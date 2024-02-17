@@ -62,6 +62,10 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <h3>Actualizar Reporte
                 </h3>
             </li>
+            <li class="tab" onclick="changeTab(2)">
+                <h3>Administración de usuarios
+                </h3>
+            </li>
 
 
         </ul>
@@ -77,6 +81,12 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 
 
             </div>
+            <div id="tab3" style="display: none;">
+                <?php include_once("./administracion_usuarios.php"); ?>
+
+
+            </div>
+
             <br><br>
 
 
@@ -96,7 +106,6 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
 <?php
 include("header.php")
 ?>
-<script src="../js/mostrar_fotores.js"></script>
 <script src="../js/menu.js"></script>
 <script src="../js/tabs.js"></script>
 <script src="../js/tema.js"></script>

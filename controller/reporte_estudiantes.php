@@ -51,11 +51,6 @@ class MiPDF extends FPDF
         $this->SetFont('Arial', 'B', 16);
         $this->SetX(50); // Ajusta la posición horizontal del texto según sea necesario
         $this->Cell(137, 20, iconv('UTF-8', 'ISO-8859-1', 'HOJA DE MATRICULA'), 0, 0, 'C');
-
-
-
-
-
     }
 
 
@@ -87,7 +82,6 @@ class MiPDF extends FPDF
         $this->SetY(280);
         $this->SetTextColor(236, 29, 23); // Establecer el color del texto en blanco para que sea legible en fondo rojo
         $this->Cell(0, 20, iconv('UTF-8', 'ISO-8859-1', ($reporte['celular'])), 0, 0, 'R');
-
     }
 }
 // Función para generar el reporte
@@ -107,7 +101,9 @@ function generateReport($estudianteId)
     e.codigo_unico
     FROM
     matricula m JOIN estudiante e on m.id_estudiante=e.Id
-     WHERE e.id = :estudianteId";
+    WHERE e.id = :estudianteId
+    ORDER BY m.created_at DESC
+    LIMIT 1";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);
     $stmt->execute();
@@ -143,11 +139,14 @@ function generateReport($estudianteId)
     m.numero,
     p.periodo,
     g.grado
-    FROM
-    matricula m join periodo p on m.id_periodo=p.id 
-    JOIN estudiante e on e.Id=m.id_estudiante 
-    join grado g on m.id_grado=g.id
-     WHERE e.id = :estudianteId";
+FROM
+    matricula m 
+JOIN periodo p ON m.id_periodo = p.id 
+JOIN estudiante e ON e.Id = m.id_estudiante 
+JOIN grado g ON m.id_grado = g.id
+WHERE e.id = :estudianteId
+ORDER BY m.created_at DESC
+LIMIT 1;";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);
     $stmt->execute();
@@ -197,17 +196,17 @@ function generateReport($estudianteId)
     $pdf->SetXY($column1X, $pdf->GetY());
     $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'NOMBRES:'), 0, 1);
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'CI:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'CI:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'FECHA DE NAC:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'FECHA DE NAC:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'LUGAR DE NAC:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'LUGAR DE NAC:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'RESIDENCIA:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'RESIDENCIA:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'DIRECCIÓN:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'DIRECCIÓN:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'SECTOR:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'SECTOR:'), 0, 1,); // Alineado a la izquierda
 
 
 
@@ -316,15 +315,15 @@ function generateReport($estudianteId)
     $pdf->SetXY($column1X, $posicionTituloY); // Establecer posición debajo del título
     $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'APELLIDOS Y NOMBRES:'), 0, 1);
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'N° DE CEDULA:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'N° DE CEDULA:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'DIRECCION DEL DOM.:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'DIRECCION DEL DOM.:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'OCUPACIÓN/PROFESIÓN:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'OCUPACIÓN/PROFESIÓN:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'TELF.DOMICILIO-CELULAR:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'TELF.DOMICILIO-CELULAR:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'EMAIL:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'EMAIL:'), 0, 1,); // Alineado a la izquierda
 
 
 
@@ -428,15 +427,15 @@ function generateReport($estudianteId)
     $pdf->SetXY($column1X, $posicionTituloY); // Establecer posición debajo del título
     $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'APELLIDOS Y NOMBRES:'), 0, 1);
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'N° DE CEDULA:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'N° DE CEDULA:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'DIRECCION DEL DOM.:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'DIRECCION DEL DOM.:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'OCUPACIÓN/PROFESIÓN:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'OCUPACIÓN/PROFESIÓN:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'TELF.DOMICILIO-CELULAR:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'TELF.DOMICILIO-CELULAR:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'EMAIL:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'EMAIL:'), 0, 1,); // Alineado a la izquierda
 
 
 
@@ -538,15 +537,15 @@ function generateReport($estudianteId)
     $pdf->SetXY($column1X, $posicionTituloY); // Establecer posición debajo del título
     $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'APELLIDOS Y NOMBRES:'), 0, 1);
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'N° DE CEDULA:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'N° DE CEDULA:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'DIRECCION DEL DOM.:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'DIRECCION DEL DOM.:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'OCUPACIÓN/PROFESIÓN:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'OCUPACIÓN/PROFESIÓN:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'TELF.DOMICILIO-CELULAR:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'TELF.DOMICILIO-CELULAR:'), 0, 1,); // Alineado a la izquierda
     $pdf->SetXY($column1X, $pdf->GetY());
-    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'EMAIL:'), 0, 1, ); // Alineado a la izquierda
+    $pdf->Cell(0, 6, iconv('UTF-8', 'ISO-8859-1', 'EMAIL:'), 0, 1,); // Alineado a la izquierda
 
 
 
@@ -611,7 +610,6 @@ function generateReport($estudianteId)
 
 
     $pdf->Output();
-
 }
 
 // Check if the 'generar_reporte' POST parameter is set
@@ -620,4 +618,3 @@ if (isset($_POST['generar_reporte'])) {
     generateReport($estudianteId);
 }
 $conn = null;
-?>

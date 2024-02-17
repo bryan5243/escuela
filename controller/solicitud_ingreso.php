@@ -191,8 +191,8 @@ function generateReport($estudianteId)
     e.nombres,
     e.apellidos,
     g.grado,
-    P.apellidos_nombres as apellidos_representante,
-    P.cedula,
+    p.apellidos_nombres as apellidos_representante,
+    p.cedula,
     pe.estado
     FROM estudiante e
     JOIN persona p ON e.Id = p.id_estudiante
