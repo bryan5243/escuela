@@ -5,7 +5,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
     exit();
 }
 
-include_once '../Model/roles_menu.php';
+include_once '../model/roles_menu.php';
 
 
 ?>
