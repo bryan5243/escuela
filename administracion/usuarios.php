@@ -41,7 +41,7 @@ include_once '../controller/registrar_usuario.php'
                 <option value="rectorado">Rectorado</option>
                 <option value="secretariado">Secretariado</option>
                 <option value="docente">Docente</option>
-                <option value="diseno">Editor</option>
+                <option value="disenador">Editor</option>
             </select>
         </div>
     </div>

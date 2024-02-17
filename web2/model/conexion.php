@@ -1,9 +1,8 @@
 <?php
-function conectarBaseDeDatos()
-{
+
     $host = 'monorail.proxy.rlwy.net';
     $port = '54739'; // Puerto por defecto de MySQL
-    $dbname = 'aguilas_del_saber'; // Nombre de la base de datos MySQL
+    $dbname = 'arias'; // Nombre de la base de datos MySQL
     $user = 'root'; // Nombre de usuario de MySQL
     $password = 'dC6A24GC53FG2E1-B5BFh3fF511GFgGD'; // Contraseña de MySQL
 
@@ -17,5 +16,4 @@ function conectarBaseDeDatos()
         exit(); // Si hay un error, termina el script
     }
     return $pdo;
-}
 ?>
