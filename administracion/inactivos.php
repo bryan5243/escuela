@@ -198,8 +198,6 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         border: none;
         box-shadow: none;
     }
-
-   
 </style>
 
 <link rel="stylesheet" href="../src/datables//Responsive-2.4.1/css/responsive.dataTables.min.css">
@@ -245,21 +243,31 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
         <tbody>
             <?php
             $conn = conectarBaseDeDatos();
-            $sql = "SELECT DISTINCT
+            $sql = "SELECT
             e.id,
             e.cedula,
             e.apellidos,
             e.nombres,
             g.grado,
-            pa.paralelo
-            FROM
+            pa.paralelo,
+            MAX(m.created_at) as ultima_matricula
+        FROM
             estudiante e
-            JOIN
-            matricula m ON e.Id=m.id_estudiante
-            JOIN periodo pe on pe.Id=m.id_periodo
-            JOIN grado g on g.id=m.id_grado
-            JOIN paralelo pa on g.id=pa.id_grados
-            where m.id_paralelo=pa.id AND e.estado=0;";
+        JOIN
+            matricula m ON e.Id = m.id_estudiante
+        JOIN
+            periodo pe ON pe.Id = m.id_periodo
+        JOIN
+            grado g ON g.id = m.id_grado
+        JOIN
+            paralelo pa ON g.id = pa.id_grados
+        WHERE
+            m.id_paralelo = pa.id AND e.estado = 0
+        GROUP BY
+            e.id, e.cedula, e.apellidos, e.nombres, g.grado, pa.paralelo
+        ORDER BY
+            ultima_matricula DESC
+        LIMIT 1;";
             $result = $conn->query($sql);
             if (!$result) {
                 echo "Error al obtener los datos: " . $conn->errorInfo()[2];
@@ -274,7 +282,7 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                 <td>' . $row['grado'] . '</td>
                 <td>' . $row['paralelo'] . '</td>
                 <td>';
-                
+
                 echo '<form action="" method="post" id="eliminarForm">
                 <input type="hidden" name="id" value="' . $row['id'] . '">
                 <button class="hand-cursor" type="button" onclick="alerta_eliminar(' . $row['id'] . ')" style="background-color: var(--c);">
