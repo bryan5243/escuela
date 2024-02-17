@@ -385,9 +385,9 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
             e.apellidos,
             e.fecha_nacimiento,
             g.grado,
-            P.apellidos_nombres,
-            P.direccion,
-            P.telefono,
+            p.apellidos_nombres,
+            p.direccion,
+            p.telefono,
             pa.paralelo,
             pe.periodo
             FROM estudiante e
