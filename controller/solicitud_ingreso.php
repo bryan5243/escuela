@@ -118,7 +118,11 @@ function generateReport($estudianteId)
     if (!$fechaGenerada) {
 
 
-        $sql = "SELECT updated_at from estudiante where Id=:estudianteId";
+        $sql = "SELECT created_at 
+        FROM matricula 
+        WHERE id_estudiante = :estudianteId
+        ORDER BY created_at DESC
+        LIMIT 1;";
         $stmt = $conn->prepare($sql);
         $stmt->bindParam(':estudianteId', $estudianteId, PDO::PARAM_INT);
         $stmt->execute();
@@ -126,7 +130,7 @@ function generateReport($estudianteId)
 
         if ($fecha) {
             $row = $fecha;
-            $fechaActual = new DateTime($row['updated_at']);
+            $fechaActual = new DateTime($row['created_at']);
             $fechaActual->setTimeZone(new DateTimeZone('Europe/Berlin'));
 
             $dia = $fechaActual->format('d');
@@ -237,13 +241,24 @@ function generateReport($estudianteId)
     $pdf->SetX(35);
     $pdf->SetFont('Arial', '', 12); // Configura la fuente en negrita
     // Obtén el año actual
-    $ano_actual = date('Y');
+
+
+    // Consulta SQL para obtener el periodo académico actual
+    $sql = "SELECT periodo FROM periodo WHERE estado = 1";
+
+    // Preparar y ejecutar la consulta
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+
+    // Obtener el resultado
+    $periodo_actual = $stmt->fetchColumn();
+
 
     // Calcula el siguiente año sumando 1 al año actual
-    $siguiente_ano = $ano_actual + 1;
+    $siguiente_ano = $periodo_actual+ 1;
 
     // Combina los años en el formato deseado
-    $ano_lectivo = $ano_actual . '-' . $siguiente_ano;
+    $ano_lectivo = $periodo_actual . '-' . $siguiente_ano;
     // Ahora puedes usar $ano_lectivo en tu texto
     $texto = 'Se digne autorizar el ingreso a la Escuela De Educación Básica Particular "Las Águilas Del Saber", en calidad de alumno de ' . $solicitud['grado'] .
         ' a mí representado, para el Año Lectivo ' . $ano_lectivo . '.';

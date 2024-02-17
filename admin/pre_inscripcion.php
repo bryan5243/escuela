@@ -335,20 +335,20 @@ use PgSql\Connection\Connection;
         // Agregar el evento onchange al campo de nacionalidad del padre
         function verificarNacionalidadPadre() {
             var nacionalidadPadre = $("#nacionalidad_padre").val();
+            var cedulaPadre = $("#cedula_Padre").val();
+            var mensajeDiv = $("#mensaje_padre");
 
-            // Limpiar el mensaje cuando cambia la nacionalidad
-            $("#mensaje_padre").html("");
+            // Limpiar el mensaje
+            mensajeDiv.html("");
 
+            // Verificar nacionalidad
             if (nacionalidadPadre === "ecuatoriano") {
-                // Si la nacionalidad es ecuatoriana, realizar la validación de cédula
-                validarCedulaEcuatoriana($("#cedula_Padre").val());
+                validarCedulaEcuatoriana(cedulaPadre, mensajeDiv);
             }
         }
 
         // Función para validar la cédula ecuatoriana
-        function validarCedulaEcuatoriana(cedula) {
-            var mensajeDiv = $("#mensaje_padre");
-
+        function validarCedulaEcuatoriana(cedula, mensajeDiv) {
             // Verificar si la cédula tiene 10 dígitos
             if (cedula.length === 10) {
                 // Coeficientes para el cálculo del dígito verificador
@@ -366,7 +366,7 @@ use PgSql\Connection\Connection;
 
                 // Verificar que el dígito verificador coincida
                 if (verificadorCalculado !== parseInt(cedula[9])) {
-                    mensajeDiv.html("<span style='color:red;'>Numero de cedula no valido.</span>");
+                    mensajeDiv.html("<span style='color:red;'>Número de cédula no válido.</span>");
                 } else {
                     mensajeDiv.html("<span style='color:green;'>Cédula válida</span>");
                 }
@@ -375,6 +375,7 @@ use PgSql\Connection\Connection;
             }
         }
     </script>
+
 
     <script>
         function verificarNacionalidadMadre() {

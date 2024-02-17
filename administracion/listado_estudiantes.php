@@ -894,9 +894,10 @@ if (!isset($_SESSION['id']) || empty($_SESSION['nombre']) || empty($_SESSION['ro
                     <label for="periodo">
                         <p>Periodos Académicos</p>
                     </label>
-                    <input type="text" class="input" id="periodos" name="periodos" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
+                    <input type="text" class="input" id="periodos" name="periodos" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4)"  onblur="verificarPeriodo()" required>
                     <span class="input-border"></span>
                 </div>
+
                 <div class="form">
                     <button id="btn-modal-periodo" class="btn-modal" style="margin-left: 20px;">
                         Agregar nuevo periodo <i class="fas fa-check" style="padding-left:10px"></i>
@@ -1100,6 +1101,7 @@ include_once "./header.php";
 
 <!-- Incluye jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 
 
 

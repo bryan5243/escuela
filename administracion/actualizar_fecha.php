@@ -13,7 +13,7 @@ $nuevaFecha = $data['nuevaFecha'];
 $conn = conectarBaseDeDatos(); // Asegúrate de que esta función devuelve una instancia de PDO
 
 try {
-    $sql = "UPDATE estudiante SET updated_at = ? WHERE id = ?";
+    $sql = "UPDATE matricula SET created_at = ? WHERE id_estudiante = ? ORDER BY created_at DESC LIMIT 1";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(1, $nuevaFecha);
     $stmt->bindParam(2, $estudianteId);
