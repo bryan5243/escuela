@@ -3,7 +3,7 @@
         if(isset($_FILES["foto"])){
             $extension=explode('.', $_FILES["foto"]['name']);
             $nuevo_nombre= rand().'.'.$extension[1];
-            $ubicacion= '../web2/img/'. $nuevo_nombre;
+            $ubicacion= './img/'. $nuevo_nombre;
             move_uploaded_file($_FILES["foto"]['tmp_name'],$ubicacion);
             return $nuevo_nombre;
         }
