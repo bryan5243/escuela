@@ -1,10 +1,11 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 include_once '../model/conexion.php';
-if (isset($_POST["guardar"])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn = conectarBaseDeDatos();
 
-    try {
-        $conn->beginTransaction();
+   
 
         // Obtener datos del formulario de Estudiante
         $cedulaEstudiante = $_POST['cedula'];
@@ -48,24 +49,11 @@ if (isset($_POST["guardar"])) {
         // Insertar datos en la tabla Persona y Rol para Representante
         guardarPersonaRol($conn, 'Representante', $idEstudiante);
 
-        $conn->commit();
-        echo '<script>
-            Swal.fire({
-                title: "Éxito",
-                text: "Los datos se han guardado correctamente.",
-                icon: "success",
-                confirmButtonText: "Aceptar",
-                showCancelButton: false
-            }).then((result) => {
-                // Redirige a la página después de hacer clic en "Aceptar y redirigir"
-                if (result.isConfirmed) {
-                    window.location.href = "../index.php"; // Reemplaza con la URL de tu página destino
-                }
-            });
-        </script>';
-    } catch (Exception $e) {
-        $conn->rollback();
-    }
+       
+
+        // Resto del código de tu archivo de guardado
+
+
     $conn = null;
 }
 

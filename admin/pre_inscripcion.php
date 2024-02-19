@@ -1,16 +1,14 @@
 <html lang="es">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="icon" href="../img/logo23.ico" type="image/x-icon">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="icon" href="../img/logo23.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../css/pre_inscripcion.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../css/pre_inscripcion.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <title>Inscripción</title>
+<title>Inscripción</title>
 </head>
 <style>
     .card {
@@ -274,108 +272,80 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Enviar</button>
+                <button type="button" class="btn btn-primary" onclick="validarYEnviar()">Enviar</button>
 
             </div>
 
         </form>
+
     </main>
 
-    <?php
-    include_once '../model/conexion.php';
-    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>';
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $pdo = conectarBaseDeDatos();
-
-        try {
-            $pdo->beginTransaction();
-
-            // Obtener datos del formulario de Estudiante
-            $cedulaEstudiante = $_POST['cedula'];
-            $apellidosEstudiante = $_POST['apellidos'];
-            $nombresEstudiante = $_POST['nombres'];
-            $direccionEstudiante = $_POST['direccion'];
-            $condicionEstudiante = ($_POST['discapacidad'] == 'si') ? 1 : 0; // Convert 'si' to 1, 'no' to 0
-
-            // Insertar datos en la tabla Estudiante
-            $stmtEstudiante = $pdo->prepare("INSERT INTO estudiante (cedula, apellidos, nombres, direccion, condicion) VALUES (?, ?, ?, ?, ?)");
-            $stmtEstudiante->execute([
-                $cedulaEstudiante,
-                $apellidosEstudiante,
-                $nombresEstudiante,
-                $direccionEstudiante,
-                $condicionEstudiante
-            ]);
-
-            $idEstudiante = $pdo->lastInsertId();
-
-            // Verificar si el estudiante tiene discapacidad
-            if ($_POST['discapacidad'] == 'si') {
-                $tipoDiscapacidad = $_POST['tipoDiscapacidad'];
-                $porcentajeDiscapacidad = $_POST['porcentajeDiscapacidad'];
-
-                // Insertar datos en la tabla Discapacidad
-                $stmtDiscapacidad = $pdo->prepare("INSERT INTO discapacidad (tipo, porcentaje, id_estudiante) VALUES (?, ?, ?)");
-                $stmtDiscapacidad->execute([
-                    $tipoDiscapacidad,
-                    $porcentajeDiscapacidad,
-                    $idEstudiante
-                ]);
-            }
-
-            // Insertar datos en la tabla Persona y Rol para Mamá
-            guardarPersonaRol($pdo, 'Madre', $idEstudiante);
-
-            // Insertar datos en la tabla Persona y Rol para Papá
-            guardarPersonaRol($pdo, 'Padre', $idEstudiante);
-
-            // Insertar datos en la tabla Persona y Rol para Representante
-            guardarPersonaRol($pdo, 'Representante', $idEstudiante);
-
-            $pdo->commit();
-            echo '
-        <script>
-            Swal.fire({
-                title: "¡Prematrícula exitosa!",
-                text: "Los datos se han guardado correctamente.",
-                icon: "success",
-                showConfirmButton: false,
-                timer: 2000 // Cierra automáticamente después de 2 segundos
-            }).then(function() {
-                window.location.href = "pre_inscripcion.php";
-            });
-        </script>';
-            exit();
-        } catch (Exception $e) {
-            $pdo->rollback();
-
-            // Mostrar SweetAlert2 en caso de error
-
-            exit();
-        }
-    }
-
-    function guardarPersonaRol($pdo, $rol, $idEstudiante)
-    {
-        $cedulaPersona = $_POST['cedula_' . ucfirst($rol)];
-        $apellidosNombresPersona = $_POST['apellidosNombres_' . ucfirst($rol)];
-        $telefonoPersona = $_POST['telefono_' . ucfirst($rol)];
-
-        $stmtPersona = $pdo->prepare("INSERT INTO persona (cedula, apellidos_nombres, telefono, id_estudiante) VALUES (?, ?, ?, ?)");
-        $stmtPersona->execute([
-            $cedulaPersona,
-            $apellidosNombresPersona,
-            $telefonoPersona,
-            $idEstudiante
-        ]);
-
-        $idPersona = $pdo->lastInsertId();
-        $stmtRol = $pdo->prepare("INSERT INTO rol (rol, id_persona) VALUES (?, ?)");
-        $stmtRol->execute([$rol, $idPersona]);
-    }
-    ?>
-
 </body>
+
+<script>
+    // Función para validar campos y mostrar alerta
+    function validarYEnviar() {
+        // Validar si todos los campos están llenos
+        var formValido = true;
+        $('input, select').each(function() {
+            if ($(this).prop('required') && $(this).val() === '') {
+                formValido = false;
+                return false; // Salir del bucle si encuentra un campo vacío
+            }
+        });
+
+        // Si algún campo está vacío, mostrar SweetAlert
+        if (!formValido) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Rellene todos los campos por favor',
+            });
+            return;
+        }
+
+        // Si todos los campos están llenos, enviar el formulario con AJAX
+        $.ajax({
+            url: 'guardar_incripcion.php', // Reemplaza esto con la URL del archivo de guardado
+            method: 'POST',
+            data: $('#formularioInscripcion').serialize(),
+            success: function(response) {
+                console.log($('#formularioInscripcion').serialize());
+
+                Swal.fire({
+                    title: "Éxito",
+                    text: "Los datos se han guardado correctamente.",
+                    icon: "success",
+                    confirmButtonText: "Aceptar",
+                    showCancelButton: false
+                }).then((result) => {
+                    // Redirige a la página después de hacer clic en "Aceptar y redirigir"
+                    if (result.isConfirmed) {
+                        window.location.href = "../index.php"; // Reemplaza con la URL de tu página destino
+                    }
+                });
+            },
+            error: function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al enviar el formulario',
+                });
+            },
+        });
+    }
+</script>
+
+
+
+
+
+
+
+
+
+
+
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
     $(document).ready(function() {

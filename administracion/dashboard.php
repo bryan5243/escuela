@@ -325,3 +325,28 @@ include_once "./header.php";
         });
     });
 </script>
+<script>
+   // Función para cerrar la sesión
+function cerrarSesion() {
+    // Redirige a un script PHP que destruirá la sesión
+    window.location.href = '../model/cerrar_session.php';
+}
+
+// Manejar el evento de carga de la página y el evento popstate
+window.addEventListener('load', function() {
+    cerrarSesionOnPageLoad();
+});
+
+window.addEventListener('popstate', function() {
+    cerrarSesionOnPageLoad();
+});
+
+function cerrarSesionOnPageLoad() {
+    // Verifica si la página se está cargando desde el historial de navegación
+    if (window.performance && window.performance.navigation.type === 2) {
+        console.log('Evento de retroceso/avance detectado');
+        cerrarSesion();
+    }
+}
+
+</script>
