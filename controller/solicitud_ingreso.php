@@ -216,7 +216,7 @@ function generateReport($estudianteId)
     $pdf->SetFont('Arial', '', 12); // Configura la fuente en negrita
 
     $texto = "Yo, " . $solicitud['apellidos_representante'] . " con cédula de ciudadanía N° " . $solicitud['cedula'] . ", Representante Legal del Estudiante  " . $solicitud['nombres'] . "  " . $solicitud['apellidos'] . ", con cedula de ciudadanía N°"
-        . $solicitud['cedula'] . " ante usted respetuosamente solicito.";
+        . $solicitud['cedula_estudiante'] . " ante usted respetuosamente solicito.";
 
     // Establece la posición y actual
     $posicion_y_actual = $pdf->GetY();
