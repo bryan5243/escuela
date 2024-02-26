@@ -177,7 +177,7 @@ include_once '../model/conexion.php';
         <label for="codigo_unico_estudiante">
             <p>11. Código de Servico básico (Código U Planilla de Luz)</p>
         </label>
-        <input type="text" class="input" id="codigo_unico_estudiante" name="codigo_unico_estudiante" required>
+        <input type="text" class="input" id="codigo_unico_estudiante" name="codigo_unico_estudiante" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)" required>
         <span class="input-border"></span>
     </div>
 </div>

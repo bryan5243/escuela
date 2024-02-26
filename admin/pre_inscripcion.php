@@ -168,7 +168,7 @@ include_once '../model/conexion.php';
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="porcentajeDiscapacidad" class="form-label">7. Porcentaje:</label>
-                            <input type="text" class="form-control" name="porcentajeDiscapacidad" id="porcentajeDiscapacidad" disabled>
+                            <input type="text" class="form-control" name="porcentajeDiscapacidad" id="porcentajeDiscapacidad" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2)" disabled>
                         </div>
                     </div>
                 </div>
