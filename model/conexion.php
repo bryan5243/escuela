@@ -1,11 +1,11 @@
 <?php
 function conectarBaseDeDatos()
 {
-    $host = 'localhost';
-    $port = '3306'; // Puerto por defecto de MySQL
-    $dbname = 'aguilas_del_saber'; // Nombre de la base de datos MySQL
+    $host = 'sfo1.clusters.zeabur.com';
+    $port = '31201'; // Puerto por defecto de MySQL
+    $dbname = 'zeabur'; // Nombre de la base de datos MySQL
     $user = 'root'; // Nombre de usuario de MySQL
-    $password = ''; // Contraseña de MySQL
+    $password = '3481jMx56boW2LZK7Th9qAQGcaDpVu0e'; // Contraseña de MySQL
 
     // Conexión a la base de datos
     try {
